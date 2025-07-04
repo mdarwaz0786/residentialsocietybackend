@@ -26,6 +26,10 @@ const flatSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Area is required."],
   },
+  photos: {
+    type: [String],
+    default: [],
+  },
   flatOwner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -39,6 +43,12 @@ const flatSchema = new mongoose.Schema({
     enum: ["Occupied", "Vacant", "Under Maintenance"],
     default: "Vacant",
   },
+  allotmentHistory: [{
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    fromDate: { type: Date },
+    toDate: { type: Date },
+    role: { type: String, enum: ["Owner", "Tenant"] },
+  }],
   isDeleted: {
     type: Boolean,
     default: false,
