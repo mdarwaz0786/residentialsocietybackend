@@ -1,0 +1,12 @@
+input.form-control:focus,
+select.form-select:focus,
+textarea.form-control:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}

@@ -1,0 +1,36 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "admin": "npm run dev --prefix ../admin",
+    "server": "nodemon server.js",
+    "dev": "concurrently \"npm run admin\" \"npm run server\"",
+    "start": "node server.js",
+    "build": "npm install && npm install --prefix ../admin && npm run build --prefix ../admin"
+  },
+  "keywords": [
+    "society",
+    "management",
+    "crm",
+    "app"
+  ],
+  "author": "Md Arwaz",
+  "license": "ISC",
+  "description": "society management crm app",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "compression": "^1.8.0",
+    "concurrently": "^9.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.1",
+    "multer": "^2.0.1",
+    "nodemon": "^3.1.10",
+    "path": "^0.12.7",
+    "validator": "^13.15.15"
+  }
+}
