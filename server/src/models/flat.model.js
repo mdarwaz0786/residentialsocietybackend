@@ -34,21 +34,15 @@ const flatSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  tenants: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  }],
   occupancyStatus: {
     type: String,
     enum: ["Occupied", "Vacant", "Under Maintenance"],
     default: "Vacant",
   },
-  allotmentHistory: [{
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    fromDate: { type: Date },
-    toDate: { type: Date },
-    role: { type: String, enum: ["Owner", "Tenant"] },
-  }],
+  isApproved: {
+    type: Boolean,
+    default: true,
+  },
   isDeleted: {
     type: Boolean,
     default: false,

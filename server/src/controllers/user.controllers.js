@@ -23,8 +23,8 @@ export const createUser = asyncHandler(async (req, res) => {
   const profilePhoto = req.files?.profilePhoto?.[0];
   const allotment = req.files?.allotment?.[0];
 
-  let profilePhotoBase64;
-  let allotmentBase64;
+  let profilePhotoBase64 = "";
+  let allotmentBase64 = "";
 
   if (profilePhoto) {
     profilePhotoBase64 = `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`;

@@ -14,7 +14,6 @@ export const createFlat = asyncHandler(async (req, res) => {
     type,
     areaInSqFt,
     flatOwner,
-    tenants,
     occupancyStatus,
   } = req.body;
 
@@ -29,7 +28,6 @@ export const createFlat = asyncHandler(async (req, res) => {
     type,
     areaInSqFt,
     flatOwner,
-    tenants,
     occupancyStatus,
     photos,
   });
@@ -52,8 +50,6 @@ export const getFlats = asyncHandler(async (req, res) => {
 
   const flats = await Flat.find(query)
     .populate("flatOwner")
-    .populate("tenants")
-    .populate("allotmentHistory.user")
     .sort(sort)
     .skip(skip)
     .limit(limit);
@@ -74,8 +70,6 @@ export const getFlat = asyncHandler(async (req, res) => {
   const flat = await Flat
     .findOne({ _id: id, isDeleted: false })
     .populate("flatOwner")
-    .populate("tenants")
-    .populate("allotmentHistory.user");
 
   if (!flat) {
     throw new ApiError(404, "Flat not found.");
@@ -159,24 +153,3 @@ export const softDeleteFlats = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: `${result.modifiedCount} flats deleted successfully.` });
 });
 
-// Add Allotment History Record
-export const addAllotmentHistory = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { user, fromDate, toDate, role } = req.body;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid flat ID.");
-  };
-
-  const flat = await Flat.findById(id);
-
-  if (!flat) {
-    throw new ApiError(404, "Flat not found.");
-  };
-
-  flat.allotmentHistory.push({ user, fromDate, toDate, role });
-
-  await flat.save();
-
-  res.status(200).json({ success: true, message: "Allotment history added." });
-});

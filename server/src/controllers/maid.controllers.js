@@ -10,7 +10,7 @@ export const createMaid = asyncHandler(async (req, res) => {
   const { name, mobile, IdType, IdNumber, flat, status } = req.body;
   const photoFile = req.files?.photo?.[0];
 
-  let photoBase64;
+  let photoBase64 = "";
 
   if (photoFile) {
     photoBase64 = `data:${photoFile.mimetype};base64,${photoFile.buffer.toString("base64")}`;

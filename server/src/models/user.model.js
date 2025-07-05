@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Mobile is required."],
     trim: true,
+    unique: true,
     validate: {
       validator: (value) => validator.matches(value, /^[6-9]\d{9}$/),
       message: "Enter a valid 10-digit mobile number.",
@@ -31,6 +32,7 @@ const userSchema = new mongoose.Schema({
     required: [true, "Email is required."],
     unique: true,
     lowercase: true,
+    trim: true,
     validate: [validator.isEmail, "Enter a valid email."]
   },
   password: {
@@ -49,7 +51,6 @@ const userSchema = new mongoose.Schema({
   role: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Role",
-    required: [true, "Role is required."],
   },
   currentAddress: {
     type: String,

@@ -10,3 +10,20 @@ input[type="checkbox"] {
   height: 16px;
   cursor: pointer;
 }
+
+.selected-item {
+  background: #f0f0f0;
+  padding: 6px 10px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 5px;
+  margin-top: 5px;
+}
+
+.selected-item button {
+  background: transparent;
+  border: none;
+  margin-left: 5px;
+  cursor: pointer;
+}
