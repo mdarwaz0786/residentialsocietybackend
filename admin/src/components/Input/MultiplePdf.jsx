@@ -5,7 +5,7 @@ const MultiplePdfUpload = ({ onChange }) => {
 
   const handlePdfChange = (e) => {
     const newFiles = Array.from(e.target.files);
-    const filtered = newFiles.filter(f => f.type === 'application/pdf');
+    const filtered = newFiles.filter((f) => f.type === 'application/pdf');
     setFiles([...files, ...filtered]);
     onChange([...files, ...filtered]);
   };

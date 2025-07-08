@@ -1,16 +1,8 @@
 import mongoose from "mongoose";
 
-const UserPermissionSchema = new mongoose.Schema(
+const PermissionSchema = new mongoose.Schema(
   {
     access: {
-      type: Boolean,
-      default: false,
-    },
-    approve: {
-      type: Boolean,
-      default: false,
-    },
-    export: {
       type: Boolean,
       default: false,
     },
@@ -26,163 +18,11 @@ const UserPermissionSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-  },
-  {
-    _id: false,
-  },
-);
-
-const RolePermissionSchema = new mongoose.Schema(
-  {
-    access: {
-      type: Boolean,
-      default: false,
-    },
     approve: {
       type: Boolean,
       default: false,
     },
     export: {
-      type: Boolean,
-      default: false,
-    },
-    create: {
-      type: Boolean,
-      default: false,
-    },
-    update: {
-      type: Boolean,
-      default: false,
-    },
-    delete: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  {
-    _id: false,
-  },
-);
-
-const VisitorPermissionSchema = new mongoose.Schema(
-  {
-    access: {
-      type: Boolean,
-      default: false,
-    },
-    approve: {
-      type: Boolean,
-      default: false,
-    },
-    export: {
-      type: Boolean,
-      default: false,
-    },
-    create: {
-      type: Boolean,
-      default: false,
-    },
-    update: {
-      type: Boolean,
-      default: false,
-    },
-    delete: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  {
-    _id: false,
-  },
-);
-
-const MaidPermissionSchema = new mongoose.Schema(
-  {
-    access: {
-      type: Boolean,
-      default: false,
-    },
-    approve: {
-      type: Boolean,
-      default: false,
-    },
-    export: {
-      type: Boolean,
-      default: false,
-    },
-    create: {
-      type: Boolean,
-      default: false,
-    },
-    update: {
-      type: Boolean,
-      default: false,
-    },
-    delete: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  {
-    _id: false,
-  },
-);
-
-const VehiclePermissionSchema = new mongoose.Schema(
-  {
-    access: {
-      type: Boolean,
-      default: false,
-    },
-    approve: {
-      type: Boolean,
-      default: false,
-    },
-    export: {
-      type: Boolean,
-      default: false,
-    },
-    create: {
-      type: Boolean,
-      default: false,
-    },
-    update: {
-      type: Boolean,
-      default: false,
-    },
-    delete: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  {
-    _id: false,
-  },
-);
-
-const TenantPermissionSchema = new mongoose.Schema(
-  {
-    access: {
-      type: Boolean,
-      default: false,
-    },
-    approve: {
-      type: Boolean,
-      default: false,
-    },
-    export: {
-      type: Boolean,
-      default: false,
-    },
-    create: {
-      type: Boolean,
-      default: false,
-    },
-    update: {
-      type: Boolean,
-      default: false,
-    },
-    delete: {
       type: Boolean,
       default: false,
     },
@@ -195,33 +35,40 @@ const TenantPermissionSchema = new mongoose.Schema(
 const roleSchema = new mongoose.Schema({
   roleName: {
     type: String,
-    required: [true, "role name is required"],
-    trim: true,
-    unique: true,
+    enum: ['Flat Owner', 'Tenant', 'Security Guard', 'Maintenance Staff', 'Admin'],
+    required: [true, "Role name is required"],
   },
   permissions: {
     user: {
-      type: UserPermissionSchema,
-      default: () => ({}),
-    },
-    role: {
-      type: RolePermissionSchema,
+      type: PermissionSchema,
       default: () => ({}),
     },
     vehicle: {
-      type: VehiclePermissionSchema,
+      type: PermissionSchema,
       default: () => ({}),
     },
     visitor: {
-      type: VisitorPermissionSchema,
+      type: PermissionSchema,
       default: () => ({}),
     },
     maid: {
-      type: MaidPermissionSchema,
+      type: PermissionSchema,
       default: () => ({}),
     },
     tenant: {
-      type: TenantPermissionSchema,
+      type: PermissionSchema,
+      default: () => ({}),
+    },
+    flatOwner: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
+    securityGuard: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
+    maintenanceStaff: {
+      type: PermissionSchema,
       default: () => ({}),
     },
   },

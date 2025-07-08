@@ -36,12 +36,7 @@ const Navbar = ({ handleToggleSidebar }) => {
 
       <div className={styles.navRight}>
         <div className={styles.profile} ref={dropdownRef}>
-          <img
-            src={avatar}
-            alt="avatar"
-            className={styles.avatar}
-            onClick={toggleDropdown}
-          />
+          <img src={avatar} alt="avatar" className={styles.avatar} onClick={toggleDropdown} />
           <div className="dropdown" onClick={toggleDropdown}>
             <button className="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</button>
           </div>

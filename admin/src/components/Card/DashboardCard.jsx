@@ -6,10 +6,7 @@ const DashboardCard = ({ label, value, icon, color = "text-primary", to }) => {
   const navigate = useNavigate();
 
   return (
-    <div
-      onClick={() => navigate(to)}
-      className={`card shadow-sm border-0 p-3 d-flex flex-row align-items-center ${styles.card}`}
-    >
+    <div onClick={() => navigate(to)} className={`card shadow-sm border-0 p-3 d-flex flex-row align-items-center ${styles.card}`}>
       <div className={`me-3 ${styles.iconBox} ${color}`}>{icon}</div>
       <div className="flex-grow-1">
         <div className={styles.label}>{label}</div>

@@ -22,14 +22,9 @@ const maidSchema = new mongoose.Schema({
       message: "Enter a valid 10-digit mobile number.",
     },
   },
-  IdType: {
+  aadharCard: {
     type: String,
-    enum: ["Aadhar Card", "PAN Card", "Voter Id Card", "Other"],
-    required: [true, "ID type is required"],
-  },
-  IdNumber: {
-    type: String,
-    required: [true, "Id number is required"],
+    required: [true, "Aadhar card is required."],
   },
   flat: {
     type: mongoose.Schema.Types.ObjectId,

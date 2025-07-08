@@ -10,12 +10,8 @@ const FormWrapper = ({ title, onSubmit, children }) => {
             <div className="row">{children}</div>
           </div>
           <div className="card-footer text-end">
-            <button type="submit" className="btn btn-primary me-2">
-              Submit
-            </button>
-            <button type="button" className="btn btn-secondary" onClick={() => window.history.back()}>
-              Cancel
-            </button>
+            <button type="submit" className="btn btn-primary me-2">Submit</button>
+            <button type="button" className="btn btn-secondary" onClick={() => window.history.back()}>Cancel</button>
           </div>
         </form>
       </div>

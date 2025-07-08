@@ -39,18 +39,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Password is required."],
     minlength: [6, "Password must be at least 6 characters long."],
-    validate: {
-      validator: (value) => validator.matches(value, /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/),
-      message: "Password must contain at least 1 uppercase, 1 lowercase letter, and 1 number.",
-    },
-  },
-  flat: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Flat",
   },
   role: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Role",
+    required: [true, "Role is required"],
   },
   currentAddress: {
     type: String,
@@ -60,8 +53,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Permanent address is required."],
   },
-  allotment: {
+  idNumber: {
     type: String,
+    required: [true, "ID number is required."],
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
   },
   status: {
     type: String,
@@ -71,6 +69,10 @@ const userSchema = new mongoose.Schema({
   isDeleted: {
     type: Boolean,
     default: false,
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
   },
 }, { timestamps: true });
 
