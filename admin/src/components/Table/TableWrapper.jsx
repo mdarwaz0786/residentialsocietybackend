@@ -3,4 +3,5 @@ const TableWrapper = ({ children }) => (
     <table className="table table-bordered table-striped">{children}</table>
   </div>
 );
+
 export default TableWrapper;

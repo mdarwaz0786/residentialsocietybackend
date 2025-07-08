@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function useFetch(apiUrl, token = "") {
+function useFetchData(apiUrl, token = "", initialParams = {}) {
   const [data, setData] = useState(null);
+  const [params, setParams] = useState(initialParams);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -15,20 +16,39 @@ function useFetch(apiUrl, token = "") {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          params: params,
         };
+
         const response = await axios.get(apiUrl, config);
         setData(response.data);
       } catch (err) {
-        setError(err);
+        setError(err.message);
       } finally {
         setIsLoading(false);
       };
     };
 
     fetchData();
-  }, [apiUrl, token]);
+  }, [apiUrl, token, params]);
 
-  return { data, isLoading, error };
+  const updateParams = (newParams) => {
+    setParams((prev) => ({
+      ...prev,
+      ...newParams,
+    }));
+  };
+
+  const resetParams = () => setParams({});
+
+  return {
+    data,
+    isLoading,
+    error,
+    params,
+    setParams: updateParams,
+    resetParams,
+    refetch: () => setParams((prev) => ({ ...prev })),
+  };
 };
 
-export default useFetch;
+export default useFetchData;
