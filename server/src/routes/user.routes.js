@@ -7,10 +7,10 @@ import checkPermission from "../middlewares/checkPermission.middleware.js";
 const router = express.Router();
 
 router.post("/create-user", checkPermission("user", "create"), upload.fields([{ name: "profilePhoto", maxCount: 1 }, { name: "allotment", maxCount: 1 }]), createUser);
-router.get("/get-all-user", isLoggedIn, checkPermission("user", "access"), getUsers);
+router.get("/get-all-user", getUsers);
 router.get("/get-single-user/:id", isLoggedIn, checkPermission("user", "access"), getUser);
 router.put("/update-user/:id", isLoggedIn, checkPermission("user", "update"), upload.fields([{ name: "profilePhoto", maxCount: 1 }, { name: "allotment", maxCount: 1 }]), updateUser);
-router.delete("/delete-single-user/:id", checkPermission("user", "delete"), isLoggedIn, softDeleteUser);
-router.patch("/delete-multiple-user", isLoggedIn, checkPermission("user", "delete"), softDeleteUsers);
+router.delete("/delete-single-user/:id", softDeleteUser);
+router.patch("/delete-multiple-user", softDeleteUsers);
 
 export default router;

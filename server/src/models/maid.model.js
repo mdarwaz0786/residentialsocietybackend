@@ -35,6 +35,10 @@ const maidSchema = new mongoose.Schema({
     type: String,
     required: [true, "Photo is required"],
   },
+  memberId: {
+    type: String,
+    required: [true, "Member ID is required."],
+  },
   status: {
     type: String,
     enum: ["Approved", "Pending", "Rejected"],

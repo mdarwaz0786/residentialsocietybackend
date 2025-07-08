@@ -6,18 +6,15 @@ import generateToken from "../helpers/generateToken.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
   const {
-    fullName,
     mobile,
+    fullName,
     email,
     password,
-    flat,
     role,
-    currentAddress,
-    permanentAddress,
+    memberId,
   } = req.body;
 
   const profilePhoto = req.files?.profilePhoto?.[0];
-  const allotment = req.files?.allotment?.[0];
 
   const existingUser = await User.findOne({ $or: [{ email }, { mobile }] });
 
@@ -29,14 +26,9 @@ export const registerUser = asyncHandler(async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   let profilePhotoBase64 = "";
-  let allotmentBase64 = "";
 
   if (profilePhoto) {
     profilePhotoBase64 = `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`;
-  };
-
-  if (allotment) {
-    allotmentBase64 = `data:${allotment.mimetype};base64,${allotment.buffer.toString("base64")}`;
   };
 
   const newUser = await User.create({
@@ -44,12 +36,9 @@ export const registerUser = asyncHandler(async (req, res) => {
     mobile,
     email,
     password: hashedPassword,
-    flat,
     role,
-    currentAddress,
-    permanentAddress,
+    memberId,
     profilePhoto: profilePhotoBase64,
-    allotment: allotmentBase64,
   });
 
   res.status(201).json({ success: true, message: "User registered successfully.", user: newUser });
@@ -66,44 +55,44 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Password is required.");
   };
 
-  const isApproved = await User.findOne({ status: "Approved" });
+  const user = await User.findOne({ mobile: mobile }).select("+password");
 
-  if (!isApproved) {
+  if (!user) {
+    throw new ApiError(401, "Invalid mobile number");
+  };
+
+  const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordMatch) {
+    throw new ApiError(401, "Invalid password.");
+  };
+
+  if (user.status != "Approved") {
     throw new ApiError(401, "Your account is not approved.");
   };
 
-  const user = await User.findOne({ mobile, isDeleted: false }).select("+password");
-
-  if (!user) {
-    throw new ApiError(401, "Invalid mobile number or password.");
+  if (user.isActive === false) {
+    throw new ApiError(401, "Your account is deactivated.");
   };
 
-  const isMatch = await bcrypt.compare(password, user.password);
-
-  if (!isMatch) {
-    throw new ApiError(401, "Invalid mobile number or password.");
+  if (user.isDeleted === true) {
+    throw new ApiError(401, "Your account is deleted.");
   };
 
   const token = generateToken(user._id);
 
-  res.status(200).json({
-    success: true,
-    message: "Login successful.",
-    token,
-    user,
-  });
+  res.status(200).json({ success: true, message: "Login successful.", token, user });
 });
 
 // Logged in user
 export const loggedInUser = asyncHandler(async (req, res) => {
   const user = await User
-    .findOne({ _id: req.user?._id, isDeleted: false })
+    .findOne({ _id: req.user?._id, isDeleted: false, isActive: true, status: "Approved" })
     .populate("role")
-    .populate("flat")
     .exec();
 
   if (!user) {
-    throw new ApiError(404, "Your account doest not exists")
+    throw new ApiError(404, "Something went wrong.")
   };
 
   res.status(200).json({ success: true, data: user });

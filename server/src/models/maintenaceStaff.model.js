@@ -5,18 +5,17 @@ const maintenanceStaffSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
+  currentAddress: {
+    type: String,
+    required: [true, "Current address is required."],
+  },
+  permanentAddress: {
+    type: String,
+    required: [true, "Permanent address is required."],
+  },
   aadharCard: {
     type: String,
     required: [true, "Aadhar card is required."],
-  },
-  status: {
-    type: String,
-    enum: ["Approved", "Pending", "Rejected"],
-    default: "Approved",
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
   },
 }, { timestamps: true });
 

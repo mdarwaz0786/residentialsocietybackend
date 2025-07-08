@@ -5,6 +5,7 @@ import Layout from './Layout';
 import AddProduct from './pages/Product/AddProduct';
 import Dashboard from './pages/Dashboard';
 import ProductList from './pages/Product/ProductList';
+import UserList from './pages/User/UserList.jsx';
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -19,6 +20,7 @@ const App = () => {
         <Route index element={<Dashboard />} />
         <Route path="products" element={<ProductList />} />
         <Route path="add-product" element={<AddProduct />} />
+        <Route path="all-user" element={<UserList />} />
       </Route>
     </Routes>
   );

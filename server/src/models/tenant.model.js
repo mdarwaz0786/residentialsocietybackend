@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const tenantSchema = new mongoose.Schema({
-  userId: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
@@ -9,6 +9,18 @@ const tenantSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Flat",
     required: [true, "Flat is required"],
+  },
+  currentAddress: {
+    type: String,
+    required: [true, "Current address is required."],
+  },
+  permanentAddress: {
+    type: String,
+    required: [true, "Permanent address is required."],
+  },
+  aadharCard: {
+    type: String,
+    required: [true, "Aadhar card is required."],
   },
   rentAgreement: {
     type: String,
@@ -21,15 +33,6 @@ const tenantSchema = new mongoose.Schema({
   vehicleRC: {
     type: String,
     required: [true, "Vehicle RC is required."],
-  },
-  status: {
-    type: String,
-    enum: ["Approved", "Pending", "Rejected"],
-    default: "Pending",
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
   },
 }, { timestamps: true });
 

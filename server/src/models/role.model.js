@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 const PermissionSchema = new mongoose.Schema(
   {
-    access: {
+    create: {
       type: Boolean,
       default: false,
     },
-    create: {
+    read: {
       type: Boolean,
       default: false,
     },
@@ -15,14 +15,6 @@ const PermissionSchema = new mongoose.Schema(
       default: false,
     },
     delete: {
-      type: Boolean,
-      default: false,
-    },
-    approve: {
-      type: Boolean,
-      default: false,
-    },
-    export: {
       type: Boolean,
       default: false,
     },
@@ -35,11 +27,19 @@ const PermissionSchema = new mongoose.Schema(
 const roleSchema = new mongoose.Schema({
   roleName: {
     type: String,
-    enum: ['Flat Owner', 'Tenant', 'Security Guard', 'Maintenance Staff', 'Admin'],
+    enum: ['Flat Owner', 'Tenant', 'Security Guard', 'Maintenance Staff', 'Admin', 'Sub Admin'],
     required: [true, "Role name is required"],
   },
   permissions: {
     user: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
+    role: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
+    flat: {
       type: PermissionSchema,
       default: () => ({}),
     },

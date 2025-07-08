@@ -11,12 +11,20 @@ const isLoggedIn = asyncHandler(async (req, res, next) => {
   };
 
   const token = authHeader.split(" ")[1];
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
   const user = await User.findById(decoded.id).select("-password");
 
-  if (!user || user.isDeleted) {
-    throw new ApiError(401, "User not found or has been deleted.");
+  if (!user) {
+    throw new ApiError(401, "Your account not found.");
+  };
+
+  if (user.isDeleted) {
+    throw new ApiError(401, "Your account has been deleted.");
+  };
+
+  if (user.status != "Approved") {
+    throw new ApiError(401, "Your account is not approved.");
   };
 
   req.user = user;

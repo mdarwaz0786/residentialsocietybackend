@@ -21,23 +21,21 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Mobile is required."],
     trim: true,
-    unique: true,
-    validate: {
-      validator: (value) => validator.matches(value, /^[6-9]\d{9}$/),
-      message: "Enter a valid 10-digit mobile number.",
-    },
+    unique: [true, "Account already exits with this mobile number."],
   },
   email: {
     type: String,
     required: [true, "Email is required."],
-    unique: true,
-    lowercase: true,
     trim: true,
+    lowercase: true,
+    unique: [true, "Account already exits with this email."],
     validate: [validator.isEmail, "Enter a valid email."]
   },
   password: {
     type: String,
     required: [true, "Password is required."],
+    trim: true,
+    select: false,
     minlength: [6, "Password must be at least 6 characters long."],
   },
   role: {
@@ -45,21 +43,11 @@ const userSchema = new mongoose.Schema({
     ref: "Role",
     required: [true, "Role is required"],
   },
-  currentAddress: {
+  memberId: {
     type: String,
-    required: [true, "Current address is required."],
-  },
-  permanentAddress: {
-    type: String,
-    required: [true, "Permanent address is required."],
-  },
-  idNumber: {
-    type: String,
-    required: [true, "ID number is required."],
-  },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    required: [true, "Member ID is required."],
+    trim: true,
+    unique: [true, "Account already exits with this member id."],
   },
   status: {
     type: String,
