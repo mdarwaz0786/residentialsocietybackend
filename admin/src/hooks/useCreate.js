@@ -20,8 +20,8 @@ function useCreate(apiUrl) {
       if (res?.data?.success) {
         setResponse(res?.data);
       };
-    } catch (err) {
-      setPostError(err?.response?.data?.message);
+    } catch (error) {
+      setPostError(error?.response?.data?.message);
     } finally {
       setIsPosting(false);
     };

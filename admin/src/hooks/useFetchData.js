@@ -18,11 +18,12 @@ function useFetchData(apiUrl, token = "", initialParams = {}) {
           },
           params: params,
         };
-
         const response = await axios.get(apiUrl, config);
-        setData(response.data);
+        if (response?.data?.success) {
+          setData(response?.data);
+        };
       } catch (err) {
-        setError(err.message);
+        setError(err?.response?.data?.message);
       } finally {
         setIsLoading(false);
       };

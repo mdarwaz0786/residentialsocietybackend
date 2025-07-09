@@ -17,11 +17,12 @@ function useDeleteMultiple(apiUrl) {
         },
         data: { ids },
       };
-
       const res = await axios.delete(apiUrl, config);
-      setResponse(res.data);
-    } catch (err) {
-      setDeleteError(err);
+      if (res?.data?.success) {
+        setResponse(res?.data);
+      };
+    } catch (error) {
+      setDeleteError(error?.response?.data?.message);
     } finally {
       setIsDeleting(false);
     };

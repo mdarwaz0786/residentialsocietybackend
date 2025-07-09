@@ -4,9 +4,7 @@ const useSelection = (data, key = "_id") => {
   const [selected, setSelected] = useState([]);
 
   const handleSelect = (id) => {
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
-    );
+    setSelected((prev) => prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]);
   };
 
   const handleSelectAll = () => {

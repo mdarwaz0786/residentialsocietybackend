@@ -16,9 +16,11 @@ function useDelete() {
         },
       };
       const res = await axios.delete(apiUrl, config);
-      setResponse(res.data);
-    } catch (err) {
-      setDeleteError(err.message);
+      if (res?.data?.sucess) {
+        setResponse(res.data);
+      };
+    } catch (error) {
+      setDeleteError(error?.response?.data?.message);
     } finally {
       setIsDeleting(false);
     };

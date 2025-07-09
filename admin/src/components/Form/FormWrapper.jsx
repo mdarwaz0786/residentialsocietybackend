@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 const FormWrapper = ({ title, onSubmit, children }) => {
   const navigation = useNavigate();
   return (
-    <div className="container mt-4">
+    <div className="container mt-2">
       <div className="card">
         <div className="card-header d-flex justify-content-between align-items-center">
           <h6 className="mb-0">{title}</h6>
+          <button type="button" className="btn btn-secondary" onClick={() => navigation(-1)}>Back</button>
         </div>
         <form onSubmit={onSubmit}>
           <div className="card-body">

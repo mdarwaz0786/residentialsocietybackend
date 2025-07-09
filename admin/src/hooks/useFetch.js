@@ -21,7 +21,7 @@ function useFetch(apiUrl, token = "") {
           setData(response?.data);
         };
       } catch (err) {
-        setError(err.message);
+        setError(err?.response?.data?.message);
       } finally {
         setIsLoading(false);
       };

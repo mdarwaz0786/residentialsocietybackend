@@ -17,9 +17,11 @@ function useUpdate(apiUrl) {
         },
       };
       const res = await axios.put(apiUrl, payload, config);
-      setResponse(res.data);
+      if (res?.data?.success) {
+        setResponse(res?.data);
+      };
     } catch (error) {
-      setUpdateError(error.message);
+      setUpdateError(error?.response?.data?.message);
     } finally {
       setIsUpdating(false);
     };

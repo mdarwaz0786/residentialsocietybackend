@@ -8,13 +8,14 @@ import useFetch from "../../hooks/useFetch";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import useFormValidation from "../../hooks/useFormValidation";
 
 const CreateUser = () => {
   const navigation = useNavigate();
   const { validToken } = useAuth();
   const { postData, response, postError } = useCreate("/api/v1/auth/register-user");
   const { data: rolesData } = useFetch("/api/v1/role/get-all-role", validToken);
-  const [errors, setErrors] = useState({});
+  const { errors, setErrors, validate } = useFormValidation();
   const [form, setForm] = useState({
     fullName: "",
     mobile: "",
@@ -36,56 +37,26 @@ const CreateUser = () => {
     setErrors((errs) => ({ ...errs, profilePhoto: "" }));
   };
 
-  const validate = () => {
-    const errs = {};
-
-    if (!form.fullName) {
-      errs.fullName = "Full name is required.";
-    };
-
-    if (!form.mobile) {
-      errs.mobile = "Mobile number is required.";
-    };
-
-    if (!form.email) {
-      errs.email = "Email is required.";
-    };
-
-    if (!form.password) {
-      errs.password = "Password is required.";
-    };
-
-    if (!form.memberId) {
-      errs.memberId = "Member ID is required.";
-    };
-
-    if (!form.role) {
-      errs.role = "Role is required.";
-    };
-
-    if (!form.profilePhoto) {
-      errs.profilePhoto = "Profile photo is required.";
-    };
-
-    setErrors(errs);
-
-    Object.values(errs).forEach((errMsg) => {
-      toast.error(errMsg);
-    });
-
-    return Object.keys(errs).length === 0;
+  const validationRules = {
+    fullName: { required: true, label: "Full Name" },
+    mobile: { required: true, label: "Mobile" },
+    email: { required: true, label: "Email" },
+    password: { required: true, label: "Password" },
+    memberId: { required: true, label: "Member ID" },
+    role: { required: true, label: "Role" },
+    profilePhoto: { required: true, label: "Profile Photo" },
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validate()) {
+    if (!validate(form, validationRules)) {
       return;
     };
 
-    const fd = new FormData();
-    Object.entries(form).forEach(([k, v]) => fd.append(k, v));
-    await postData(fd, validToken, true);
+    const formData = new FormData();
+    Object.entries(form).forEach(([key, value]) => formData.append(key, value));
+    await postData(formData, validToken, true);
 
     if (postError) {
       toast.error(postError);

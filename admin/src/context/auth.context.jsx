@@ -7,7 +7,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const validToken = `Bearer ${token}`;
   let isLoggedIn = !!token;
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
         setUser(response?.data?.data);
       };
     } catch (error) {
-      console.error(error.message);
+      console.error(error?.response?.data?.message);
     } finally {
       setIsLoading(false);
     };
