@@ -8,6 +8,7 @@ import { useAuth } from './context/auth.context';
 import Login from './pages/Auth/Login';
 import UserDetail from './pages/User/UserDetail';
 import CreateUser from './pages/user/createUser';
+import NotFound from './pages/NotFound/NotFound';
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -25,13 +26,15 @@ const App = () => {
           <Route path="*" element={<Navigate to="/login" replace />} />
         </>
       ) : (
-        <Route path="/" element={<Layout mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} handleToggleSidebar={handleToggleSidebar} />}>
-          <Route index element={<Dashboard />} />
-          <Route path="user" element={<User />} />
-          <Route path="create-user" element={<CreateUser />} />
-          <Route path="user-detail/:id" element={<UserDetail />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
+        <>
+          <Route path="/" element={<Layout mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} handleToggleSidebar={handleToggleSidebar} />}>
+            <Route index element={<Dashboard />} />
+            <Route path="user" element={<User />} />
+            <Route path="create-user" element={<CreateUser />} />
+            <Route path="user-detail/:id" element={<UserDetail />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </>
       )}
     </Routes>
   );
