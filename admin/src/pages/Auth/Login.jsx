@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
 import Input from "../../components/Input/Input";
 import useCreate from "../../hooks/useCreate";
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const { storeToken } = useAuth();
@@ -33,6 +34,10 @@ const Login = () => {
     e.preventDefault();
     if (!validate()) return;
     await postData(form);
+    toast.success("Login Succcessful");
+    if (postError) {
+      toast.success(postError);
+    };
   };
 
   useEffect(() => {

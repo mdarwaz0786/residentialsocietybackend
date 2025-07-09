@@ -4,8 +4,11 @@ import styles from "./Navbar.module.css";
 import avatar from "../../assets/avatar.png";
 import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/auth.context";
+import { toast } from "react-toastify";
 
 const Navbar = ({ handleToggleSidebar }) => {
+  const { logOutUser } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -22,6 +25,11 @@ const Navbar = ({ handleToggleSidebar }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleLogout = () => {
+    logOutUser();
+    toast.success("Logout successful");
+  };
 
   return (
     <nav className={styles.navbar}>
@@ -44,7 +52,7 @@ const Navbar = ({ handleToggleSidebar }) => {
             <ul className={styles.dropdownMenu}>
               <Link to="#" className="text-decoration-none"><li className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>My Profile</li></Link>
               <Link to="#" className="text-decoration-none"><li className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>Settings</li></Link>
-              <Link to="#" className="text-decoration-none"><li className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>Logout</li></Link>
+              <Link to="#" className="text-decoration-none"><li className={styles.dropdownItem} onClick={() => { setDropdownOpen(false); handleLogout() }}>Logout</li></Link>
             </ul>
           )}
         </div>

@@ -2,9 +2,9 @@ const Pagination = ({ page, total, limit, onPageChange }) => {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="d-flex justify-content-between align-items-center mt-3">
+    <div className="d-flex justify-content-end align-items-center">
       <button
-        className="btn btn-outline-primary btn-sm"
+        className="btn btn-primary btn-sm"
         onClick={() => onPageChange(page - 1)}
         disabled={page === 1}
       >
@@ -14,7 +14,7 @@ const Pagination = ({ page, total, limit, onPageChange }) => {
         Page {page} of {totalPages}
       </span>
       <button
-        className="btn btn-outline-primary btn-sm"
+        className="btn btn-primary btn-sm"
         onClick={() => onPageChange(page + 1)}
         disabled={page === totalPages}
       >

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-const SingleImage = ({ onChange }) => {
+const SingleImage = ({ label, name, onChange, required = false, error, width }) => {
   const [preview, setPreview] = useState(null);
 
   const handleImageChange = (e) => {
@@ -17,12 +17,38 @@ const SingleImage = ({ onChange }) => {
   };
 
   return (
-    <div className="form-wrap">
-      <input type="file" accept="image/*" onChange={handleImageChange} />
+    <div className={`${width} mb-4`}>
+      <label className="form-label" htmlFor={name}>
+        {label} {required && <span className="text-danger">*</span>}
+      </label>
+
+      <input
+        type="file"
+        id={name}
+        name={name}
+        accept="image/*"
+        className={`form-control ${error ? "is-invalid" : ""}`}
+        onChange={handleImageChange}
+      />
+      {error && <div className="invalid-feedback">{error}</div>}
+
       {preview && (
-        <div className="preview">
-          <img src={preview} alt="Preview" height="100" />
-          <button type="button" onClick={removeImage}>Remove</button>
+        <div className="text-center mt-3">
+          <img
+            src={preview}
+            alt="Preview"
+            className="img-thumbnail mb-2"
+            style={{ maxHeight: "150px" }}
+          />
+          <div>
+            <button
+              type="button"
+              className="btn btn-outline-danger btn-sm"
+              onClick={removeImage}
+            >
+              Remove
+            </button>
+          </div>
         </div>
       )}
     </div>

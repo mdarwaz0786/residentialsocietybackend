@@ -12,7 +12,7 @@ function useDeleteMultiple(apiUrl) {
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: token,
           'Content-Type': 'application/json',
         },
         data: { ids },

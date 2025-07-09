@@ -12,7 +12,7 @@ function useUpdate(apiUrl) {
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: token,
           ...(isFormData && { 'Content-Type': 'multipart/form-data' }),
         },
       };

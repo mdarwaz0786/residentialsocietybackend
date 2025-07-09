@@ -1,51 +1,35 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './Layout/Layout';
-import AddProduct from './pages/Product/AddProduct';
 import Dashboard from './pages/Dashboard';
-import ProductList from './pages/Product/ProductList';
-// import UserList from './pages/User/UserList';
+import User from './pages/User/User';
 import { useAuth } from './context/auth.context';
-import Loader from './components/Loader/Loader';
 import Login from './pages/Auth/Login';
+import UserDetail from './pages/User/UserDetail';
+import CreateUser from './pages/user/createUser';
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { isLoggedIn, isLoading } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   const handleToggleSidebar = () => {
     setMobileOpen((prev) => !prev);
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   return (
     <Routes>
-      {/* Not logged in: only allow /login */}
       {!isLoggedIn ? (
         <>
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </>
       ) : (
-        // Logged in: protected routes
-        <Route
-          path="/"
-          element={
-            <Layout
-              mobileOpen={mobileOpen}
-              setMobileOpen={setMobileOpen}
-              handleToggleSidebar={handleToggleSidebar}
-            />
-          }
-        >
+        <Route path="/" element={<Layout mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} handleToggleSidebar={handleToggleSidebar} />}>
           <Route index element={<Dashboard />} />
-          {/* <Route path="all-user" element={<UserList />} /> */}
-          <Route path="products" element={<ProductList />} />
-          <Route path="add-product" element={<AddProduct />} />
+          <Route path="user" element={<User />} />
+          <Route path="create-user" element={<CreateUser />} />
+          <Route path="user-detail/:id" element={<UserDetail />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       )}

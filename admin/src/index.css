@@ -10,3 +10,8 @@ html,
 body {
   font-family: "Roboto", sans-serif;
 }
+
+.toastBody {
+  font-family: "Atlas Grotesk Web", Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+}

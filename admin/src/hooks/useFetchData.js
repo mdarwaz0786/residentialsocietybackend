@@ -14,7 +14,7 @@ function useFetchData(apiUrl, token = "", initialParams = {}) {
       try {
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token,
           },
           params: params,
         };
@@ -38,15 +38,12 @@ function useFetchData(apiUrl, token = "", initialParams = {}) {
     }));
   };
 
-  const resetParams = () => setParams({});
-
   return {
     data,
     isLoading,
     error,
     params,
     setParams: updateParams,
-    resetParams,
     refetch: () => setParams((prev) => ({ ...prev })),
   };
 };

@@ -21,7 +21,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Mobile is required."],
     trim: true,
-    unique: [true, "Account already exits with this mobile number."],
+    unique: [true, "Account already exists with this mobile number."],
+    match: [/^\d{10}$/, "Mobile number must be exactly 10 digits."],
   },
   email: {
     type: String,

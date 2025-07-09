@@ -11,8 +11,11 @@ import {
 import logo from "../../assets/logo.png";
 import styles from "./Sidebar.module.css";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/auth.context";
+import { toast } from "react-toastify";
 
 const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
+  const { logOutUser } = useAuth();
   const [openDropdowns, setOpenDropdowns] = useState([]);
   const [activeLink, setActiveLink] = useState(null);
   const dropdownRefs = [useRef(null), useRef(null)];
@@ -62,6 +65,11 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [mobileOpen, setMobileOpen]);
+
+  const handleLogout = () => {
+    logOutUser();
+    toast.success("Logout successful");
+  };
 
   return (
     <aside ref={sidebarRef} className={`${styles.sidebar} ${mobileOpen ? styles.mobileOpen : ""}`}>
@@ -154,7 +162,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
             </li>
 
             <li className={styles.navItem}>
-              <Link to="#" className={`${styles.navLink} ${activeLink === "Logout" ? styles.active : ""}`} onClick={() => handleLinkClick("Logout")}>
+              <Link to="#" className={`${styles.navLink} ${activeLink === "Logout" ? styles.active : ""}`} onClick={handleLogout}>
                 <MdLogout />
                 <span className={styles.navLabel}>Logout</span>
               </Link>

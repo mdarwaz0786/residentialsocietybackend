@@ -3,7 +3,7 @@ import axios from 'axios';
 
 function useFetch(apiUrl, token = "") {
   const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -13,13 +13,15 @@ function useFetch(apiUrl, token = "") {
       try {
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token,
           },
         };
         const response = await axios.get(apiUrl, config);
-        setData(response.data);
+        if (response?.data?.success) {
+          setData(response?.data);
+        };
       } catch (err) {
-        setError(err);
+        setError(err.message);
       } finally {
         setIsLoading(false);
       };

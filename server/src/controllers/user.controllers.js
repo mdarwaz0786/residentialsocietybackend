@@ -13,25 +13,15 @@ export const createUser = asyncHandler(async (req, res) => {
     mobile,
     email,
     password,
-    status,
-    flat,
     role,
-    currentAddress,
-    permanentAddress,
   } = req.body;
 
   const profilePhoto = req.files?.profilePhoto?.[0];
-  const allotment = req.files?.allotment?.[0];
 
   let profilePhotoBase64 = "";
-  let allotmentBase64 = "";
 
   if (profilePhoto) {
     profilePhotoBase64 = `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`;
-  };
-
-  if (allotment) {
-    allotmentBase64 = `data:${allotment.mimetype};base64,${allotment.buffer.toString("base64")}`;
   };
 
   const salt = await bcrypt.genSalt(10);
@@ -42,13 +32,8 @@ export const createUser = asyncHandler(async (req, res) => {
     mobile,
     email,
     password: hashedPassword,
-    status,
-    flat,
     role,
-    currentAddress,
-    permanentAddress,
     profilePhoto: profilePhotoBase64,
-    allotment: allotmentBase64,
   });
 
   res.status(201).json({ success: true, data: user });
@@ -56,7 +41,7 @@ export const createUser = asyncHandler(async (req, res) => {
 
 // Get all users
 export const getUsers = asyncHandler(async (req, res) => {
-  const searchableFields = ["fullName", "email", "mobile", "currentAddress", "permanentAddress"];
+  const searchableFields = ["fullName", "email", "mobile"];
   const filterableFields = ["status", "role"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
@@ -92,7 +77,6 @@ export const getUser = asyncHandler(async (req, res) => {
 
   const user = await User
     .findOne({ _id: id, isDeleted: false })
-    .populate("flat")
     .populate("role");
 
   if (!user) {
@@ -119,14 +103,9 @@ export const updateUser = asyncHandler(async (req, res) => {
   const updates = { ...req.body };
 
   const profilePhoto = req.files?.profilePhoto?.[0];
-  const allotment = req.files?.allotment?.[0];
 
   if (profilePhoto) {
     updates.profilePhoto = `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`;
-  };
-
-  if (allotment) {
-    updates.allotment = `data:${allotment.mimetype};base64,${allotment.buffer.toString("base64")}`;
   };
 
   const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });

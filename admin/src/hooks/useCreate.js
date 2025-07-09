@@ -12,14 +12,16 @@ function useCreate(apiUrl) {
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: token,
           ...(isFormData && { 'Content-Type': 'multipart/form-data' }),
         },
       };
       const res = await axios.post(apiUrl, payload, config);
-      setResponse(res.data);
+      if (res?.data?.success) {
+        setResponse(res?.data);
+      };
     } catch (err) {
-      setPostError(err);
+      setPostError(err?.response?.data?.message);
     } finally {
       setIsPosting(false);
     };
