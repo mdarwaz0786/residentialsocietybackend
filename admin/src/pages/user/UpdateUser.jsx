@@ -72,6 +72,7 @@ const UpdateUser = () => {
     const formData = new FormData();
     Object.entries(form).forEach(([key, value]) => {
       if (key === "password" && !value) return;
+      if ((key === "profilePhoto") && typeof value === "string") return;
       formData.append(key, value);
     });
 

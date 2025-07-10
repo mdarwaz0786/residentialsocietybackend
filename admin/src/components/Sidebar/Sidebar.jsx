@@ -7,6 +7,7 @@ import {
   MdKeyboardArrowDown,
   MdClose,
   MdStorefront,
+  MdHome,
 } from "react-icons/md";
 import {
   FaUserFriends,
@@ -99,6 +100,13 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
             </li>
 
             <li className={styles.navItem}>
+              <Link to="/flat" className={`${styles.navLink} ${activeLink === "Flat" ? styles.active : ""}`} onClick={() => handleLinkClick("Flat")}>
+                <MdHome />
+                <span className={styles.navLabel}>Flat</span>
+              </Link>
+            </li>
+
+            <li className={styles.navItem}>
               <Link to="#" className={`${styles.navLink} ${activeLink === "Flat Owner" ? styles.active : ""}`} onClick={() => handleLinkClick("Falt Owner")}>
                 <FaUserFriends />
                 <span className={styles.navLabel}>Flat Owner</span>
@@ -144,7 +152,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
             </li>
 
             <li className={styles.navItem}>
-              <Link to="#" className={`${styles.navLink} ${activeLink === "Vehicle" ? styles.active : ""}`} onClick={() => handleLinkClick("Vehicle")}>
+              <Link to="/vehicle" className={`${styles.navLink} ${activeLink === "Vehicle" ? styles.active : ""}`} onClick={() => handleLinkClick("Vehicle")}>
                 <FaCar />
                 <span className={styles.navLabel}>Vehicle</span>
               </Link>

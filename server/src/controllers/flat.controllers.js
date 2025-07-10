@@ -9,27 +9,20 @@ import formatApiResponse from "../helpers/formatApiResponse.js";
 export const createFlat = asyncHandler(async (req, res) => {
   const {
     flatNumber,
-    block,
     floor,
-    type,
-    areaInSqFt,
+    flatType,
     flatOwner,
-    occupancyStatus,
+    status,
   } = req.body;
 
-  const photos = req.files?.photos?.map((file) =>
-    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
-  ) || [];
+  console.log(req.body)
 
   const flat = await Flat.create({
     flatNumber,
-    block,
     floor,
-    type,
-    areaInSqFt,
+    flatType,
     flatOwner,
-    occupancyStatus,
-    photos,
+    status,
   });
 
   res.status(201).json({ success: true, data: flat });
@@ -37,8 +30,8 @@ export const createFlat = asyncHandler(async (req, res) => {
 
 // Get All Flats
 export const getFlats = asyncHandler(async (req, res) => {
-  const searchableFields = ["flatNumber", "block", "floor", "type"];
-  const filterableFields = ["occupancyStatus", "flatOwner"];
+  const searchableFields = ["flatNumber", "floor", "flatType"];
+  const filterableFields = ["flatOwner"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
     softDelete: true,
@@ -93,18 +86,6 @@ export const updateFlat = asyncHandler(async (req, res) => {
   };
 
   const updates = { ...req.body };
-
-  const newPhotos = req.files?.photos?.map((file) =>
-    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
-  ) || [];
-
-  if (newPhotos.length > 0) {
-    updates.photos = [...flat.photos, ...newPhotos];
-  };
-
-  if (Array.isArray(req.body.deletePhotos)) {
-    updates.photos = updates.photos || flat.photos.filter((photo) => !req.body.deletePhotos.includes(photo));
-  };
 
   const updatedFlat = await Flat.findByIdAndUpdate(id, updates, { new: true });
 

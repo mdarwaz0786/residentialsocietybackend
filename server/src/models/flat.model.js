@@ -12,31 +12,19 @@ const flatSchema = new mongoose.Schema({
     required: [true, "Floor is required."],
     trim: true,
   },
-  type: {
+  flatType: {
     type: String,
     enum: ["1BHK", "2BHK", "3BHK", "Studio", "Penthouse", "Other"],
     required: [true, "Flat type is required."],
-  },
-  photos: {
-    type: [String],
-    default: [],
   },
   flatOwner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  tenants: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Tenant",
-  }],
-  occupancyStatus: {
+  status: {
     type: String,
-    enum: ["Occupied", "Vacant", "Under Maintenance"],
-    default: "Vacant",
-  },
-  isApproved: {
-    type: Boolean,
-    default: true,
+    enum: ["Approved", "Pending", "Rejected"],
+    default: "Pending",
   },
   isDeleted: {
     type: Boolean,

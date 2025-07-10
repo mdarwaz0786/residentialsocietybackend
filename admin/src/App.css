@@ -5,6 +5,13 @@ textarea.form-control:focus {
   outline: none;
 }
 
+input.is-invalid:focus,
+textarea.is-invalid:focus,
+select.is-invalid:focus {
+  box-shadow: none !important;
+  outline: none;
+}
+
 input[type="checkbox"] {
   width: 16px;
   height: 16px;

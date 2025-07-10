@@ -7,20 +7,33 @@ import formatApiResponse from "../helpers/formatApiResponse.js";
 
 // Create Vehicle
 export const createVehicle = asyncHandler(async (req, res) => {
-  const { vehicleNumber, vehicleType, vehicleOwner, status } = req.body;
-  const photoFile = req.files?.vehiclePhoto?.[0];
+  const { vehicleNumber, vehicleType, status, vehicleOwner } = req.body;
+  const photo = req.files?.vehiclePhoto?.[0];
+  const rc = req.files?.vehicleRC?.[0];
+
+  if (vehicleOwner && !mongoose.Types.ObjectId.isValid(vehicleOwner)) {
+    throw new ApiError(400, "Invalid Vehicle Owner");
+  };
+
+  const vehicleOwnerId = vehicleOwner || req.user._id;
 
   let photoBase64;
+  let rcBase64;
 
-  if (photoFile) {
-    photoBase64 = `data:${photoFile.mimetype};base64,${photoFile.buffer.toString("base64")}`;
+  if (photo) {
+    photoBase64 = `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`;
+  };
+
+  if (rc) {
+    rcBase64 = `data:${rc.mimetype};base64,${rc.buffer.toString("base64")}`;
   };
 
   const vehicle = await Vehicle.create({
     vehicleNumber,
     vehicleType,
-    vehicleOwner,
+    vehicleOwner: vehicleOwnerId,
     vehiclePhoto: photoBase64,
+    vehicleRC: rcBase64,
     status,
   });
 
@@ -84,10 +97,15 @@ export const updateVehicle = asyncHandler(async (req, res) => {
   };
 
   const updates = { ...req.body };
-  const photoFile = req.files?.vehiclePhoto?.[0];
+  const photo = req.files?.vehiclePhoto?.[0];
+  const rc = req.files?.vehicleRC?.[0];
 
-  if (photoFile) {
-    updates.vehiclePhoto = `data:${photoFile.mimetype};base64,${photoFile.buffer.toString("base64")}`;
+  if (photo) {
+    updates.vehiclePhoto = `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`;
+  };
+
+  if (rc) {
+    updates.vehicleRC = `data:${rc.mimetype};base64,${rc.buffer.toString("base64")}`;
   };
 
   const updated = await Vehicle.findByIdAndUpdate(id, updates, { new: true });

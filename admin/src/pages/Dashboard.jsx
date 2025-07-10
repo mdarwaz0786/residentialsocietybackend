@@ -9,11 +9,19 @@ import {
   FaCog,
   FaUserTag,
   FaUsers,
+  FaHome,
 } from "react-icons/fa";
 import DashboardCard from "../components/Card/DashboardCard";
 
 const Dashboard = () => {
   const stats = [
+    {
+      label: "Flats",
+      value: 80,
+      icon: <FaHome size={20} />,
+      color: "text-primary",
+      to: "/flat",
+    },
     {
       label: "Flat Owners",
       value: 40,

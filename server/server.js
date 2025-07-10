@@ -11,6 +11,8 @@ import userRoutes from "./src/routes/user.routes.js";
 import authRoutes from "./src/routes/auth.routes.js";
 import roleRoutes from "./src/routes/role.routes.js";
 import maidRoutes from "./src/routes/maid.routes.js";
+import vehicleRoutes from "./src/routes/vehicle.routes.js";
+import flatRoutes from "./src/routes/flat.routes.js";
 
 // Path to current file
 const __filename = fileURLToPath(import.meta.url);
@@ -35,10 +37,12 @@ server.use(cors());
 
 // API Routes
 server.use("/api/v1", testRoutes);
-server.use("/api/v1/user", userRoutes);
 server.use("/api/v1/auth", authRoutes);
+server.use("/api/v1/user", userRoutes);
 server.use("/api/v1/role", roleRoutes);
 server.use("/api/v1/maid", maidRoutes);
+server.use("/api/v1/vehicle", vehicleRoutes);
+server.use("/api/v1/flat", flatRoutes);
 
 // Serve static files from the React admin build folder
 server.use(express.static(path.join(__dirname, "../admin", "dist")));

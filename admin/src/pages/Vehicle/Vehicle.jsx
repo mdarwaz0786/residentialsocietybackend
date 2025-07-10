@@ -8,10 +8,10 @@ import useDelete from '../../hooks/useDelete';
 import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
 
-const User = () => {
+const Vehicle = () => {
   const { validToken } = useAuth();
-  const fetchDataUrl = "/api/v1/user/get-all-user";
-  const singleDeleteUrl = "/api/v1/user/delete-single-user";
+  const fetchDataUrl = "/api/v1/vehicle/get-all-vehicle";
+  const singleDeleteUrl = "/api/v1/vehicle/delete-single-vehicle";
   const { deleteData } = useDelete();
 
   const {
@@ -43,14 +43,14 @@ const User = () => {
     refetch();
   };
 
-  const users = data?.data || [];
+  const vehicles = data?.data || [];
   const total = data?.total || 0;
 
   return (
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h5>All User<span className="badge bg-secondary ms-2">{total}</span></h5>
-        <Link to="/create-user"><button className="btn btn-primary btn-sm">Add New User</button></Link>
+        <h5>All Vehicle<span className="badge bg-secondary ms-2">{total}</span></h5>
+        <Link to="/create-vehicle"><button className="btn btn-primary btn-sm">Create New Vehicle</button></Link>
         <SearchBar value={params.search} onChange={handleSearch} />
       </div>
       <TableWrapper>
@@ -58,27 +58,23 @@ const User = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
-            <th>Name</th>
-            <th>Mobile</th>
-            <th>Email</th>
-            <th>Role</th>
+            <th>Vehicle Number</th>
+            <th>Vehicle Type</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {
-            users?.length > 0 ? (
-              users?.map((item, index) => (
+            vehicles?.length > 0 ? (
+              vehicles?.map((item, index) => (
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
-                  <td>{item?.fullName}</td>
-                  <td>{item?.mobile}</td>
-                  <td>{item?.email}</td>
-                  <td>{item?.role?.roleName}</td>
+                  <td>{item?.vehicleNumber}</td>
+                  <td>{item?.vehicleType}</td>
                   <td>
-                    <Link to={`/user-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
-                    <Link to={`/update-user/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
+                    <Link to={`/vehicle-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
+                    <Link to={`/update-vehicle/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
                     <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>
                 </tr>
@@ -110,4 +106,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default Vehicle;

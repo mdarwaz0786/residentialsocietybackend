@@ -8,10 +8,10 @@ import useDelete from '../../hooks/useDelete';
 import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
 
-const User = () => {
+const Flat = () => {
   const { validToken } = useAuth();
-  const fetchDataUrl = "/api/v1/user/get-all-user";
-  const singleDeleteUrl = "/api/v1/user/delete-single-user";
+  const fetchDataUrl = "/api/v1/flat/get-all-flat";
+  const singleDeleteUrl = "/api/v1/flat/delete-single-flat";
   const { deleteData } = useDelete();
 
   const {
@@ -43,14 +43,14 @@ const User = () => {
     refetch();
   };
 
-  const users = data?.data || [];
+  const flats = data?.data || [];
   const total = data?.total || 0;
 
   return (
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h5>All User<span className="badge bg-secondary ms-2">{total}</span></h5>
-        <Link to="/create-user"><button className="btn btn-primary btn-sm">Add New User</button></Link>
+        <h5>All Flat<span className="badge bg-secondary ms-2">{total}</span></h5>
+        <Link to="/create-flat"><button className="btn btn-primary">Add New Flat</button></Link>
         <SearchBar value={params.search} onChange={handleSearch} />
       </div>
       <TableWrapper>
@@ -58,27 +58,27 @@ const User = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
-            <th>Name</th>
-            <th>Mobile</th>
-            <th>Email</th>
-            <th>Role</th>
+            <th>Flat Number</th>
+            <th>Flat Type</th>
+            <th>Floor</th>
+            <th>Flat Owner</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {
-            users?.length > 0 ? (
-              users?.map((item, index) => (
+            flats?.length > 0 ? (
+              flats?.map((item, index) => (
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
-                  <td>{item?.fullName}</td>
-                  <td>{item?.mobile}</td>
-                  <td>{item?.email}</td>
-                  <td>{item?.role?.roleName}</td>
+                  <td>{item?.flatNumber}</td>
+                  <td>{item?.flatType}</td>
+                  <td>{item?.floor}</td>
+                  <td>{item?.flatOwner?.fullName}</td>
                   <td>
-                    <Link to={`/user-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
-                    <Link to={`/update-user/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
+                    <Link to={`/flat-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
+                    <Link to={`/update-flat/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
                     <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>
                 </tr>
@@ -110,4 +110,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default Flat;
