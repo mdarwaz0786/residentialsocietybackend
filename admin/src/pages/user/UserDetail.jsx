@@ -1,11 +1,12 @@
 import { useAuth } from "../../context/auth.context";
 import useFetch from "../../hooks/useFetch";
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Loader from "../../components/Loader/Loader";
 import { useRef } from "react";
 import html2pdf from "html2pdf.js";
 
 const UserDetail = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { validToken } = useAuth();
   const apiUrl = id ? `/api/v1/user/get-single-user/${id}` : null;
@@ -24,15 +25,23 @@ const UserDetail = () => {
     });
   };
 
+  const Info = ({ label, value }) => (
+    <div className="col-sm-6">
+      <div className="border p-2 rounded bg-light">
+        <strong>{label}:</strong>{" "}{value}</div>
+    </div>
+  );
+
   return (
     <>
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="container mt-4">
-          <div className="d-flex justify-content-between align-items-center mb-4">
+        <div className="container">
+          <div className="d-flex justify-content-between align-items-center mb-3">
             <h5 className="text-dark">User Profile</h5>
-            <button className="btn btn-sm btn-primary" onClick={handleDownloadPDF}>Download</button>
+            <button className="btn btn-primary" onClick={handleDownloadPDF}>Download</button>
+            <button className="btn btn-secondary" onClick={() => navigate(-1)}>Back</button>
           </div>
           <div className="card border-0 shadow p-4" ref={pdfRef}>
             <div className="row">
@@ -50,10 +59,10 @@ const UserDetail = () => {
                   <Info label="Mobile" value={user?.mobile} />
                   <Info label="Email" value={user?.email} />
                   <Info label="Member ID" value={user?.memberId} />
-                  <Info label="Role" value={user?.role?.roleName || 'N/A'} />
-                  <Info label="Active" value={user?.isActive ? 'Yes' : 'No'} badge={user?.isActive ? 'success' : 'secondary'} />
-                  <Info label="Deleted" value={user?.isDeleted ? 'Yes' : 'No'} badge={user?.isDeleted ? 'danger' : 'success'} />
-                  <Info label="Status" value={user?.status} badge={`${getStatusColor(user?.status)}`} />
+                  <Info label="Role" value={user?.role?.roleName} />
+                  <Info label="Active" value={user?.isActive ? 'Yes' : 'No'} />
+                  <Info label="Deleted" value={user?.isDeleted ? 'Yes' : 'No'} />
+                  <Info label="Status" value={user?.status} />
                 </div>
               </div>
             </div>
@@ -62,23 +71,6 @@ const UserDetail = () => {
       )}
     </>
   );
-};
-
-const Info = ({ label, value, badge }) => (
-  <div className="col-sm-6">
-    <div className="border p-2 rounded bg-light">
-      <strong>{label}:</strong>{" "}
-      {badge ? <span className={`badge bg-${badge}`}>{value}</span> : value}
-    </div>
-  </div>
-);
-
-const getStatusColor = (status) => {
-  switch (status) {
-    case "Approved": return "success";
-    case "Rejected": return "danger";
-    default: return "warning";
-  };
 };
 
 export default UserDetail;

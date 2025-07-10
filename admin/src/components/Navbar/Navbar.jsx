@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MdMenu } from "react-icons/md";
 import styles from "./Navbar.module.css";
 import avatar from "../../assets/avatar.png";

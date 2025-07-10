@@ -47,9 +47,10 @@ const User = () => {
   const total = data?.total || 0;
 
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
+    <div className="container mt-1">
+      <div className="d-flex justify-content-between align-items-center mb-4">
         <h5>All User</h5>
+        <Link to="/create-user"><button className="btn btn-primary btn-sm">Add New User</button></Link>
         <SearchBar value={params.search} onChange={handleSearch} />
       </div>
       <TableWrapper>
@@ -59,6 +60,7 @@ const User = () => {
             <th>Name</th>
             <th>Mobile</th>
             <th>Email</th>
+            <th>Role</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -71,9 +73,10 @@ const User = () => {
                   <td>{item?.fullName}</td>
                   <td>{item?.mobile}</td>
                   <td>{item?.email}</td>
+                  <td>{item?.role?.roleName}</td>
                   <td>
                     <Link to={`/user-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
-                    <button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button>
+                    <Link to={`/update-user/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
                     <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>
                 </tr>

@@ -13,7 +13,7 @@
 }
 
 .active {
-  background-color: #22222e;
+  background-color: #202029;
   color: #ffffff !important;
 }
 
@@ -45,7 +45,6 @@
   object-fit: cover;
   transition: transform 0.3s ease;
 }
-
 
 .sidebarScrollArea {
   height: calc(100vh - 60px);
@@ -84,14 +83,14 @@
   display: flex;
   align-items: center;
   padding: 12px 20px;
-  color: #cfcfe4;
+  color: #dfdff7;
   text-decoration: none;
   font-size: 16px;
   transition: 0.3s;
 }
 
 .navLink:hover {
-  background-color: #242430;
+  background-color: #202029;
 }
 
 .navLabel {
@@ -121,7 +120,7 @@
 
 .dropdownLink {
   font-size: 14px;
-  color: #a0a0b2;
+  color: #d7d7eb;
   padding: 8px 0px 8px 45px;
   display: block;
 }

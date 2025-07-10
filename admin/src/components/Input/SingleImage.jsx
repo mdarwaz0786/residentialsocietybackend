@@ -1,7 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const SingleImage = ({ label, name, onChange, required = false, error, width }) => {
+const SingleImage = ({ label, name, value, onChange, required = false, error, width }) => {
   const [preview, setPreview] = useState(null);
+
+  useEffect(() => {
+    if (value && typeof value === "string") {
+      setPreview(value);
+    };
+  }, [value]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];

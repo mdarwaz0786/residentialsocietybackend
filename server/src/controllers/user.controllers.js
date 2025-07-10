@@ -17,7 +17,6 @@ export const createUser = asyncHandler(async (req, res) => {
   } = req.body;
 
   const profilePhoto = req.files?.profilePhoto?.[0];
-
   let profilePhotoBase64 = "";
 
   if (profilePhoto) {
@@ -97,13 +96,17 @@ export const updateUser = asyncHandler(async (req, res) => {
   const user = await User.findById(id);
 
   if (!user) {
-    throw new ApiError(404, "user not found");
+    throw new ApiError(404, "user not found.");
   };
 
   const updates = { ...req.body };
 
-  const profilePhoto = req.files?.profilePhoto?.[0];
+  if (updates.password) {
+    const salt = await bcrypt.genSalt(10);
+    updates.password = await bcrypt.hash(updates.password, salt);
+  };
 
+  const profilePhoto = req.files?.profilePhoto?.[0];
   if (profilePhoto) {
     updates.profilePhoto = `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`;
   };
@@ -111,7 +114,7 @@ export const updateUser = asyncHandler(async (req, res) => {
   const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
 
   if (!updatedUser) {
-    throw new ApiError(404, "user not found");
+    throw new ApiError(404, "user not found.");
   };
 
   res.status(200).json({ success: true, data: updatedUser });

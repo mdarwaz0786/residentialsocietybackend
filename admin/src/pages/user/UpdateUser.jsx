@@ -1,21 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import FormWrapper from "../../components/form/FormWrapper";
 import Input from "../../components/Input/Input";
 import SingleImage from "../../components/Input/SingleImage";
 import SingleSelect from "../../components/Input/SingleSelect";
-import useCreate from "../../hooks/useCreate";
 import useFetch from "../../hooks/useFetch";
+import useUpdate from "../../hooks/useUpdate";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import useFormValidation from "../../hooks/useFormValidation";
 
-const CreateUser = () => {
+const UpdateUser = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const { validToken } = useAuth();
-  const { postData, response, postError } = useCreate("/api/v1/auth/register-user");
   const { data: rolesData } = useFetch("/api/v1/role/get-all-role", validToken);
+  const { data: userData } = useFetch(`/api/v1/user/get-single-user/${id}`, validToken);
+  const { updateData, response, updateError } = useUpdate(`/api/v1/user/update-user/${id}`);
   const { errors, setErrors, validate } = useFormValidation();
+
   const [form, setForm] = useState({
     fullName: "",
     mobile: "",
@@ -26,22 +29,36 @@ const CreateUser = () => {
     profilePhoto: null,
   });
 
+  useEffect(() => {
+    if (userData?.data) {
+      const { fullName, mobile, email, memberId, role, profilePhoto } = userData.data;
+      setForm({
+        fullName,
+        mobile,
+        email,
+        password: "",
+        memberId,
+        role: role?._id,
+        profilePhoto,
+      });
+    };
+  }, [userData]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-    setErrors((errs) => ({ ...errs, [name]: "" }));
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleImageChange = (file) => {
-    setForm((f) => ({ ...f, profilePhoto: file }));
-    setErrors((errs) => ({ ...errs, profilePhoto: "" }));
+    setForm((prev) => ({ ...prev, profilePhoto: file }));
+    setErrors((prev) => ({ ...prev, profilePhoto: "" }));
   };
 
   const validationRules = {
     fullName: { required: true, label: "Full Name" },
     mobile: { required: true, label: "Mobile" },
     email: { required: true, label: "Email" },
-    password: { required: true, label: "Password" },
     memberId: { required: true, label: "Member ID" },
     role: { required: true, label: "Role" },
     profilePhoto: { required: true, label: "Profile Photo" },
@@ -50,30 +67,32 @@ const CreateUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validate(form, validationRules)) {
-      return;
-    };
+    if (!validate(form, validationRules)) return;
 
     const formData = new FormData();
-    Object.entries(form).forEach(([key, value]) => formData.append(key, value));
-    await postData(formData, validToken, true);
+    Object.entries(form).forEach(([key, value]) => {
+      if (key === "password" && !value) return;
+      formData.append(key, value);
+    });
+
+    await updateData(formData, validToken, true);
   };
 
   useEffect(() => {
     if (response?.success) {
-      toast.success("User created");
+      toast.success("User updated");
       navigate(-1);
     };
   }, [response, navigate]);
 
   useEffect(() => {
-    if (postError) {
-      toast.error(postError);
+    if (updateError) {
+      toast.error(updateError);
     };
-  }, [postError]);
+  }, [updateError]);
 
   return (
-    <FormWrapper title="Create New User" onSubmit={handleSubmit}>
+    <FormWrapper title="Update User" onSubmit={handleSubmit}>
       <Input
         label="Full Name"
         name="fullName"
@@ -108,9 +127,9 @@ const CreateUser = () => {
         type="password"
         value={form.password}
         onChange={handleChange}
-        required
         error={errors.password}
         width="col-md-6"
+        placeholder="Leave blank to keep existing"
       />
       <Input
         label="Member ID"
@@ -137,6 +156,7 @@ const CreateUser = () => {
         label="Profile Photo"
         name="profilePhoto"
         onChange={handleImageChange}
+        value={form.profilePhoto}
         required
         error={errors.profilePhoto}
         width="col-md-12"
@@ -145,4 +165,4 @@ const CreateUser = () => {
   );
 };
 
-export default CreateUser;
+export default UpdateUser;

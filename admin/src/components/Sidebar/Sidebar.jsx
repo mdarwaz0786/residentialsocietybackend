@@ -8,6 +8,16 @@ import {
   MdClose,
   MdStorefront,
 } from "react-icons/md";
+import {
+  FaUserFriends,
+  FaUserAlt,
+  FaUserShield,
+  FaTools,
+  FaCar,
+  FaBroom,
+  FaUserTag,
+  FaUsers,
+} from "react-icons/fa";
 import logo from "../../assets/logo.png";
 import styles from "./Sidebar.module.css";
 import { Link } from "react-router-dom";
@@ -88,6 +98,34 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
               </Link>
             </li>
 
+            <li className={styles.navItem}>
+              <Link to="#" className={`${styles.navLink} ${activeLink === "Flat Owner" ? styles.active : ""}`} onClick={() => handleLinkClick("Falt Owner")}>
+                <FaUserFriends />
+                <span className={styles.navLabel}>Flat Owner</span>
+              </Link>
+            </li>
+
+            <li className={styles.navItem}>
+              <Link to="#" className={`${styles.navLink} ${activeLink === "Tenant" ? styles.active : ""}`} onClick={() => handleLinkClick("Tenant")}>
+                <FaUserAlt />
+                <span className={styles.navLabel}>Tenant</span>
+              </Link>
+            </li>
+
+            <li className={styles.navItem}>
+              <Link to="#" className={`${styles.navLink} ${activeLink === "Security Guard" ? styles.active : ""}`} onClick={() => handleLinkClick("Security Guard")}>
+                <FaUserShield />
+                <span className={styles.navLabel}>Security Guard</span>
+              </Link>
+            </li>
+
+            <li className={styles.navItem}>
+              <Link to="#" className={`${styles.navLink} ${activeLink === "Maintenance Staff" ? styles.active : ""}`} onClick={() => handleLinkClick("Maintenance Staff")}>
+                <FaTools />
+                <span className={styles.navLabel}>Maintenance Staff</span>
+              </Link>
+            </li>
+
             <li className={`${styles.navItem} ${styles.dropdownContainer} ${openDropdowns.includes(0) ? styles.open : ""}`}>
               <Link to="#" className={`${styles.navLink} ${styles.dropdownToggle}`} onClick={(e) => handleDropdownClick(e, 0)}>
                 <MdStorefront />
@@ -96,7 +134,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
               </Link>
               <ul className={styles.dropdownMenu} ref={dropdownRefs[0]}>
                 {
-                  [{ label: "All Visitors", route: "/all-visitors" }, { label: "Today's Visitors", route: "/today-visitotr" }, { label: "Upcoming Visitors", route: "/upcoming-visitotr" }].map((item) => (
+                  [{ label: "All Visitors", route: "/all-visitor" }, { label: "Today's Visitors", route: "/today-visitor" }, { label: "Upcoming Visitors", route: "/upcoming-visitor" }].map((item) => (
                     <li className={styles.navItem} key={item.label}>
                       <Link to={item.route} className={`${styles.navLink} ${styles.dropdownLink} ${activeLink === item.label ? styles.active : ""}`} onClick={() => handleLinkClick(item.label)}>{item.label}</Link>
                     </li>
@@ -106,51 +144,30 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
             </li>
 
             <li className={styles.navItem}>
-              <Link to="#" className={`${styles.navLink} ${activeLink === "Settings" ? styles.active : ""}`} onClick={() => handleLinkClick("Settings")}>
-                <MdSettings />
-                <span className={styles.navLabel}>Flat Owner</span>
-              </Link>
-            </li>
-
-            <li className={styles.navItem}>
-              <Link to="#" className={`${styles.navLink} ${activeLink === "Settings" ? styles.active : ""}`} onClick={() => handleLinkClick("Settings")}>
-                <MdSettings />
-                <span className={styles.navLabel}>Tenant</span>
-              </Link>
-            </li>
-
-            <li className={styles.navItem}>
-              <Link to="#" className={`${styles.navLink} ${activeLink === "Settings" ? styles.active : ""}`} onClick={() => handleLinkClick("Settings")}>
-                <MdSettings />
-                <span className={styles.navLabel}>Security Guard</span>
-              </Link>
-            </li>
-
-            <li className={styles.navItem}>
-              <Link to="#" className={`${styles.navLink} ${activeLink === "Settings" ? styles.active : ""}`} onClick={() => handleLinkClick("Settings")}>
-                <MdSettings />
-                <span className={styles.navLabel}>Maintenance Staff</span>
-              </Link>
-            </li>
-
-            <li className={styles.navItem}>
-              <Link to="#" className={`${styles.navLink} ${activeLink === "Settings" ? styles.active : ""}`} onClick={() => handleLinkClick("Settings")}>
-                <MdSettings />
+              <Link to="#" className={`${styles.navLink} ${activeLink === "Vehicle" ? styles.active : ""}`} onClick={() => handleLinkClick("Vehicle")}>
+                <FaCar />
                 <span className={styles.navLabel}>Vehicle</span>
               </Link>
             </li>
 
             <li className={styles.navItem}>
-              <Link to="#" className={`${styles.navLink} ${activeLink === "Settings" ? styles.active : ""}`} onClick={() => handleLinkClick("Settings")}>
-                <MdSettings />
+              <Link to="#" className={`${styles.navLink} ${activeLink === "Maid" ? styles.active : ""}`} onClick={() => handleLinkClick("Maid")}>
+                <FaBroom />
                 <span className={styles.navLabel}>Maid</span>
               </Link>
             </li>
 
             <li className={styles.navItem}>
-              <Link to="#" className={`${styles.navLink} ${activeLink === "Settings" ? styles.active : ""}`} onClick={() => handleLinkClick("Settings")}>
-                <MdSettings />
+              <Link to="#" className={`${styles.navLink} ${activeLink === "Role" ? styles.active : ""}`} onClick={() => handleLinkClick("Role")}>
+                <FaUserTag />
                 <span className={styles.navLabel}>Role</span>
+              </Link>
+            </li>
+
+            <li className={styles.navItem}>
+              <Link to="/user" className={`${styles.navLink} ${activeLink === "User" ? styles.active : ""}`} onClick={() => handleLinkClick("User")}>
+                <FaUsers />
+                <span className={styles.navLabel}>User</span>
               </Link>
             </li>
 

@@ -5,8 +5,12 @@ import {
   FaUserCheck,
   FaBroom,
   FaCar,
+  FaTools,
+  FaCog,
+  FaUserTag,
+  FaUsers,
 } from "react-icons/fa";
-import DashboardCard from "../components/Card/DashboardCard.jsx";
+import DashboardCard from "../components/Card/DashboardCard";
 
 const Dashboard = () => {
   const stats = [
@@ -15,42 +19,70 @@ const Dashboard = () => {
       value: 40,
       icon: <FaUserFriends size={20} />,
       color: "text-primary",
-      to: "/flat-owners",
+      to: "/flat-owner",
     },
     {
       label: "Tenants",
       value: 65,
       icon: <FaUserAlt size={20} />,
       color: "text-success",
-      to: "/tenants",
+      to: "/tenant",
     },
     {
       label: "Security Guards",
       value: 6,
       icon: <FaUserShield size={20} />,
       color: "text-warning",
-      to: "/security-guards",
+      to: "/security-guard",
+    },
+    {
+      label: "Maintenance Staff",
+      value: 12,
+      icon: <FaTools size={20} />,
+      color: "text-dark",
+      to: "/maintenance-staff",
     },
     {
       label: "Visitors",
       value: 150,
       icon: <FaUserCheck size={20} />,
       color: "text-info",
-      to: "/visitors",
+      to: "/visitor",
     },
     {
       label: "Maids",
       value: 25,
       icon: <FaBroom size={20} />,
       color: "text-danger",
-      to: "/maids",
+      to: "/maid",
     },
     {
       label: "Vehicles",
       value: 70,
       icon: <FaCar size={20} />,
       color: "text-secondary",
-      to: "/vehicles",
+      to: "/vehicle",
+    },
+    {
+      label: "Roles",
+      value: 5,
+      icon: <FaUserTag size={20} />,
+      color: "text-muted",
+      to: "/role",
+    },
+    {
+      label: "Users",
+      value: 120,
+      icon: <FaUsers size={20} />,
+      color: "text-info",
+      to: "/user",
+    },
+    {
+      label: "Settings",
+      value: 1,
+      icon: <FaCog size={20} />,
+      color: "text-black-50",
+      to: "/setting",
     },
   ];
 
