@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
 
-const maintenanceStaffSchema = new mongoose.Schema({
+const flatOwnerSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    required: [true, "User is required."]
   },
   currentAddress: {
     type: String,
@@ -17,8 +18,16 @@ const maintenanceStaffSchema = new mongoose.Schema({
     type: String,
     required: [true, "Aadhar card is required."],
   },
+  allotment: {
+    type: String,
+    required: [true, "Allotment is required."],
+  },
+  vehicleRC: {
+    type: String,
+    required: [true, "Vehicle RC is required."],
+  },
 }, { timestamps: true });
 
-const MaintenanceStaff = mongoose.model("SecurityGuard", maintenanceStaffSchema);
+const FlatOwner = mongoose.model("FlatOwner", flatOwnerSchema);
 
-export default MaintenanceStaff;
+export default FlatOwner;

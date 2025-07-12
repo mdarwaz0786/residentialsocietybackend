@@ -18,6 +18,18 @@ import CreateFlat from './pages/Flat/CreateFlat';
 import Flat from './pages/Flat/Flat';
 import UpdateFlat from './pages/Flat/UpdateFlat';
 import FlatDetail from './pages/Flat/FlatDetail';
+import CreateFlatOwner from './pages/FlatOwner/CreateFlatOwner';
+import FlatOwner from './pages/FlatOwner/FlatOwner';
+import UpdateFlatOwner from './pages/FlatOwner/UpdateFlatOwner';
+import FlatOwnerDetail from './pages/FlatOwner/FlatOwnerDetail';
+import SecurityGuard from './pages/SecurityGuard/SecurityGuard';
+import CreateSecurityGuard from './pages/SecurityGuard/CreateSecurityGuard';
+import UpdateSecurityGuard from './pages/SecurityGuard/UpdateSecurityGuard';
+import SecurityGuardDetail from './pages/SecurityGuard/SecurityGuardDetail';
+import MaintenanceStaff from './pages/MaintenanceStaff/MaintenanceStaff';
+import CreateMaintenanceStaff from './pages/MaintenanceStaff/CreateMaintenanceStaff';
+import UpdateMaintenanceStaff from './pages/MaintenanceStaff/UpdateMaintenaceStaff';
+import MaintenanceStaffDetail from './pages/MaintenanceStaff/MaintenanceStaffDetail';
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -50,6 +62,18 @@ const App = () => {
             <Route path="create-flat" element={<CreateFlat />} />
             <Route path="update-flat/:id" element={<UpdateFlat />} />
             <Route path="flat-detail/:id" element={<FlatDetail />} />
+            <Route path="flat-owner" element={<FlatOwner />} />
+            <Route path="create-flat-owner" element={<CreateFlatOwner />} />
+            <Route path="update-flat-owner/:id" element={<UpdateFlatOwner />} />
+            <Route path="flat-owner-detail/:id" element={<FlatOwnerDetail />} />
+            <Route path="security-guard" element={<SecurityGuard />} />
+            <Route path="create-security-guard" element={<CreateSecurityGuard />} />
+            <Route path="update-security-guard/:id" element={<UpdateSecurityGuard />} />
+            <Route path="security-guard-detail/:id" element={<SecurityGuardDetail />} />
+            <Route path="maintenance-staff" element={<MaintenanceStaff />} />
+            <Route path="create-maintenance-staff" element={<CreateMaintenanceStaff />} />
+            <Route path="update-maintenance-staff/:id" element={<UpdateMaintenanceStaff />} />
+            <Route path="maintenance-staff-detail/:id" element={<MaintenanceStaffDetail />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </>

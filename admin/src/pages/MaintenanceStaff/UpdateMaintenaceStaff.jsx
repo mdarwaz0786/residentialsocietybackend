@@ -1,22 +1,20 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import FormWrapper from "../../components/form/FormWrapper";
 import Input from "../../components/Input/Input";
 import SingleImage from "../../components/Input/SingleImage";
-import SingleSelect from "../../components/Input/SingleSelect";
 import useFetch from "../../hooks/useFetch";
 import useUpdate from "../../hooks/useUpdate";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
 import useFormValidation from "../../hooks/useFormValidation";
 
-const UpdateUser = () => {
+const UpdateMaintenanceStaff = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { validToken } = useAuth();
-  const { data: rolesData } = useFetch("/api/v1/role/get-all-role", validToken);
-  const { data: userData } = useFetch(`/api/v1/user/get-single-user/${id}`, validToken);
-  const { updateData, response, updateError } = useUpdate(`/api/v1/user/update-user/${id}`);
+  const { data } = useFetch(`/api/v1/maintenanceStaff/get-single-maintenanceStaff/${id}`, validToken);
+  const { updateData, response, updateError } = useUpdate(`/api/v1/maintenanceStaff/update-maintenanceStaff/${id}`);
   const { errors, setErrors, validate } = useFormValidation();
 
   const [form, setForm] = useState({
@@ -24,55 +22,61 @@ const UpdateUser = () => {
     mobile: "",
     email: "",
     password: "",
-    memberId: "",
-    role: "",
+    currentAddress: "",
+    permanentAddress: "",
     profilePhoto: null,
+    aadharCard: null,
   });
 
   useEffect(() => {
-    if (userData?.data) {
-      const { fullName, mobile, email, memberId, role, profilePhoto } = userData.data;
+    if (data?.data) {
+      const { userId, currentAddress, permanentAddress, aadharCard, } = data.data;
       setForm({
-        fullName,
-        mobile,
-        email,
+        fullName: userId.fullName || "",
+        mobile: userId.mobile || "",
+        email: userId.email || "",
         password: "",
-        memberId,
-        role: role?._id,
-        profilePhoto,
+        currentAddress: currentAddress || "",
+        permanentAddress: permanentAddress || "",
+        profilePhoto: userId.profilePhoto,
+        aadharCard: aadharCard,
       });
     };
-  }, [userData]);
+  }, [data]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
+    setForm((f) => ({ ...f, [name]: value }));
+    setErrors((errs) => ({ ...errs, [name]: "" }));
   };
 
-  const handleImageChange = (file) => {
-    setForm((prev) => ({ ...prev, profilePhoto: file }));
-    setErrors((prev) => ({ ...prev, profilePhoto: "" }));
+  const handleImageChange = (file, name) => {
+    setForm((f) => ({ ...f, [name]: file }));
+    setErrors((errs) => ({ ...errs, [name]: "" }));
   };
 
   const validationRules = {
     fullName: { required: true, label: "Full Name" },
     mobile: { required: true, label: "Mobile" },
     email: { required: true, label: "Email" },
-    memberId: { required: true, label: "Member ID" },
-    role: { required: true, label: "Role" },
+    currentAddress: { required: true, label: "Current Address" },
+    permanentAddress: { required: true, label: "Permanent Address" },
     profilePhoto: { required: true, label: "Profile Photo" },
+    aadharCard: { required: true, label: "Aadhar Card" },
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validate(form, validationRules)) return;
+    if (!validate(form, validationRules)) {
+      return;
+    };
 
     const formData = new FormData();
     Object.entries(form).forEach(([key, value]) => {
       if (key === "password" && !value) return;
       if ((key === "profilePhoto") && typeof value === "string") return;
+      if ((key === "aadharCard") && typeof value === "string") return;
       if (value !== null) formData.append(key, value);
     });
 
@@ -81,7 +85,7 @@ const UpdateUser = () => {
 
   useEffect(() => {
     if (response?.success) {
-      toast.success("User updated");
+      toast.success("Security guard updated");
       navigate(-1);
     };
   }, [response, navigate]);
@@ -93,7 +97,7 @@ const UpdateUser = () => {
   }, [updateError]);
 
   return (
-    <FormWrapper title="Update User" onSubmit={handleSubmit}>
+    <FormWrapper title="Update Maintenance Staff" onSubmit={handleSubmit}>
       <Input
         label="Full Name"
         name="fullName"
@@ -101,7 +105,7 @@ const UpdateUser = () => {
         onChange={handleChange}
         required
         error={errors.fullName}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Mobile"
@@ -110,7 +114,7 @@ const UpdateUser = () => {
         onChange={handleChange}
         required
         error={errors.mobile}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Email"
@@ -120,7 +124,7 @@ const UpdateUser = () => {
         onChange={handleChange}
         required
         error={errors.email}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Password"
@@ -128,42 +132,48 @@ const UpdateUser = () => {
         type="password"
         value={form.password}
         onChange={handleChange}
+        required
         error={errors.password}
         width="col-md-6"
-        placeholder="Leave blank to keep existing"
       />
       <Input
-        label="Member ID"
-        name="memberId"
-        value={form.memberId}
+        label="Current Address"
+        name="currentAddress"
+        value={form.currentAddress}
         onChange={handleChange}
         required
-        error={errors.memberId}
+        error={errors.currentAddress}
         width="col-md-6"
       />
-      <SingleSelect
-        label="Role"
-        name="role"
-        value={form.role}
+      <Input
+        label="Permanent Address"
+        name="permanentAddress"
+        value={form.permanentAddress}
         onChange={handleChange}
-        options={rolesData?.data || []}
-        optionValue="roleName"
-        optionKey="_id"
         required
-        error={errors.role}
+        error={errors.permanentAddress}
         width="col-md-6"
       />
       <SingleImage
         label="Profile Photo"
         name="profilePhoto"
-        onChange={handleImageChange}
+        onChange={(file) => handleImageChange(file, "profilePhoto")}
         value={form.profilePhoto}
         required
         error={errors.profilePhoto}
-        width="col-md-12"
+        width="col-md-6"
+      />
+      <SingleImage
+        label="Aadhar Card"
+        name="aadharCard"
+        onChange={(file) => handleImageChange(file, "aadharCard")}
+        value={form.aadharCard}
+        required
+        error={errors.aadharCard}
+        width="col-md-6"
       />
     </FormWrapper>
   );
 };
 
-export default UpdateUser;
+export default UpdateMaintenanceStaff;

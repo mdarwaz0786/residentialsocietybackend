@@ -15,8 +15,6 @@ export const createFlat = asyncHandler(async (req, res) => {
     status,
   } = req.body;
 
-  console.log(req.body)
-
   const flat = await Flat.create({
     flatNumber,
     floor,

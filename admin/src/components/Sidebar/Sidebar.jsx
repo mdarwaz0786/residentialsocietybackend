@@ -107,7 +107,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
             </li>
 
             <li className={styles.navItem}>
-              <Link to="#" className={`${styles.navLink} ${activeLink === "Flat Owner" ? styles.active : ""}`} onClick={() => handleLinkClick("Falt Owner")}>
+              <Link to="flat-owner" className={`${styles.navLink} ${activeLink === "Flat Owner" ? styles.active : ""}`} onClick={() => handleLinkClick("Falt Owner")}>
                 <FaUserFriends />
                 <span className={styles.navLabel}>Flat Owner</span>
               </Link>
@@ -121,14 +121,14 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
             </li>
 
             <li className={styles.navItem}>
-              <Link to="#" className={`${styles.navLink} ${activeLink === "Security Guard" ? styles.active : ""}`} onClick={() => handleLinkClick("Security Guard")}>
+              <Link to="security-guard" className={`${styles.navLink} ${activeLink === "Security Guard" ? styles.active : ""}`} onClick={() => handleLinkClick("Security Guard")}>
                 <FaUserShield />
                 <span className={styles.navLabel}>Security Guard</span>
               </Link>
             </li>
 
             <li className={styles.navItem}>
-              <Link to="#" className={`${styles.navLink} ${activeLink === "Maintenance Staff" ? styles.active : ""}`} onClick={() => handleLinkClick("Maintenance Staff")}>
+              <Link to="maintenance-staff" className={`${styles.navLink} ${activeLink === "Maintenance Staff" ? styles.active : ""}`} onClick={() => handleLinkClick("Maintenance Staff")}>
                 <FaTools />
                 <span className={styles.navLabel}>Maintenance Staff</span>
               </Link>
