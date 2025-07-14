@@ -105,7 +105,7 @@ const UpdateSecurityGuard = () => {
         onChange={handleChange}
         required
         error={errors.fullName}
-        width="col-md-4"
+        width="col-md-6"
       />
       <Input
         label="Mobile"
@@ -114,7 +114,7 @@ const UpdateSecurityGuard = () => {
         onChange={handleChange}
         required
         error={errors.mobile}
-        width="col-md-4"
+        width="col-md-6"
       />
       <Input
         label="Email"
@@ -124,7 +124,7 @@ const UpdateSecurityGuard = () => {
         onChange={handleChange}
         required
         error={errors.email}
-        width="col-md-4"
+        width="col-md-6"
       />
       <Input
         label="Password"

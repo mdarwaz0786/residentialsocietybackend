@@ -30,6 +30,10 @@ import MaintenanceStaff from './pages/MaintenanceStaff/MaintenanceStaff';
 import CreateMaintenanceStaff from './pages/MaintenanceStaff/CreateMaintenanceStaff';
 import UpdateMaintenanceStaff from './pages/MaintenanceStaff/UpdateMaintenaceStaff';
 import MaintenanceStaffDetail from './pages/MaintenanceStaff/MaintenanceStaffDetail';
+import Role from './pages/Role/Role';
+import Maid from './pages/Maid/Maid';
+import Tenant from './pages/Tenant/Tenant';
+import Visitor from './pages/Visitor/Visitor';
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -74,6 +78,10 @@ const App = () => {
             <Route path="create-maintenance-staff" element={<CreateMaintenanceStaff />} />
             <Route path="update-maintenance-staff/:id" element={<UpdateMaintenanceStaff />} />
             <Route path="maintenance-staff-detail/:id" element={<MaintenanceStaffDetail />} />
+            <Route path="role" element={<Role />} />
+            <Route path="maid" element={<Maid />} />
+            <Route path="tenant" element={<Tenant />} />
+            <Route path="visitor" element={<Visitor />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </>
