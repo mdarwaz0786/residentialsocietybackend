@@ -16,9 +16,8 @@ const paymentSchema = new mongoose.Schema({
     enum: ['Pending', 'Success', 'Failed'],
     default: 'Pending',
   },
-  paidAt: {
+  paymentDate: {
     type: Date,
-    default: Date.now,
   },
   transactionId: {
     type: String,
