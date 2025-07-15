@@ -29,7 +29,7 @@ const CreateTenant = () => {
   const { validToken } = useAuth();
   const navigate = useNavigate();
   const { data: flats } = useFetch("/api/v1/flat/get-all-flat", validToken);
-  const { postData, response, postError } = useCreate("/api/v1/tenant");
+  const { postData, response, postError } = useCreate("/api/v1/tenant/create-tenant");
 
   const [flat, setFlat] = useState("");
   const [tenantPersons, setTenantPersons] = useState([defaultTenantPerson]);
@@ -47,13 +47,15 @@ const CreateTenant = () => {
       const updated = [...tenantPersons];
       updated.splice(index, 1);
       setTenantPersons(updated);
-    }
+    };
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!flat) return toast.error("Please select a flat");
+    if (!flat) {
+      return toast.error("Please select a flat");
+    };
 
     const formData = new FormData();
     formData.append("flat", flat);
@@ -71,6 +73,8 @@ const CreateTenant = () => {
       });
     });
 
+    console.log(formData);
+
     await postData(formData, validToken, true);
   };
 
@@ -78,13 +82,13 @@ const CreateTenant = () => {
     if (response?.success) {
       toast.success("Tenant created successfully");
       navigate(-1);
-    }
+    };
   }, [response, navigate]);
 
   useEffect(() => {
     if (postError) {
       toast.error(postError);
-    }
+    };
   }, [postError]);
 
   return (
@@ -99,101 +103,106 @@ const CreateTenant = () => {
         optionKey="_id"
         required
         error={!flat ? "Flat is required." : ""}
-        width="col-md-6"
+        width="col-md-12"
       />
 
       {tenantPersons.map((person, index) => (
         <div key={index} className="border p-3 my-3">
-          <h5>Tenant Person {index + 1}</h5>
-
-          <Input
-            label="Full Name"
-            name="fullName"
-            value={person.fullName}
-            onChange={(e) => handleTenantChange(index, "fullName", e.target.value)}
-            required
-          />
-          <Input
-            label="Email"
-            name="email"
-            value={person.email}
-            onChange={(e) => handleTenantChange(index, "email", e.target.value)}
-            required
-          />
-          <Input
-            label="Mobile"
-            name="mobile"
-            value={person.mobile}
-            onChange={(e) => handleTenantChange(index, "mobile", e.target.value)}
-            required
-          />
-          <Input
-            label="Password"
-            name="password"
-            type="password"
-            value={person.password}
-            onChange={(e) => handleTenantChange(index, "password", e.target.value)}
-            required
-          />
-          <Input
-            label="Current Address"
-            name="currentAddress"
-            value={person.currentAddress}
-            onChange={(e) => handleTenantChange(index, "currentAddress", e.target.value)}
-            required
-          />
-          <Input
-            label="Permanent Address"
-            name="permanentAddress"
-            value={person.permanentAddress}
-            onChange={(e) => handleTenantChange(index, "permanentAddress", e.target.value)}
-            required
-          />
-          <Input
-            label="From Date"
-            name="fromDate"
-            type="date"
-            value={person.fromDate}
-            onChange={(e) => handleTenantChange(index, "fromDate", e.target.value)}
-          />
-          <Input
-            label="To Date"
-            name="toDate"
-            type="date"
-            value={person.toDate}
-            onChange={(e) => handleTenantChange(index, "toDate", e.target.value)}
-          />
-
-          <SingleImage
-            label="Profile Photo"
-            name="profilePhoto"
-            onChange={(file) => handleTenantChange(index, "profilePhoto", file)}
-            required
-          />
-          <SingleImage
-            label="Aadhar Card"
-            name="aadharCard"
-            onChange={(file) => handleTenantChange(index, "aadharCard", file)}
-            required
-          />
-          <SingleImage
-            label="Rent Agreement"
-            name="rentAgreement"
-            onChange={(file) => handleTenantChange(index, "rentAgreement", file)}
-            required
-          />
-          <SingleImage
-            label="Police Verification"
-            name="policeVerification"
-            onChange={(file) => handleTenantChange(index, "policeVerification", file)}
-            required
-          />
-          <SingleImage
-            label="Vehicle RC"
-            name="vehicleRC"
-            onChange={(file) => handleTenantChange(index, "vehicleRC", file)}
-            required
-          />
+          <h5 className="mb-3">Tenant {index + 1}</h5>
+          <div className="row">
+            <Input
+              label="Full Name"
+              name="fullName"
+              value={person.fullName}
+              onChange={(e) => handleTenantChange(index, "fullName", e.target.value)}
+              required
+              width="col-md-6"
+            />
+            <Input
+              label="Email"
+              name="email"
+              value={person.email}
+              onChange={(e) => handleTenantChange(index, "email", e.target.value)}
+              required
+              width="col-md-6"
+            />
+            <Input
+              label="Mobile"
+              name="mobile"
+              value={person.mobile}
+              onChange={(e) => handleTenantChange(index, "mobile", e.target.value)}
+              required
+              width="col-md-6"
+            />
+            <Input
+              label="Password"
+              name="password"
+              type="password"
+              value={person.password}
+              onChange={(e) => handleTenantChange(index, "password", e.target.value)}
+              required
+              width="col-md-6"
+            />
+            <Input
+              label="Current Address"
+              name="currentAddress"
+              value={person.currentAddress}
+              onChange={(e) => handleTenantChange(index, "currentAddress", e.target.value)}
+              required
+              width="col-md-6"
+            />
+            <Input
+              label="Permanent Address"
+              name="permanentAddress"
+              value={person.permanentAddress}
+              onChange={(e) => handleTenantChange(index, "permanentAddress", e.target.value)}
+              required
+              width="col-md-6"
+            />
+            <Input
+              label="From Date"
+              name="fromDate"
+              type="date"
+              value={person.fromDate}
+              onChange={(e) => handleTenantChange(index, "fromDate", e.target.value)}
+              width="col-md-6"
+            />
+            <SingleImage
+              label="Profile Photo"
+              name="profilePhoto"
+              onChange={(file) => handleTenantChange(index, "profilePhoto", file)}
+              required
+              width="col-md-6"
+            />
+            <SingleImage
+              label="Aadhar Card"
+              name="aadharCard"
+              onChange={(file) => handleTenantChange(index, "aadharCard", file)}
+              required
+              width="col-md-6"
+            />
+            <SingleImage
+              label="Rent Agreement"
+              name="rentAgreement"
+              onChange={(file) => handleTenantChange(index, "rentAgreement", file)}
+              required
+              width="col-md-6"
+            />
+            <SingleImage
+              label="Police Verification"
+              name="policeVerification"
+              onChange={(file) => handleTenantChange(index, "policeVerification", file)}
+              required
+              width="col-md-6"
+            />
+            <SingleImage
+              label="Vehicle RC"
+              name="vehicleRC"
+              onChange={(file) => handleTenantChange(index, "vehicleRC", file)}
+              required
+              width="col-md-6"
+            />
+          </div>
 
           {tenantPersons.length > 1 && (
             <button
@@ -208,7 +217,7 @@ const CreateTenant = () => {
       ))}
 
       <button type="button" onClick={handleAddPerson} className="btn btn-secondary mt-3">
-        + Add Another Person
+        + Add Another Tenant
       </button>
     </FormWrapper>
   );

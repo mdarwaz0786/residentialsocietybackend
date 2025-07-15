@@ -12,7 +12,7 @@ const Tenant = () => {
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5>All Tenant<span className="badge bg-secondary ms-2">{total}</span></h5>
-        <Link to="#"><button className="btn btn-primary btn-sm">Add New Tenant</button></Link>
+        <Link to="/create-tenant"><button className="btn btn-primary btn-sm">Add New Tenant</button></Link>
         <SearchBar />
       </div>
       <TableWrapper>

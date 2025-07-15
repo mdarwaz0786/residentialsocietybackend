@@ -50,7 +50,7 @@ const Flat = () => {
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5>All Flat<span className="badge bg-secondary ms-2">{total}</span></h5>
-        <Link to="/create-flat"><button className="btn btn-primary">Add New Flat</button></Link>
+        <Link to="/create-flat"><button className="btn btn-primary btn-sm">Add New Flat</button></Link>
         <SearchBar value={params.search} onChange={handleSearch} />
       </div>
       <TableWrapper>

@@ -19,7 +19,7 @@ const flatSchema = new mongoose.Schema({
   },
   flatOwner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "FlatOwner",
   },
   status: {
     type: String,
