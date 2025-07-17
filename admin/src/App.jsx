@@ -54,8 +54,8 @@ const App = () => {
         <>
           <Route path="/" element={<Layout mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} handleToggleSidebar={handleToggleSidebar} />}>
             <Route index element={<Dashboard />} />
-            <Route path="user" element={<User />} />
             <Route path="create-user" element={<CreateUser />} />
+            <Route path="user" element={<User />} />
             <Route path="update-user/:id" element={<UpdateUser />} />
             <Route path="user-detail/:id" element={<UserDetail />} />
             <Route path="vehicle" element={<Vehicle />} />
