@@ -34,7 +34,6 @@ import Role from './pages/Role/Role';
 import Maid from './pages/Maid/Maid';
 import Tenant from './pages/Tenant/Tenant';
 import Visitor from './pages/Visitor/Visitor';
-import CreateTenant from './pages/Tenant/createTenant';
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -82,7 +81,6 @@ const App = () => {
             <Route path="role" element={<Role />} />
             <Route path="maid" element={<Maid />} />
             <Route path="tenant" element={<Tenant />} />
-            <Route path="create-tenant" element={<CreateTenant />} />
             <Route path="visitor" element={<Visitor />} />
           </Route>
           <Route path="*" element={<NotFound />} />

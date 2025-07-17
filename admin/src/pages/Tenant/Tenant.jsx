@@ -12,7 +12,6 @@ const Tenant = () => {
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5>All Tenant<span className="badge bg-secondary ms-2">{total}</span></h5>
-        <Link to="/create-tenant"><button className="btn btn-primary btn-sm">Add New Tenant</button></Link>
         <SearchBar />
       </div>
       <TableWrapper>
@@ -20,6 +19,7 @@ const Tenant = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
+            <th>Flat</th>
             <th>Name</th>
             <th>Mobile</th>
             <th>Email</th>
@@ -33,9 +33,10 @@ const Tenant = () => {
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + 1 * 1}</td>
-                  <td>{item?.user?.fullName}</td>
-                  <td>{item?.user?.mobile}</td>
-                  <td>{item?.user?.email}</td>
+                  <td>{item?.flat?.flatNumber}</td>
+                  <td>{item?.fullName}</td>
+                  <td>{item?.mobile}</td>
+                  <td>{item?.email}</td>
                   <td>
                     <Link to="#"><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
                     <Link to="#"><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
@@ -45,7 +46,7 @@ const Tenant = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center">
+                <td colSpan="7" className="text-center">
                   No Data.
                 </td>
               </tr>

@@ -84,9 +84,9 @@ const MaintenanceStaff = () => {
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
-                  <td>{item?.user?.fullName}</td>
-                  <td>{item?.user?.mobile}</td>
-                  <td>{item?.user?.email}</td>
+                  <td>{item?.fullName}</td>
+                  <td>{item?.mobile}</td>
+                  <td>{item?.email}</td>
                   <td>
                     <Link to={`/maintenance-staff-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
                     <Link to={`/update-maintenance-staff/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
@@ -96,7 +96,7 @@ const MaintenanceStaff = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center">
+                <td colSpan="7" className="text-center">
                   No Data.
                 </td>
               </tr>

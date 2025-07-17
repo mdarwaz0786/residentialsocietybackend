@@ -41,10 +41,10 @@ export const createUser = asyncHandler(async (req, res) => {
 // Get all users
 export const getUsers = asyncHandler(async (req, res) => {
   const searchableFields = ["fullName", "email", "mobile"];
-  const filterableFields = ["status", "role"];
+  const filterableFields = [""];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
-    softDelete: true,
+    softDelete: false,
     defaultSortBy: "createdAt",
     defaultOrder: "desc",
     defaultPage: 1,
