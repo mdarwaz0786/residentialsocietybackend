@@ -3,7 +3,7 @@ import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './Layout/Layout';
 import Dashboard from './pages/Dashboard';
-// import User from './pages/User/User';
+import User from './pages/User/User';
 import CreateUser from './pages/user/createUser';
 import { useAuth } from './context/auth.context';
 import Login from './pages/Auth/Login';
@@ -54,7 +54,7 @@ const App = () => {
         <>
           <Route path="/" element={<Layout mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} handleToggleSidebar={handleToggleSidebar} />}>
             <Route index element={<Dashboard />} />
-            {/* <Route path="user" element={<User />} /> */}
+            <Route path="user" element={<User />} />
             <Route path="create-user" element={<CreateUser />} />
             <Route path="update-user/:id" element={<UpdateUser />} />
             <Route path="user-detail/:id" element={<UserDetail />} />
