@@ -1,0 +1,15 @@
+{
+  "plugins": [
+    "import"
+  ],
+  "rules": {
+    "import/no-unresolved": "error"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "caseSensitive": true
+      }
+    }
+  }
+}
