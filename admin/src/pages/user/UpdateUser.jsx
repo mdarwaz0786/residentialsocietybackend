@@ -24,20 +24,18 @@ const UpdateUser = () => {
     mobile: "",
     email: "",
     password: "",
-    memberId: "",
     role: "",
     profilePhoto: null,
   });
 
   useEffect(() => {
     if (userData?.data) {
-      const { fullName, mobile, email, memberId, role, profilePhoto } = userData.data;
+      const { fullName, mobile, email, role, profilePhoto } = userData.data;
       setForm({
         fullName,
         mobile,
         email,
         password: "",
-        memberId,
         role: role?._id,
         profilePhoto,
       });
@@ -59,7 +57,6 @@ const UpdateUser = () => {
     fullName: { required: true, label: "Full Name" },
     mobile: { required: true, label: "Mobile" },
     email: { required: true, label: "Email" },
-    memberId: { required: true, label: "Member ID" },
     role: { required: true, label: "Role" },
     profilePhoto: { required: true, label: "Profile Photo" },
   };
@@ -131,15 +128,6 @@ const UpdateUser = () => {
         error={errors.password}
         width="col-md-6"
         placeholder="Leave blank to keep existing"
-      />
-      <Input
-        label="Member ID"
-        name="memberId"
-        value={form.memberId}
-        onChange={handleChange}
-        required
-        error={errors.memberId}
-        width="col-md-6"
       />
       <SingleSelect
         label="Role"

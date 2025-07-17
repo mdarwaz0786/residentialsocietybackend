@@ -74,6 +74,7 @@ const FlatOwner = () => {
             <th>Name</th>
             <th>Mobile</th>
             <th>Email</th>
+            <th>flat</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -84,9 +85,10 @@ const FlatOwner = () => {
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
-                  <td>{item?.user?.fullName}</td>
-                  <td>{item?.user?.mobile}</td>
-                  <td>{item?.user?.email}</td>
+                  <td>{item?.fullName}</td>
+                  <td>{item?.mobile}</td>
+                  <td>{item?.email}</td>
+                  <td>{item?.flat?.flatNumber}</td>
                   <td>
                     <Link to={`/flat-owner-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
                     <Link to={`/update-flat-owner/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
@@ -96,7 +98,7 @@ const FlatOwner = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center">
+                <td colSpan="7" className="text-center">
                   No Data.
                 </td>
               </tr>

@@ -28,7 +28,7 @@ const FlatOwnerDetail = () => {
   return (
     <div className="container">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h5>Vehicle Detail</h5>
+        <h5>Flat Owner Detail</h5>
         <button className="btn btn-primary" onClick={handleDownloadPDF}>Download</button>
         <button className="btn btn-secondary" onClick={() => navigate(-1)}>
           <FaArrowLeft className="me-1" /> Back
@@ -37,37 +37,41 @@ const FlatOwnerDetail = () => {
 
       <div className="card shadow-sm p-3" ref={pdfRef}>
         <div className="row">
-          <div className="col-md-6 mb-2">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Name:</label>
-            <span>{" "}{flatOwner?.userId?.fullName}</span>
+            <span>{" "}{flatOwner?.fullName}</span>
           </div>
-          <div className="col-md-6 mb-2">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Mobile:</label>
-            <span>{" "}{flatOwner?.userId?.mobile}</span>
+            <span>{" "}{flatOwner?.mobile}</span>
           </div>
-          <div className="col-md-6 mb-2">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Email:</label>
-            <span>{" "}{flatOwner?.userId?.email}</span>
+            <span>{" "}{flatOwner?.email}</span>
           </div>
-          <div className="col-md-6">
-            <label className="fw-bold">Status:</label>
-            <span>{" "}{flatOwner?.userId?.status}</span>
+          <div className="col-md-4 mb-2">
+            <label className="fw-bold">Flat:</label>
+            <span>{" "}{flatOwner?.flat?.flatNumber}</span>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label className="fw-bold">ID:</label>
-            <span>{" "}{flatOwner?.userId?.memberId}</span>
+            <span>{" "}{flatOwner?.memberId}</span>
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1">Profile Photo:</label>
-            <img src={flatOwner?.userId?.profilePhoto} alt="Vehicle" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={flatOwner?.profilePhoto} alt="image" className="img-thumbnail" style={{ maxHeight: "200px" }} />
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Aadhar Card:</label>
-            <img src={flatOwner?.aadharCard} alt="RC" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={flatOwner?.aadharCard} alt="image" className="img-thumbnail" style={{ maxHeight: "200px" }} />
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Allotment:</label>
-            <img src={flatOwner?.allotment} alt="RC" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={flatOwner?.allotment} alt="image" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+          </div>
+          <div className="col-md-6">
+            <label className="fw-bold d-block mb-1 mt-3">Vehicle RC:</label>
+            <img src={flatOwner?.vehicleRC} alt="image" className="img-thumbnail" style={{ maxHeight: "200px" }} />
           </div>
         </div>
       </div>

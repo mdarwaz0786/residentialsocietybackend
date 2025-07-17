@@ -3,7 +3,6 @@ import FormWrapper from "../../components/form/FormWrapper";
 import Input from "../../components/Input/Input";
 import SingleSelect from "../../components/Input/SingleSelect";
 import useCreate from "../../hooks/useCreate";
-import useFetch from "../../hooks/useFetch";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -13,13 +12,12 @@ const CreateFlat = () => {
   const navigate = useNavigate();
   const { validToken } = useAuth();
   const { postData, response, postError } = useCreate("/api/v1/flat/create-flat");
-  const { data: userData } = useFetch("/api/v1/user/get-all-user", validToken);
   const { errors, setErrors, validate } = useFormValidation();
   const [form, setForm] = useState({
     flatNumber: "",
     floor: "",
     flatType: "",
-    flatOwner: "",
+    block: "",
     status: "Approved",
   });
 
@@ -33,6 +31,7 @@ const CreateFlat = () => {
     flatNumber: { required: true, label: "Flat Number" },
     floor: { required: true, label: "Floor" },
     flatType: { required: true, label: "Flat Type" },
+    block: { required: true, label: "Block" },
   };
 
   const handleSubmit = async (e) => {
@@ -87,6 +86,15 @@ const CreateFlat = () => {
         error={errors.floor}
         width="col-md-6"
       />
+      <Input
+        label="Block"
+        name="block"
+        value={form.block}
+        onChange={handleChange}
+        required
+        error={errors.block}
+        width="col-md-6"
+      />
       <SingleSelect
         label="Flat Type"
         name="flatType"
@@ -97,16 +105,6 @@ const CreateFlat = () => {
         optionKey="flatType"
         required
         error={errors.flatType}
-        width="col-md-6"
-      />
-      <SingleSelect
-        label="Flat Owner"
-        name="flatOwner"
-        value={form.flatOwner}
-        onChange={handleChange}
-        options={userData?.data || []}
-        optionValue="fullName"
-        optionKey="_id"
         width="col-md-6"
       />
     </FormWrapper>

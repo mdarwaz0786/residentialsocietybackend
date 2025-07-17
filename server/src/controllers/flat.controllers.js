@@ -7,11 +7,13 @@ import formatApiResponse from "../helpers/formatApiResponse.js";
 
 // Create Flat
 export const createFlat = asyncHandler(async (req, res) => {
+  const createdBy = req.user?._id;
+
   const {
     flatNumber,
     floor,
     flatType,
-    flatOwner,
+    block,
     status,
   } = req.body;
 
@@ -19,8 +21,9 @@ export const createFlat = asyncHandler(async (req, res) => {
     flatNumber,
     floor,
     flatType,
-    flatOwner,
+    block,
     status,
+    createdBy,
   });
 
   res.status(201).json({ success: true, data: flat });
@@ -28,8 +31,8 @@ export const createFlat = asyncHandler(async (req, res) => {
 
 // Get All Flats
 export const getFlats = asyncHandler(async (req, res) => {
-  const searchableFields = ["flatNumber", "floor", "flatType"];
-  const filterableFields = ["flatOwner"];
+  const searchableFields = ["flatNumber", "floor", "flatType", "block"];
+  const filterableFields = ["flatType", "block"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
     softDelete: true,
@@ -39,8 +42,8 @@ export const getFlats = asyncHandler(async (req, res) => {
     defaultLimit: 10,
   });
 
-  const flats = await Flat.find(query)
-    .populate("flatOwner")
+  const flats = await Flat
+    .find(query)
     .sort(sort)
     .skip(skip)
     .limit(limit);
@@ -58,9 +61,7 @@ export const getFlat = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid flat ID.");
   };
 
-  const flat = await Flat
-    .findOne({ _id: id, isDeleted: false })
-    .populate("flatOwner")
+  const flat = await Flat.findOne({ _id: id, isDeleted: false });
 
   if (!flat) {
     throw new ApiError(404, "Flat not found.");

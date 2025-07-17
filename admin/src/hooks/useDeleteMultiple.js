@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 
 function useDeleteMultiple(apiUrl) {
-  const [response, setResponse] = useState(null);
+  const [deleteResponse, setDeleteResponse] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
 
@@ -19,7 +19,7 @@ function useDeleteMultiple(apiUrl) {
       };
       const res = await axios.delete(apiUrl, config);
       if (res?.data?.success) {
-        setResponse(res?.data);
+        setDeleteResponse(res?.data);
       };
     } catch (error) {
       setDeleteError(error?.response?.data?.message);
@@ -28,7 +28,7 @@ function useDeleteMultiple(apiUrl) {
     };
   };
 
-  return { deleteMultiple, response, isDeleting, deleteError };
+  return { deleteMultiple, deleteResponse, isDeleting, deleteError };
 };
 
 export default useDeleteMultiple;

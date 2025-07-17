@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import asyncHandler from "../helpers/asynsHandler.js";
 import ApiError from "../helpers/apiError.js";
 import generateToken from "../helpers/generateToken.js";
+import generateMemberId from "../helpers/generateMemberId.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
   const {
@@ -11,7 +12,6 @@ export const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     role,
-    memberId,
   } = req.body;
 
   const profilePhoto = req.files?.profilePhoto?.[0];
@@ -30,6 +30,8 @@ export const registerUser = asyncHandler(async (req, res) => {
   if (profilePhoto) {
     profilePhotoBase64 = `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`;
   };
+
+  const memberId = await generateMemberId("ADM");
 
   const newUser = await User.create({
     fullName,
@@ -67,18 +69,6 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid password.");
   };
 
-  if (user.status != "Approved") {
-    throw new ApiError(401, "Your account is not approved.");
-  };
-
-  if (user.isActive === false) {
-    throw new ApiError(401, "Your account is deactivated.");
-  };
-
-  if (user.isDeleted === true) {
-    throw new ApiError(401, "Your account is deleted.");
-  };
-
   const token = generateToken(user._id);
 
   res.status(200).json({ success: true, message: "Login successful.", token, user });
@@ -87,7 +77,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 // Logged in user
 export const loggedInUser = asyncHandler(async (req, res) => {
   const user = await User
-    .findOne({ _id: req.user?._id, isDeleted: false, isActive: true, status: "Approved" })
+    .findOne({ _id: req.user?._id })
     .populate("role")
     .exec();
 

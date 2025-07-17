@@ -6,6 +6,7 @@ function useFetchData(apiUrl, token = "", initialParams = {}) {
   const [params, setParams] = useState(initialParams);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reloadFlag, setReloadFlag] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +31,7 @@ function useFetchData(apiUrl, token = "", initialParams = {}) {
     };
 
     fetchData();
-  }, [apiUrl, token, params]);
+  }, [apiUrl, token, params, reloadFlag]);
 
   const updateParams = (newParams) => {
     setParams((prev) => ({
@@ -45,7 +46,7 @@ function useFetchData(apiUrl, token = "", initialParams = {}) {
     error,
     params,
     setParams: updateParams,
-    refetch: () => setParams((prev) => ({ ...prev })),
+    refetch: () => setReloadFlag(prev => !prev),
   };
 };
 

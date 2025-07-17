@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 
 function useDelete() {
-  const [response, setResponse] = useState(null);
+  const [deleteResponse, setDeleteResponse] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
 
@@ -16,8 +16,8 @@ function useDelete() {
         },
       };
       const res = await axios.delete(apiUrl, config);
-      if (res?.data?.sucess) {
-        setResponse(res.data);
+      if (res?.data?.success) {
+        setDeleteResponse(res?.data);
       };
     } catch (error) {
       setDeleteError(error?.response?.data?.message);
@@ -26,7 +26,7 @@ function useDelete() {
     };
   };
 
-  return { deleteData, response, isDeleting, deleteError };
+  return { deleteData, deleteResponse, isDeleting, deleteError };
 };
 
 export default useDelete;

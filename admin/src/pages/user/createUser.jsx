@@ -21,7 +21,6 @@ const CreateUser = () => {
     mobile: "",
     email: "",
     password: "",
-    memberId: "",
     role: "",
     profilePhoto: null,
   });
@@ -42,7 +41,6 @@ const CreateUser = () => {
     mobile: { required: true, label: "Mobile" },
     email: { required: true, label: "Email" },
     password: { required: true, label: "Password" },
-    memberId: { required: true, label: "Member ID" },
     role: { required: true, label: "Role" },
     profilePhoto: { required: true, label: "Profile Photo" },
   };
@@ -110,15 +108,6 @@ const CreateUser = () => {
         onChange={handleChange}
         required
         error={errors.password}
-        width="col-md-6"
-      />
-      <Input
-        label="Member ID"
-        name="memberId"
-        value={form.memberId}
-        onChange={handleChange}
-        required
-        error={errors.memberId}
         width="col-md-6"
       />
       <SingleSelect

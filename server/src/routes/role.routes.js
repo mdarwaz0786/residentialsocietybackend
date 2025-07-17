@@ -4,7 +4,7 @@ import isLoggedIn from "../middlewares/auth.middleware.js";
 import checkPermission from "../middlewares/checkPermission.middleware.js";
 const router = express.Router();
 
-router.post("/create-role", isLoggedIn, checkPermission("role", "create"), createRole);
+router.post("/create-role", createRole);
 router.get("/get-all-role", isLoggedIn, checkPermission("role", "read"), getRoles);
 router.get("/get-single-role/:id", isLoggedIn, checkPermission("role", "read"), getRole);
 router.put("/update-role/:id", isLoggedIn, checkPermission("role", "update"), updateRole);

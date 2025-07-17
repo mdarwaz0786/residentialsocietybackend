@@ -7,12 +7,13 @@ import PageSizeSelector from '../../components/Table/PageSizeSelector';
 import useDelete from '../../hooks/useDelete';
 import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Flat = () => {
   const { validToken } = useAuth();
   const fetchDataUrl = "/api/v1/flat/get-all-flat";
   const singleDeleteUrl = "/api/v1/flat/delete-single-flat";
-  const { deleteData } = useDelete();
+  const { deleteData, deleteResponse, deleteError } = useDelete();
 
   const {
     data,
@@ -39,9 +40,20 @@ const Flat = () => {
 
   const handleDelete = async (id) => {
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
-    toast.success("Deleted successful");
-    refetch();
   };
+
+  useEffect(() => {
+    if (deleteResponse?.success) {
+      toast.success("Flat Deleted");
+      refetch();
+    };
+  }, [deleteResponse, refetch]);
+
+  useEffect(() => {
+    if (deleteError) {
+      toast.error(deleteError);
+    };
+  }, [deleteError]);
 
   const flats = data?.data || [];
   const total = data?.total || 0;
@@ -61,7 +73,7 @@ const Flat = () => {
             <th>Flat Number</th>
             <th>Flat Type</th>
             <th>Floor</th>
-            <th>Flat Owner</th>
+            <th>Block</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -75,7 +87,7 @@ const Flat = () => {
                   <td>{item?.flatNumber}</td>
                   <td>{item?.flatType}</td>
                   <td>{item?.floor}</td>
-                  <td>{item?.flatOwner?.fullName}</td>
+                  <td>{item?.block}</td>
                   <td>
                     <Link to={`/flat-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
                     <Link to={`/update-flat/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
@@ -85,7 +97,7 @@ const Flat = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center">
+                <td colSpan="7" className="text-center">
                   No Data.
                 </td>
               </tr>

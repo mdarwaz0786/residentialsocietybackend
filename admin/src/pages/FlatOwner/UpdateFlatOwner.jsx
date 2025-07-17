@@ -4,17 +4,19 @@ import FormWrapper from "../../components/form/FormWrapper";
 import Input from "../../components/Input/Input";
 import SingleImage from "../../components/Input/SingleImage";
 import useFetch from "../../hooks/useFetch";
-import useUpdate from "../../hooks/useUpdate";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
 import useFormValidation from "../../hooks/useFormValidation";
+import SingleSelect from "../../components/Input/SingleSelect";
+import usePatch from "../../hooks/usePatch";
 
 const UpdateFlatOwner = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { validToken } = useAuth();
   const { data } = useFetch(`/api/v1/flatOwner/get-single-flatOwner/${id}`, validToken);
-  const { updateData, response, updateError } = useUpdate(`/api/v1/flatOwner/update-flatOwner/${id}`);
+  const { data: flatData } = useFetch("/api/v1/flat/get-all-flat", validToken);
+  const { updateData, response, updateError } = usePatch(`/api/v1/flatOwner/update-flatOwner/${id}`);
   const { errors, setErrors, validate } = useFormValidation();
 
   const [form, setForm] = useState({
@@ -22,6 +24,7 @@ const UpdateFlatOwner = () => {
     mobile: "",
     email: "",
     password: "",
+    flat: "",
     currentAddress: "",
     permanentAddress: "",
     profilePhoto: null,
@@ -32,15 +35,16 @@ const UpdateFlatOwner = () => {
 
   useEffect(() => {
     if (data?.data) {
-      const { userId, currentAddress, permanentAddress, aadharCard, allotment, vehicleRC } = data.data;
+      const { fullName, mobile, email, flat, currentAddress, permanentAddress, profilePhoto, aadharCard, allotment, vehicleRC } = data.data;
       setForm({
-        fullName: userId.fullName || "",
-        mobile: userId.mobile || "",
-        email: userId.email || "",
+        fullName: fullName,
+        mobile: mobile,
+        email: email,
+        flat: flat?._id,
         password: "",
-        currentAddress: currentAddress || "",
-        permanentAddress: permanentAddress || "",
-        profilePhoto: userId.profilePhoto,
+        currentAddress: currentAddress,
+        permanentAddress: permanentAddress,
+        profilePhoto: profilePhoto,
         aadharCard: aadharCard,
         allotment: allotment,
         vehicleRC: vehicleRC,
@@ -63,6 +67,7 @@ const UpdateFlatOwner = () => {
     fullName: { required: true, label: "Full Name" },
     mobile: { required: true, label: "Mobile" },
     email: { required: true, label: "Email" },
+    flat: { required: true, label: "Email" },
     currentAddress: { required: true, label: "Current Address" },
     permanentAddress: { required: true, label: "Permanent Address" },
     profilePhoto: { required: true, label: "Profile Photo" },
@@ -113,7 +118,7 @@ const UpdateFlatOwner = () => {
         onChange={handleChange}
         required
         error={errors.fullName}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Mobile"
@@ -122,7 +127,7 @@ const UpdateFlatOwner = () => {
         onChange={handleChange}
         required
         error={errors.mobile}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Email"
@@ -132,7 +137,7 @@ const UpdateFlatOwner = () => {
         onChange={handleChange}
         required
         error={errors.email}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Password"
@@ -142,6 +147,18 @@ const UpdateFlatOwner = () => {
         onChange={handleChange}
         required
         error={errors.password}
+        width="col-md-6"
+      />
+      <SingleSelect
+        label="Flat"
+        name="flat"
+        value={form.flat}
+        onChange={handleChange}
+        options={flatData?.data || []}
+        optionValue="flatNumber"
+        optionKey="_id"
+        required
+        error={errors.flat}
         width="col-md-6"
       />
       <Input

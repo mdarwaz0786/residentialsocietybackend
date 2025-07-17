@@ -14,28 +14,27 @@ const UpdateFlat = () => {
   const navigate = useNavigate();
   const { validToken } = useAuth();
   const { data: flatData } = useFetch(`/api/v1/flat/get-single-flat/${id}`, validToken);
-  const { data: userData } = useFetch("/api/v1/user/get-all-user", validToken);
   const { updateData, response, updateError } = useUpdate(`/api/v1/flat/update-flat/${id}`);
   const { errors, setErrors, validate } = useFormValidation();
   const [form, setForm] = useState({
     flatNumber: "",
     floor: "",
     flatType: "",
-    flatOwner: "",
+    block: "",
     status: "Approved",
   });
 
   useEffect(() => {
     if (flatData?.data) {
-      const { flatNumber, floor, flatType, flatOwner, status } = flatData.data;
+      const { flatNumber, floor, flatType, block } = flatData.data;
       setForm({
         flatNumber,
         floor,
         flatType,
-        flatOwner: flatOwner?._id || "",
-        status: status || "Approved",
+        block,
+        status: "Approved",
       });
-    }
+    };
   }, [flatData]);
 
   const handleChange = (e) => {
@@ -48,6 +47,7 @@ const UpdateFlat = () => {
     flatNumber: { required: true, label: "Flat Number" },
     floor: { required: true, label: "Floor" },
     flatType: { required: true, label: "Flat Type" },
+    block: { required: true, label: "Block" },
   };
 
   const handleSubmit = async (e) => {
@@ -98,6 +98,15 @@ const UpdateFlat = () => {
         error={errors.floor}
         width="col-md-6"
       />
+      <Input
+        label="Block"
+        name="block"
+        value={form.block}
+        onChange={handleChange}
+        required
+        error={errors.block}
+        width="col-md-6"
+      />
       <SingleSelect
         label="Flat Type"
         name="flatType"
@@ -108,16 +117,6 @@ const UpdateFlat = () => {
         optionKey="flatType"
         required
         error={errors.flatType}
-        width="col-md-6"
-      />
-      <SingleSelect
-        label="Flat Owner"
-        name="flatOwner"
-        value={form.flatOwner}
-        onChange={handleChange}
-        options={userData?.data || []}
-        optionValue="fullName"
-        optionKey="_id"
         width="col-md-6"
       />
     </FormWrapper>

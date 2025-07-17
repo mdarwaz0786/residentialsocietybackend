@@ -50,8 +50,8 @@ const FlatDetail = () => {
             <span>{" "}{flat?.floor}</span>
           </div>
           <div className="col-md-6 mb-2">
-            <label className="fw-bold">Flat Owner:</label>
-            <span>{" "}{flat?.flatOwner?.fullName}</span>
+            <label className="fw-bold">Block:</label>
+            <span>{" "}{flat?.block}</span>
           </div>
         </div>
       </div>

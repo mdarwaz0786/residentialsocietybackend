@@ -7,24 +7,27 @@ import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import useFormValidation from "../../hooks/useFormValidation";
+import useFetch from "../../hooks/useFetch";
+import SingleSelect from "../../components/Input/SingleSelect";
 
 const CreateFlatOwner = () => {
   const navigate = useNavigate();
   const { validToken } = useAuth();
   const { postData, response, postError } = useCreate("/api/v1/flatOwner/create-flatOwner");
+  const { data: flatData } = useFetch("/api/v1/flat/get-all-flat", validToken);
   const { errors, setErrors, validate } = useFormValidation();
   const [form, setForm] = useState({
     fullName: "",
     mobile: "",
     email: "",
     password: "",
+    flat: "",
     currentAddress: "",
     permanentAddress: "",
     profilePhoto: null,
     aadharCard: null,
     allotment: null,
     vehicleRC: null,
-    status: "Approved",
   });
 
   const handleChange = (e) => {
@@ -43,6 +46,7 @@ const CreateFlatOwner = () => {
     mobile: { required: true, label: "Mobile" },
     email: { required: true, label: "Email" },
     password: { required: true, label: "Password" },
+    flat: { required: true, label: "Flat" },
     currentAddress: { required: true, label: "Current Address" },
     permanentAddress: { required: true, label: "Permanent Address" },
     profilePhoto: { required: true, label: "Profile Photo" },
@@ -85,7 +89,7 @@ const CreateFlatOwner = () => {
         onChange={handleChange}
         required
         error={errors.fullName}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Mobile"
@@ -94,7 +98,7 @@ const CreateFlatOwner = () => {
         onChange={handleChange}
         required
         error={errors.mobile}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Email"
@@ -104,7 +108,7 @@ const CreateFlatOwner = () => {
         onChange={handleChange}
         required
         error={errors.email}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Password"
@@ -114,6 +118,18 @@ const CreateFlatOwner = () => {
         onChange={handleChange}
         required
         error={errors.password}
+        width="col-md-6"
+      />
+      <SingleSelect
+        label="Flat"
+        name="flat"
+        value={form.flat}
+        onChange={handleChange}
+        options={flatData?.data || []}
+        optionValue="flatNumber"
+        optionKey="_id"
+        required
+        error={errors.flat}
         width="col-md-6"
       />
       <Input

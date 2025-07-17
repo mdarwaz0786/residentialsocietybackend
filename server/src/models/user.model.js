@@ -2,20 +2,16 @@ import mongoose from "mongoose";
 import validator from "validator";
 
 const userSchema = new mongoose.Schema({
+  profilePhoto: {
+    type: String,
+    required: [true, "Profile photo is required."],
+  },
   fullName: {
     type: String,
     required: [true, "Full name is required."],
     minlength: [3, "Full name must be at least 3 characters long."],
     maxlength: [50, "Full name cannot exceed 50 characters."],
     trim: true,
-    validate: {
-      validator: (value) => validator.matches(value, /^[a-zA-Z\s]+$/),
-      message: "Full name should only contain alphabets and spaces.",
-    },
-  },
-  profilePhoto: {
-    type: String,
-    required: [true, "Profile photo is required."],
   },
   mobile: {
     type: String,
@@ -50,22 +46,13 @@ const userSchema = new mongoose.Schema({
     trim: true,
     unique: [true, "Account already exits with this member id."],
   },
-  status: {
+  profile: {
+    type: mongoose.Schema.Types.ObjectId,
+    refPath: 'profileType'
+  },
+  profileType: {
     type: String,
-    enum: ["Approved", "Pending", "Rejected"],
-    default: "Pending",
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
-  canLogin: {
-    type: Boolean,
-    default: false,
+    enum: ["Admin", "FlatOwner", "Tenant", "SecurityGuard", "MaintenanceStaff"],
   },
 }, { timestamps: true });
 

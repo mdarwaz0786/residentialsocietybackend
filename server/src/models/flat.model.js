@@ -5,7 +5,12 @@ const flatSchema = new mongoose.Schema({
     type: String,
     required: [true, "Flat number is required."],
     trim: true,
-    unique: true,
+    unique: [true, "This flat mumber already exists."]
+  },
+  block: {
+    type: String,
+    required: [true, "Block is required."],
+    trim: true,
   },
   floor: {
     type: String,
@@ -17,10 +22,6 @@ const flatSchema = new mongoose.Schema({
     enum: ["1BHK", "2BHK", "3BHK", "Studio", "Penthouse", "Other"],
     required: [true, "Flat type is required."],
   },
-  flatOwner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "FlatOwner",
-  },
   status: {
     type: String,
     enum: ["Approved", "Pending", "Rejected"],
@@ -29,6 +30,10 @@ const flatSchema = new mongoose.Schema({
   isDeleted: {
     type: Boolean,
     default: false,
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
   },
 }, { timestamps: true });
 
