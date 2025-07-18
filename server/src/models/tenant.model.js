@@ -67,7 +67,6 @@ const tenantPersonSchema = new mongoose.Schema({
   },
   vehicleRC: {
     type: String,
-    required: [true, "Vehicle RC is required."],
   },
   fromDate: {
     type: Date,
@@ -76,14 +75,14 @@ const tenantPersonSchema = new mongoose.Schema({
   toDate: {
     type: Date,
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
   status: {
     type: String,
     enum: ["Approved", "Pending", "Rejected"],
     default: "Pending",
-  },
-  isActive: {
-    type: Boolean,
-    default: true,
   },
   canLogin: {
     type: Boolean,

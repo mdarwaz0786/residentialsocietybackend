@@ -11,6 +11,15 @@ const tenantRegistrationPaymentSchema = new mongoose.Schema({
     ref: 'FlatOwner',
     required: [true, "Flat owner is required."],
   },
+  tenant: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tenant',
+    required: [true, "Tenant is required."],
+  },
+  purpose: {
+    type: String,
+    default: "Tenant Registration",
+  },
   paymentStatus: {
     type: String,
     enum: ["Pending", "Success", "Failed"],
@@ -21,10 +30,18 @@ const tenantRegistrationPaymentSchema = new mongoose.Schema({
   },
   transactionId: {
     type: String,
+    unique: true,
+    trim: true,
   },
-  purpose: {
-    type: String,
-    default: "Tenant Registration",
+  amount: {
+    type: Number,
+    trim: true,
+  },
+  paymentDate: {
+    type: Date,
+  },
+  paymentGatewayResponse: {
+    type: Object,
   },
 }, { timestamps: true });
 

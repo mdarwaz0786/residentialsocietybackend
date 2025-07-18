@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import validator from "validator";
 
-const securityGuardSchema = new mongoose.Schema({
+const adminSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    required: [true, "User is required."]
   },
   profilePhoto: {
     type: String,
@@ -40,29 +41,6 @@ const securityGuardSchema = new mongoose.Schema({
     required: [true, "Member ID is required."],
     trim: true,
   },
-  currentAddress: {
-    type: String,
-    required: [true, "Current address is required."],
-  },
-  permanentAddress: {
-    type: String,
-    required: [true, "Permanent address is required."],
-  },
-  aadharCard: {
-    type: String,
-    required: [true, "Aadhar card is required."],
-  },
-  gateNumber: {
-    type: Number,
-    requured: [true, "Gate number is required."]
-  },
-  fromDate: {
-    type: Date,
-    default: Date.now,
-  },
-  toDate: {
-    type: Date,
-  },
   isActive: {
     type: Boolean,
     default: true,
@@ -80,16 +58,8 @@ const securityGuardSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-  updatedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
 }, { timestamps: true });
 
-const SecurityGuard = mongoose.model("SecurityGuard", securityGuardSchema);
+const Admin = mongoose.model("Admin", adminSchema);
 
-export default SecurityGuard;
+export default Admin;

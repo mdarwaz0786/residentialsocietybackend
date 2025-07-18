@@ -1,18 +1,69 @@
 import SearchBar from '../../components/Table/SearchBar'
 import Pagination from '../../components/Table/Pagination';
 import TableWrapper from '../../components/Table/TableWrapper';
+import useFetchData from '../../hooks/useFetchData';
+import { useAuth } from '../../context/auth.context';
 import PageSizeSelector from '../../components/Table/PageSizeSelector';
+import useDelete from '../../hooks/useDelete';
+import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Tenant = () => {
-  const total = 0;
-  const data = [];
+  const { validToken } = useAuth();
+  const fetchDataUrl = "/api/v1/tenant/get-all-tenant";
+  const singleDeleteUrl = "/api/v1/tenantr/delete-single-tenant";
+  const { deleteData, response, deleteError } = useDelete();
+
+  const {
+    data,
+    params,
+    setParams,
+    refetch,
+  } = useFetchData(fetchDataUrl, validToken, {
+    page: 1,
+    limit: 10,
+    isDeleted: false,
+    search: "",
+  });
+
+  const handleSearch = (value) => {
+    setParams({ search: value, page: 1 });
+  };
+
+  const handlePageChange = (newPage) => {
+    setParams({ page: newPage });
+  };
+
+  const handlePageSizeChange = (newLimit) => {
+    setParams({ limit: newLimit, page: 1 });
+  };
+
+  const handleDelete = async (id) => {
+    await deleteData(`${singleDeleteUrl}/${id}`, validToken);
+  };
+
+  useEffect(() => {
+    if (response?.success) {
+      toast.success("Deleted successful");
+      refetch();
+    };
+  }, [response, refetch]);
+
+  useEffect(() => {
+    if (deleteError) {
+      toast.error(deleteError);
+    };
+  }, [deleteError]);
+
+  const tenants = data?.data || [];
+  const total = data?.total || 0;
 
   return (
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5>All Tenant<span className="badge bg-secondary ms-2">{total}</span></h5>
-        <SearchBar />
+        <SearchBar value={params.search} onChange={handleSearch} />
       </div>
       <TableWrapper>
         <thead className="table-dark">
@@ -28,19 +79,19 @@ const Tenant = () => {
         </thead>
         <tbody>
           {
-            data?.length > 0 ? (
-              data?.map((item, index) => (
+            tenants?.length > 0 ? (
+              tenants?.map((item, index) => (
                 <tr>
                   <td><input type="checkbox" /></td>
-                  <td>{index + 1 + 1 * 1}</td>
+                  <td>{index + 1 + (params.page - 1) * params.limit}</td>
                   <td>{item?.flat?.flatNumber}</td>
                   <td>{item?.fullName}</td>
                   <td>{item?.mobile}</td>
                   <td>{item?.email}</td>
                   <td>
-                    <Link to="#"><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
-                    <Link to="#"><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
-                    <button className="btn btn-danger btn-sm">Delete</button>
+                    <Link to={`/flat-owner-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
+                    <Link to={`/update-flat-owner/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
+                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>
                 </tr>
               ))
@@ -56,13 +107,15 @@ const Tenant = () => {
       </TableWrapper>
       <div className="d-flex justify-content-between align-items-center mt-3">
         <PageSizeSelector
-          value={10}
+          value={params.limit}
+          onChange={handlePageSizeChange}
           total={total}
         />
         <Pagination
-          page={1}
+          page={params.page}
           total={total}
-          limit={10}
+          limit={params.limit}
+          onPageChange={handlePageChange}
         />
       </div>
     </div>
