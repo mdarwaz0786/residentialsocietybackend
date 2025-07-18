@@ -55,7 +55,7 @@ export const createTenant = asyncHandler(async (req, res) => {
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
-  const memberId = await generateMemberId("TENANT", flatNumber);
+  const memberId = await generateMemberId("TENANT-", flatNumber);
 
   const newUser = await User.create({
     profilePhoto,

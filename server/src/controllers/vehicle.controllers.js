@@ -7,15 +7,14 @@ import formatApiResponse from "../helpers/formatApiResponse.js";
 
 // Create Vehicle
 export const createVehicle = asyncHandler(async (req, res) => {
-  const { vehicleNumber, vehicleType, status, vehicleOwner } = req.body;
+  const { vehicleNumber, vehicleType, } = req.body;
+  const createdBy = req.user?._id;
   const photo = req.files?.vehiclePhoto?.[0];
   const rc = req.files?.vehicleRC?.[0];
 
-  if (vehicleOwner && !mongoose.Types.ObjectId.isValid(vehicleOwner)) {
+  if (createdBy && !mongoose.Types.ObjectId.isValid(createdBy)) {
     throw new ApiError(400, "Invalid Vehicle Owner");
   };
-
-  const vehicleOwnerId = vehicleOwner || req.user._id;
 
   let photoBase64;
   let rcBase64;
@@ -31,10 +30,9 @@ export const createVehicle = asyncHandler(async (req, res) => {
   const vehicle = await Vehicle.create({
     vehicleNumber,
     vehicleType,
-    vehicleOwner: vehicleOwnerId,
     vehiclePhoto: photoBase64,
     vehicleRC: rcBase64,
-    status,
+    createdBy,
   });
 
   res.status(201).json({ success: true, data: vehicle });
@@ -42,8 +40,8 @@ export const createVehicle = asyncHandler(async (req, res) => {
 
 // Get All Vehicles
 export const getVehicles = asyncHandler(async (req, res) => {
-  const searchableFields = ["vehicleNumber"];
-  const filterableFields = ["vehicleType", "status", "vehicleOwner"];
+  const searchableFields = ["vehicleNumber", "vehicleType"];
+  const filterableFields = ["vehicleType", "status"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
     softDelete: true,
@@ -55,7 +53,6 @@ export const getVehicles = asyncHandler(async (req, res) => {
 
   const vehicles = await Vehicle
     .find(query)
-    .populate("vehicleOwner")
     .sort(sort)
     .skip(skip)
     .limit(limit);
@@ -73,7 +70,7 @@ export const getVehicle = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid vehicle ID.");
   };
 
-  const vehicle = await Vehicle.findOne({ _id: id, isDeleted: false }).populate("vehicleOwner");
+  const vehicle = await Vehicle.findOne({ _id: id, isDeleted: false });
 
   if (!vehicle) {
     throw new ApiError(404, "Vehicle not found or has been deleted.");
@@ -85,6 +82,7 @@ export const getVehicle = asyncHandler(async (req, res) => {
 // Update Vehicle
 export const updateVehicle = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const updatedBy = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new ApiError(400, "Invalid vehicle ID.");
@@ -107,6 +105,8 @@ export const updateVehicle = asyncHandler(async (req, res) => {
   if (rc) {
     updates.vehicleRC = `data:${rc.mimetype};base64,${rc.buffer.toString("base64")}`;
   };
+
+  updates.updatedBy = updatedBy;
 
   const updated = await Vehicle.findByIdAndUpdate(id, updates, { new: true });
 

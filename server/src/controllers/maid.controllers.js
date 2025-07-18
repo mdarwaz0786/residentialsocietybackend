@@ -4,26 +4,62 @@ import ApiError from "../helpers/apiError.js";
 import asyncHandler from "../helpers/asynsHandler.js";
 import ApiFeatures from "../helpers/ApiFeatures.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
+import FlatOwner from "../models/flatOwner.model.js";
+import Tenant from "../models/tenant.model.js";
+import generateMemberId from "../helpers/generateMemberId.js";
 
 // Create Maid
 export const createMaid = asyncHandler(async (req, res) => {
-  const { name, mobile, IdType, IdNumber, flat, status } = req.body;
-  const photoFile = req.files?.photo?.[0];
+  const { fullName, mobile } = req.body;
+  const createdBy = req.user?._id;
 
-  let photoBase64 = "";
+  let tenant = await Tenant.findOne({ userId: createdBy }).populate("flat").select("flat");
+  let flatOwner = null;
+  let flat = null;
 
-  if (photoFile) {
-    photoBase64 = `data:${photoFile.mimetype};base64,${photoFile.buffer.toString("base64")}`;
+  if (!tenant) {
+    flatOwner = await FlatOwner.findOne({ userId: createdBy }).populate("flat").select("flat");
+
+    if (!flatOwner) {
+      throw new ApiError(404, "Flat not found.");
+    };
+
+    flat = flatOwner?.flat;
+  } else {
+    flat = tenant?.flat;
   };
 
+  if (!flat) {
+    throw new ApiError(400, "Flat not found.");
+  };
+
+  const flatID = flat?._id;
+  const flatNumber = flat?.flatNumber;
+
+  const photo = req.files?.photo?.[0];
+  const aadharCard = req.files?.aadharCard?.[0];
+
+  let photoBase64 = "";
+  let aadharBase64 = "";
+
+  if (photo) {
+    photoBase64 = `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`;
+  };
+
+  if (aadharCard) {
+    aadharBase64 = `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`;
+  };
+
+  const memberId = await generateMemberId("MAID-", flatNumber);
+
   const maid = await Maid.create({
-    name,
+    fullName,
     mobile,
-    IdType,
-    IdNumber,
-    flat,
+    memberId,
+    flat: flatID,
     photo: photoBase64,
-    status,
+    aadharCard: aadharBase64,
+    createdBy,
   });
 
   res.status(201).json({ success: true, data: maid });
@@ -31,8 +67,8 @@ export const createMaid = asyncHandler(async (req, res) => {
 
 // Get All Maids
 export const getMaids = asyncHandler(async (req, res) => {
-  const searchableFields = ["name", "mobile", "IdNumber"];
-  const filterableFields = ["status", "flat"];
+  const searchableFields = ["name", "mobile", "memberId"];
+  const filterableFields = ["status"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
     softDelete: true,
@@ -42,7 +78,8 @@ export const getMaids = asyncHandler(async (req, res) => {
     defaultLimit: 10,
   });
 
-  const maids = await Maid.find(query)
+  const maids = await Maid
+    .find(query)
     .populate("flat")
     .sort(sort)
     .skip(skip)
@@ -73,6 +110,7 @@ export const getMaid = asyncHandler(async (req, res) => {
 //  Update Maid
 export const updateMaid = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const updatedBy = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new ApiError(400, "Invalid maid ID.");
@@ -85,11 +123,18 @@ export const updateMaid = asyncHandler(async (req, res) => {
   };
 
   const updates = { ...req.body };
-  const photoFile = req.files?.photo?.[0];
+  const photo = req.files?.photo?.[0];
+  const aadharCard = req.files?.aadharCard?.[0];
 
-  if (photoFile) {
-    updates.photo = `data:${photoFile.mimetype};base64,${photoFile.buffer.toString("base64")}`;
+  if (photo) {
+    updates.photo = `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`;
   };
+
+  if (aadharCard) {
+    updates.aadharCard = `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`;
+  };
+
+  updates.updatedBy = updatedBy;
 
   const updatedMaid = await Maid.findByIdAndUpdate(id, updates, { new: true });
 

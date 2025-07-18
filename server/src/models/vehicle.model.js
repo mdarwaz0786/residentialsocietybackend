@@ -9,7 +9,7 @@ const vehicleSchema = new mongoose.Schema({
   },
   vehicleType: {
     type: String,
-    enum: ["Car", "Bike", "Scooter", "Others"],
+    enum: ["Car", "Bike", "Scooter", "Bicycle", "Others"],
     required: [true, "Vehicle type is required."],
   },
   vehiclePhoto: {
@@ -20,11 +20,6 @@ const vehicleSchema = new mongoose.Schema({
     type: String,
     required: [true, "Vehicle RC is required."],
   },
-  vehicleOwner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: [true, "Vehicle owner is required."],
-  },
   status: {
     type: String,
     enum: ["Approved", "Pending", "Rejected"],
@@ -33,6 +28,14 @@ const vehicleSchema = new mongoose.Schema({
   isDeleted: {
     type: Boolean,
     default: false,
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  updatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
   },
 }, { timestamps: true });
 

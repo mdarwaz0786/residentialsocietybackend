@@ -9,7 +9,7 @@ const router = express.Router();
 router.post("/create-vehicle", isLoggedIn, checkPermission("vehicle", "create"), upload.fields([{ name: "vehiclePhoto", maxCount: 1 }, { name: "vehicleRC", maxCount: 1 }]), validateFileSize, createVehicle);
 router.get("/get-all-vehicle", isLoggedIn, checkPermission("vehicle", "read"), getVehicles);
 router.get("/get-single-vehicle/:id", isLoggedIn, checkPermission("vehicle", "read"), getVehicle);
-router.put("/update-vehicle/:id", isLoggedIn, checkPermission("vehicle", "update"), upload.fields([{ name: "vehiclePhoto", maxCount: 1 }, { name: "vehicleRC", maxCount: 1 }]), validateFileSize, updateVehicle);
+router.patch("/update-vehicle/:id", isLoggedIn, checkPermission("vehicle", "update"), upload.fields([{ name: "vehiclePhoto", maxCount: 1 }, { name: "vehicleRC", maxCount: 1 }]), validateFileSize, updateVehicle);
 router.delete("/delete-single-vehicle/:id", isLoggedIn, checkPermission("vehicle", "delete"), softDeleteVehicle);
 router.patch("/delete-multiple-vehicle", isLoggedIn, checkPermission("vehicle", "delete"), softDeleteVehicles);
 
