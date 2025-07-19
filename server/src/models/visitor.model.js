@@ -32,6 +32,10 @@ const visitorSchema = new mongoose.Schema({
     type: String,
     required: [true, "Purpose is required."],
   },
+  visitorId: {
+    type: String,
+    required: [true, "Visitor ID is required."],
+  },
   status: {
     type: String,
     enum: ["Approved", "Pending", "Rejected"],

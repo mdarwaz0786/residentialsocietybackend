@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import User from "../models/user.model.js";
 import FlatOwner from "../models/flatOwner.model.js";
 import Role from "../models/role.model.js";
+import Flat from "../models/flat.model.js";
 import asyncHandler from "../helpers/asynsHandler.js";
 import ApiError from "../helpers/apiError.js";
 import generateMemberId from "../helpers/generateMemberId.js";
@@ -22,6 +23,12 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
     permanentAddress,
     flat,
   } = req.body;
+
+  const ownerFlat = await Flat.findById(flat);
+
+  if (!ownerFlat) {
+    throw new ApiError(404, "Flat not found.");
+  };
 
   const flatOwnerRole = await Role.findOne({ roleName: "Flat Owner", isDeleted: false });
 
@@ -64,7 +71,8 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  const memberId = await generateMemberId("FOWN");
+  const flatNumber = ownerFlat?.flatNumber;
+  const memberId = await generateMemberId("FOWN-", flatNumber);
 
   const newUser = await User.create({
     profilePhoto: profilePhotoBase64,

@@ -4,21 +4,16 @@ import TableWrapper from '../../components/Table/TableWrapper';
 import useFetchData from '../../hooks/useFetchData';
 import { useAuth } from '../../context/auth.context';
 import PageSizeSelector from '../../components/Table/PageSizeSelector';
-import useDelete from '../../hooks/useDelete';
-import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
 
 const User = () => {
   const { validToken } = useAuth();
   const fetchDataUrl = "/api/v1/user/get-all-user";
-  const singleDeleteUrl = "/api/v1/user/delete-single-user";
-  const { deleteData } = useDelete();
 
   const {
     data,
     params,
     setParams,
-    refetch,
   } = useFetchData(fetchDataUrl, validToken, {
     page: 1,
     limit: 10,
@@ -35,12 +30,6 @@ const User = () => {
 
   const handlePageSizeChange = (newLimit) => {
     setParams({ limit: newLimit, page: 1 });
-  };
-
-  const handleDelete = async (id) => {
-    await deleteData(`${singleDeleteUrl}/${id}`, validToken);
-    toast.success("Deleted successful");
-    refetch();
   };
 
   const users = data?.data || [];
@@ -79,7 +68,6 @@ const User = () => {
                   <td>
                     <Link to={`/user-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
                     <Link to={`/update-user/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>
                 </tr>
               ))

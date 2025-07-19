@@ -21,6 +21,7 @@ const UpdateSecurityGuard = () => {
     fullName: "",
     mobile: "",
     email: "",
+    gateNumber: "",
     password: "",
     currentAddress: "",
     permanentAddress: "",
@@ -30,15 +31,16 @@ const UpdateSecurityGuard = () => {
 
   useEffect(() => {
     if (data?.data) {
-      const { userId, currentAddress, permanentAddress, aadharCard, } = data.data;
+      const { fullName, mobile, email, gateNumber, currentAddress, permanentAddress, aadharCard, profilePhoto } = data.data;
       setForm({
-        fullName: userId.fullName || "",
-        mobile: userId.mobile || "",
-        email: userId.email || "",
+        fullName: fullName,
+        mobile: mobile,
+        email: email,
+        gateNumber: gateNumber,
         password: "",
-        currentAddress: currentAddress || "",
-        permanentAddress: permanentAddress || "",
-        profilePhoto: userId.profilePhoto,
+        currentAddress: currentAddress,
+        permanentAddress: permanentAddress,
+        profilePhoto: profilePhoto,
         aadharCard: aadharCard,
       });
     };
@@ -59,6 +61,7 @@ const UpdateSecurityGuard = () => {
     fullName: { required: true, label: "Full Name" },
     mobile: { required: true, label: "Mobile" },
     email: { required: true, label: "Email" },
+    gateNumber: { required: true, label: "Gate Number" },
     currentAddress: { required: true, label: "Current Address" },
     permanentAddress: { required: true, label: "Permanent Address" },
     profilePhoto: { required: true, label: "Profile Photo" },
@@ -105,7 +108,7 @@ const UpdateSecurityGuard = () => {
         onChange={handleChange}
         required
         error={errors.fullName}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Mobile"
@@ -114,7 +117,7 @@ const UpdateSecurityGuard = () => {
         onChange={handleChange}
         required
         error={errors.mobile}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Email"
@@ -124,6 +127,16 @@ const UpdateSecurityGuard = () => {
         onChange={handleChange}
         required
         error={errors.email}
+        width="col-md-4"
+      />
+      <Input
+        label="Gate Number"
+        name="gateNumber"
+        type="text"
+        value={form.gateNumber}
+        onChange={handleChange}
+        required
+        error={errors.gateNumber}
         width="col-md-6"
       />
       <Input

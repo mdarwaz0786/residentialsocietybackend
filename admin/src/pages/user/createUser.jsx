@@ -128,7 +128,7 @@ const CreateUser = () => {
         onChange={handleImageChange}
         required
         error={errors.profilePhoto}
-        width="col-md-12"
+        width="col-md-6"
       />
     </FormWrapper>
   );

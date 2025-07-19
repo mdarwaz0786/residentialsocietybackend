@@ -7,6 +7,7 @@ import formatApiResponse from "../helpers/formatApiResponse.js";
 import FlatOwner from "../models/flatOwner.model.js";
 import Tenant from "../models/tenant.model.js";
 import Role from "../models/role.model.js";
+import generateVisitorId from "../helpers/generateVisitorId.js";
 
 // Create Visitor
 export const createVisitor = asyncHandler(async (req, res) => {
@@ -57,6 +58,8 @@ export const createVisitor = asyncHandler(async (req, res) => {
     photoBase64 = `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`;
   };
 
+  const visitorId = await generateVisitorId("VIS-");
+
   const maid = await Visitor.create({
     fullName,
     mobile,
@@ -66,6 +69,7 @@ export const createVisitor = asyncHandler(async (req, res) => {
     date,
     time,
     purpose,
+    visitorId,
   });
 
   res.status(201).json({ success: true, data: maid });

@@ -30,15 +30,15 @@ const UpdateMaintenanceStaff = () => {
 
   useEffect(() => {
     if (data?.data) {
-      const { userId, currentAddress, permanentAddress, aadharCard, } = data.data;
+      const { fullName, email, mobile, profilePhoto, aadharCard, currentAddress, permanentAddress, } = data.data;
       setForm({
-        fullName: userId.fullName || "",
-        mobile: userId.mobile || "",
-        email: userId.email || "",
+        fullName: fullName,
+        mobile: mobile,
+        email: email,
         password: "",
-        currentAddress: currentAddress || "",
-        permanentAddress: permanentAddress || "",
-        profilePhoto: userId.profilePhoto,
+        currentAddress: currentAddress,
+        permanentAddress: permanentAddress,
+        profilePhoto: profilePhoto,
         aadharCard: aadharCard,
       });
     };

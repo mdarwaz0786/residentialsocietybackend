@@ -44,7 +44,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Member ID is required."],
     trim: true,
-    unique: [true, "Account already exits with this member id."],
   },
   profile: {
     type: mongoose.Schema.Types.ObjectId,

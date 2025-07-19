@@ -19,6 +19,7 @@ const CreateSecurityGuard = () => {
     email: "",
     password: "",
     currentAddress: "",
+    gateNumber: "",
     permanentAddress: "",
     profilePhoto: null,
     aadharCard: null,
@@ -40,6 +41,7 @@ const CreateSecurityGuard = () => {
     fullName: { required: true, label: "Full Name" },
     mobile: { required: true, label: "Mobile" },
     email: { required: true, label: "Email" },
+    gateNumber: { required: true, label: "Gate Number" },
     password: { required: true, label: "Password" },
     currentAddress: { required: true, label: "Current Address" },
     permanentAddress: { required: true, label: "Permanent Address" },
@@ -81,7 +83,7 @@ const CreateSecurityGuard = () => {
         onChange={handleChange}
         required
         error={errors.fullName}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Mobile"
@@ -90,7 +92,7 @@ const CreateSecurityGuard = () => {
         onChange={handleChange}
         required
         error={errors.mobile}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Email"
@@ -100,6 +102,16 @@ const CreateSecurityGuard = () => {
         onChange={handleChange}
         required
         error={errors.email}
+        width="col-md-4"
+      />
+      <Input
+        label="Gate Number"
+        name="gateNumber"
+        type="text"
+        value={form.gateNumber}
+        onChange={handleChange}
+        required
+        error={errors.gateNumber}
         width="col-md-6"
       />
       <Input

@@ -6,9 +6,13 @@ import Role from "../models/role.model.js";
 import asyncHandler from "../helpers/asynsHandler.js";
 import ApiError from "../helpers/apiError.js";
 import generateMemberId from "../helpers/generateMemberId.js";
+import ApiFeatures from "../helpers/ApiFeatures.js";
+import formatApiResponse from "../helpers/formatApiResponse.js";
 
 // Create Security Guard
 export const createSecurityGuard = asyncHandler(async (req, res) => {
+  const createdBy = req.user?._id;
+
   const {
     fullName,
     mobile,
@@ -16,7 +20,7 @@ export const createSecurityGuard = asyncHandler(async (req, res) => {
     password,
     currentAddress,
     permanentAddress,
-    status,
+    gateNumber,
   } = req.body;
 
   const role = await Role.findOne({ roleName: "Security Guard", isDeleted: false });
@@ -47,146 +51,63 @@ export const createSecurityGuard = asyncHandler(async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  const memberId = await generateMemberId("SGD");
+  const memberId = await generateMemberId("MTS-");
 
   const newUser = await User.create({
+    profilePhoto: profilePhotoBase64,
+    fullName,
+    mobile,
+    email,
+    password: hashedPassword,
+    role: role?._id,
+    memberId,
+    profileType: "SecurityGuard",
+  });
+
+  const securityGuard = await SecurityGuard.create({
+    userId: newUser?._id,
     fullName,
     profilePhoto: profilePhotoBase64,
     mobile,
     email,
     password: hashedPassword,
-    role: role._id,
+    role: role?._id,
     memberId,
-    status,
-  });
-
-  const securityGuard = await SecurityGuard.create({
-    userId: newUser._id,
     currentAddress,
     permanentAddress,
     aadharCard: aadharCardBase64,
+    gateNumber,
+    createdBy,
   });
+
+  newUser.profile = securityGuard?._id;
+  await newUser.save();
 
   res.status(201).json({ success: true, data: { user: newUser, securityGuard } });
 });
 
 // Get all Security Guards
 export const getSecurityGuards = async (req, res) => {
-  try {
-    const {
-      search,
-      status,
-      isActive,
-      isDeleted,
-      role,
-      page = 1,
-      limit = 10,
-      sortBy = "createdAt",
-      sortOrder = "desc",
-    } = req.query;
+  const searchableFields = ["fullName", "email", "mobile"];
+  const filterableFields = ["status"];
 
-    const matchStage = {};
+  const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
+    softDelete: true,
+    defaultSortBy: "createdAt",
+    defaultOrder: "desc",
+    defaultPage: 1,
+    defaultLimit: 10,
+  });
 
-    if (search) {
-      matchStage.$or = [
-        { currentAddress: { $regex: search, $options: "i" } },
-        { permanentAddress: { $regex: search, $options: "i" } },
-        { "user.fullName": { $regex: search, $options: "i" } },
-        { "user.email": { $regex: search, $options: "i" } },
-        { "user.memberId": { $regex: search, $options: "i" } },
-        { "user.mobile": { $regex: search, $options: "i" } },
-        { "user.role.roleName": { $regex: search, $options: "i" } },
-      ];
-    };
+  const securityGuard = await SecurityGuard
+    .find(query)
+    .sort(sort)
+    .skip(skip)
+    .limit(limit);
 
-    if (status) matchStage["user.status"] = status;
-    if (isActive !== undefined) matchStage["user.isActive"] = isActive === "true";
-    if (isDeleted !== undefined) matchStage["user.isDeleted"] = isDeleted === "true";
-    if (role) matchStage["user.role.roleName"] = role;
+  const total = await SecurityGuard.countDocuments(query);
 
-    const securityGuards = await SecurityGuard.aggregate([
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "user"
-        }
-      },
-      { $unwind: "$user" },
-      {
-        $lookup: {
-          from: "roles",
-          localField: "user.role",
-          foreignField: "_id",
-          as: "user.role"
-        }
-      },
-      {
-        $unwind: {
-          path: "$user.role",
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      { $match: matchStage },
-      {
-        $sort: {
-          [sortBy]: sortOrder === "asc" ? 1 : -1,
-        },
-      },
-      {
-        $skip: (parseInt(page) - 1) * parseInt(limit),
-      },
-      {
-        $limit: parseInt(limit),
-      },
-    ]);
-
-    const totalCount = await SecurityGuard.aggregate([
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "user"
-        }
-      },
-      { $unwind: "$user" },
-      {
-        $lookup: {
-          from: "roles",
-          localField: "user.role",
-          foreignField: "_id",
-          as: "user.role"
-        }
-      },
-      {
-        $unwind: {
-          path: "$user.role",
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      { $match: matchStage },
-      { $count: "total" },
-    ]);
-
-    const total = totalCount[0]?.total || 0;
-    const totalPages = Math.ceil(total / limit);
-
-    return res.status(200).json({
-      success: true,
-      message: "Security guard fetched successfully",
-      data: securityGuards,
-      total,
-      page: parseInt(page),
-      limit: parseInt(limit),
-      totalPages,
-      hasNext: page < totalPages,
-      hasPrev: page > 1,
-    });
-  } catch (err) {
-    return res.status(500).json({ success: false, message: "Server Error" });
-  };
+  res.status(200).json(formatApiResponse({ data: securityGuard, total, page, limit }));
 };
 
 // Get single Security Guard
@@ -197,13 +118,7 @@ export const getSecurityGuard = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid security guard ID.");
   };
 
-  const securityGuard = await SecurityGuard.findById(id).populate({
-    path: "userId",
-    populate: {
-      path: "role",
-      model: "Role",
-    },
-  });
+  const securityGuard = await SecurityGuard.findById(id);
 
   if (!securityGuard) {
     throw new ApiError(404, "Security guard not found.");
@@ -215,6 +130,7 @@ export const getSecurityGuard = asyncHandler(async (req, res) => {
 // Update Security Guard
 export const updateSecurityGuard = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const updatedBy = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new ApiError(400, "Invalid security guard ID.");
@@ -231,10 +147,9 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
     mobile,
     email,
     password,
-    status,
-    isActive,
     currentAddress,
     permanentAddress,
+    gateNumber,
   } = req.body;
 
   const profilePhoto = req?.files?.profilePhoto?.[0];
@@ -253,8 +168,6 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
   if (mobile) userUpdates.mobile = mobile;
   if (email) userUpdates.email = email;
   if (profilePhotoBase64) userUpdates.profilePhoto = profilePhotoBase64;
-  if (status) userUpdates.status = status;
-  if (isActive) userUpdates.isActive = isActive;
   if (password) {
     const salt = await bcrypt.genSalt(10);
     userUpdates.password = await bcrypt.hash(password, salt);
@@ -263,11 +176,16 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(securityGuard.userId._id, userUpdates);
 
   const securityGuardUpdates = {};
+  securityGuardUpdates.updatedBy = updatedBy;
+  if (fullName) securityGuardUpdates.fullName = fullName;
+  if (mobile) securityGuardUpdates.mobile = mobile;
+  if (email) securityGuardUpdates.email = email;
+  if (gateNumber) securityGuardUpdates.gateNumber = gateNumber;
   if (currentAddress) securityGuardUpdates.currentAddress = currentAddress;
   if (permanentAddress) securityGuardUpdates.permanentAddress = permanentAddress;
   if (aadharCardBase64) securityGuardUpdates.aadharCard = aadharCardBase64;
 
-  const updatedSecurityGuard = await SecurityGuard.findByIdAndUpdate(id, securityGuardUpdates, { new: true }).populate("userId");
+  const updatedSecurityGuard = await SecurityGuard.findByIdAndUpdate(id, securityGuardUpdates, { new: true });
 
   res.status(200).json({ success: true, data: updatedSecurityGuard });
 });
@@ -277,54 +195,47 @@ export const softDeleteSecurityGuard = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid security guard ID.");
+    throw new ApiError(400, "Invalid ID.");
   };
 
   const securityGuard = await SecurityGuard.findById(id);
 
   if (!securityGuard) {
-    throw new ApiError(404, "Security guard not found.");
+    throw new ApiError(404, "Security Guard not found.");
   };
 
-  const user = await User.findById(securityGuard.userId);
+  securityGuard.isDeleted = true;
+  await securityGuard.save();
 
-  if (!user) {
-    throw new ApiError(404, "User not found.");
-  };
-
-  user.isDeleted = true;
-  await user.save();
-
-  res.status(200).json({ success: true, message: "Security guard deleted successfully." });
+  res.status(200).json({ success: true, message: "Security Guard deleted successfully." });
 });
 
 // Soft delete multiple Security Guard
-export const softDeleteSecurityGuards = asyncHandler(async (req, res) => {
+export const softDeleteScurityGuards = asyncHandler(async (req, res) => {
   const { ids } = req.body;
 
   if (!Array.isArray(ids) || ids.length === 0) {
-    throw new ApiError(400, "Please provide an array of security guards IDs.");
+    throw new ApiError(400, "Please provide an array of IDs.");
   };
 
   const invalidIds = ids.filter((id) => !mongoose.Types.ObjectId.isValid(id));
 
   if (invalidIds.length > 0) {
-    throw new ApiError(400, `Invalid security guard IDs: ${invalidIds.join(", ")}`);
+    throw new ApiError(400, `Invalid IDs: ${invalidIds.join(", ")}`);
   };
 
-  const securityGuards = await SecurityGuard.find({ _id: { $in: ids } });
+  const securityGuards = await SecurityGuard.find({ _id: { $in: ids } }).lean();
 
   if (securityGuards.length === 0) {
     throw new ApiError(404, "No security guard found for the provided IDs.");
   };
 
-  const userIds = securityGuards.map((owner) => owner.userId).filter(Boolean);
+  const idsToDelete = securityGuards.map((owner) => owner?._id);
 
-  const result = await User.updateMany(
-    { _id: { $in: userIds }, isDeleted: false },
-    { $set: { isDeleted: true } },
+  const result = await SecurityGuard.updateMany(
+    { _id: { $in: idsToDelete }, isDeleted: false },
+    { $set: { isDeleted: true } }
   );
 
   res.status(200).json({ success: true, message: `${result.modifiedCount} security guard deleted successfully.` });
 });
-

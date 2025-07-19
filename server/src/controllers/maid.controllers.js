@@ -6,7 +6,7 @@ import ApiFeatures from "../helpers/ApiFeatures.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
 import FlatOwner from "../models/flatOwner.model.js";
 import Tenant from "../models/tenant.model.js";
-import generateMemberId from "../helpers/generateMemberId.js";
+import generateMaidId from "../helpers/generateMaidId.js";
 
 // Create Maid
 export const createMaid = asyncHandler(async (req, res) => {
@@ -50,7 +50,7 @@ export const createMaid = asyncHandler(async (req, res) => {
     aadharBase64 = `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`;
   };
 
-  const memberId = await generateMemberId("MAID-", flatNumber);
+  const memberId = await generateMaidId("MAID-", flatNumber);
 
   const maid = await Maid.create({
     fullName,
