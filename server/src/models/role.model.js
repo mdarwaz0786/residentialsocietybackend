@@ -71,6 +71,22 @@ const roleSchema = new mongoose.Schema({
       type: PermissionSchema,
       default: () => ({}),
     },
+    payment: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
+    complaint: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
+    event: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
+    notification: {
+      type: PermissionSchema,
+      default: () => ({}),
+    },
   },
   isDeleted: {
     type: Boolean,
