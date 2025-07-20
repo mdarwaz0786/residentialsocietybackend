@@ -8,6 +8,8 @@ import useDelete from '../../hooks/useDelete';
 import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
+import useUpdateStatus from '../../hooks/useUpdateStatus';
+import StatusUpdateForm from '../../components/Form/StatusUpdateForm';
 
 const Maid = () => {
   const { validToken } = useAuth();
@@ -26,6 +28,13 @@ const Maid = () => {
     isDeleted: false,
     search: "",
   });
+
+  const {
+    status,
+    approving,
+    handleStatusChange,
+    updateStatus,
+  } = useUpdateStatus({ token: validToken, refetch });
 
   const handleSearch = (value) => {
     setParams({ search: value, page: 1 });
@@ -70,8 +79,11 @@ const Maid = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
-            <th>Name</th>
+            <th>Profile Photo</th>
+            <th>Full Name</th>
             <th>Mobile</th>
+            <th>Flat</th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -82,18 +94,29 @@ const Maid = () => {
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
+                  <td><img className="profile-photo" src={item?.photo} alt="photo" /></td>
                   <td>{item?.fullName}</td>
                   <td>{item?.mobile}</td>
+                  <td>{item?.flat?.flatNumber}</td>
                   <td>
-                    <Link to={`/maid-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
-                    <Link to={`/update-maid/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item?._id)}>Delete</button>
+                    <StatusUpdateForm
+                      id={item?._id}
+                      currentStatus={item?.status}
+                      status={status}
+                      approving={approving}
+                      onChange={handleStatusChange}
+                      onSubmit={(id) => updateStatus("/api/v1/maid/update-maid", id)}
+                    />
+                  </td>
+                  <td>
+                    <Link to={`/maid-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
+                    <button className="btn btn-danger" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="text-center">
+                <td colSpan="8" className="text-center">
                   No Data.
                 </td>
               </tr>

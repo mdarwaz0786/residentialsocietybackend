@@ -9,7 +9,7 @@ const router = express.Router();
 router.post("/create-securityGuard", isLoggedIn, checkPermission("securityGuard", "create"), upload.fields([{ name: "profilePhoto", maxCount: 1 }, { name: "aadharCard", maxCount: 1 }]), validateFileSize, createSecurityGuard);
 router.get("/get-all-securityGuard", isLoggedIn, checkPermission("securityGuard", "read"), getSecurityGuards);
 router.get("/get-single-securityGuard/:id", isLoggedIn, checkPermission("securityGuard", "read"), getSecurityGuard);
-router.put("/update-securityGuard/:id", isLoggedIn, checkPermission("securityGuard", "update"), upload.fields([{ name: "profilePhoto", maxCount: 1 }, { name: "aadharCard", maxCount: 1 }]), validateFileSize, updateSecurityGuard);
+router.patch("/update-securityGuard/:id", isLoggedIn, checkPermission("securityGuard", "update"), upload.fields([{ name: "profilePhoto", maxCount: 1 }, { name: "aadharCard", maxCount: 1 }]), validateFileSize, updateSecurityGuard);
 router.delete("/delete-single-securityGuard/:id", isLoggedIn, checkPermission("securityGuard", "delete"), softDeleteSecurityGuard);
 router.patch("/delete-multiple-securityGuard", isLoggedIn, checkPermission("securityGuard", "delete"), softDeleteScurityGuards);
 

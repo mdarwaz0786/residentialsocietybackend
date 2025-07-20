@@ -38,6 +38,7 @@ input[type="checkbox"] {
 .table td,
 .table th {
   white-space: nowrap;
+  vertical-align: middle;
 }
 
 .toggleBtn {
@@ -113,4 +114,10 @@ input[type="checkbox"] {
 
 .switch input:checked+.slider::before {
   transform: translateX(24px);
+}
+
+.profile-photo {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
 }

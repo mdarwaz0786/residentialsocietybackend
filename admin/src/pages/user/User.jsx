@@ -39,7 +39,6 @@ const User = () => {
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5>All User<span className="badge bg-secondary ms-2">{total}</span></h5>
-        <Link to="/create-user"><button className="btn btn-primary btn-sm">Add New User</button></Link>
         <SearchBar value={params.search} onChange={handleSearch} />
       </div>
       <TableWrapper>
@@ -66,8 +65,7 @@ const User = () => {
                   <td>{item?.email}</td>
                   <td>{item?.role?.roleName}</td>
                   <td>
-                    <Link to={`/user-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
-                    <Link to={`/update-user/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
+                    <Link to={`/user-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
                   </td>
                 </tr>
               ))

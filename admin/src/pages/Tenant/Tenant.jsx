@@ -8,6 +8,8 @@ import useDelete from '../../hooks/useDelete';
 import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
+import useUpdateStatus from '../../hooks/useUpdateStatus';
+import StatusUpdateForm from '../../components/Form/StatusUpdateForm';
 
 const Tenant = () => {
   const { validToken } = useAuth();
@@ -22,10 +24,17 @@ const Tenant = () => {
     refetch,
   } = useFetchData(fetchDataUrl, validToken, {
     page: 1,
-    limit: 10,
+    limit: 20,
     isDeleted: false,
     search: "",
   });
+
+  const {
+    status,
+    approving,
+    handleStatusChange,
+    updateStatus,
+  } = useUpdateStatus({ token: validToken, refetch });
 
   const handleSearch = (value) => {
     setParams({ search: value, page: 1 });
@@ -70,10 +79,11 @@ const Tenant = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
+            <th>Profile Photo</th>
             <th>Flat</th>
             <th>Name</th>
             <th>Mobile</th>
-            <th>Email</th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -84,20 +94,29 @@ const Tenant = () => {
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
+                  <td><img className="profile-photo" src={item?.profilePhoto} alt="profile-photo" /></td>
                   <td>{item?.flat?.flatNumber}</td>
                   <td>{item?.fullName}</td>
                   <td>{item?.mobile}</td>
-                  <td>{item?.email}</td>
                   <td>
-                    <Link to={`/flat-owner-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
-                    <Link to={`/update-flat-owner/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item?._id)}>Delete</button>
+                    <StatusUpdateForm
+                      id={item?._id}
+                      currentStatus={item?.status}
+                      status={status}
+                      approving={approving}
+                      onChange={handleStatusChange}
+                      onSubmit={(id) => updateStatus("/api/v1/tenant/update-tenant", id)}
+                    />
+                  </td>
+                  <td>
+                    <Link to={`/tenant-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
+                    <button className="btn btn-danger" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="text-center">
+                <td colSpan="8" className="text-center">
                   No Data.
                 </td>
               </tr>

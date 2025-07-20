@@ -5,11 +5,11 @@ import { FaArrowLeft } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { useRef } from "react";
 
-const MaintenanceStaffDetail = () => {
+const TenantDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { validToken } = useAuth();
-  const apiUrl = id ? `/api/v1/maintenanceStaff/get-single-maintenanceStaff/${id}` : null;
+  const apiUrl = id ? `/api/v1/tenant/get-single-tenant/${id}` : null;
 
   const { data } = useFetch(apiUrl, validToken);
   const maintenanceStaff = data?.data || {};
@@ -18,7 +18,7 @@ const MaintenanceStaffDetail = () => {
   const handleDownloadPDF = () => {
     html2pdf(pdfRef.current, {
       margin: 0.5,
-      filename: `${maintenanceStaff?.fullName}_maintenanceStaff.pdf`,
+      filename: `${maintenanceStaff?.fullName}_tenant.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
@@ -57,13 +57,25 @@ const MaintenanceStaffDetail = () => {
             <label className="fw-bold">ID:</label>
             <span>{" "}{maintenanceStaff?.memberId}</span>
           </div>
-          <div className="col-md-6">
-            <label className="fw-bold d-block mb-1 mt-3">Profile Photo:</label>
+          <div className="col-md-6 mt-2">
+            <label className="fw-bold d-block mb-1">Profile Photo:</label>
             <img src={maintenanceStaff?.profilePhoto} alt="profileImage" className="img-thumbnail" style={{ maxHeight: "200px" }} />
           </div>
-          <div className="col-md-6">
+          <div className="col-md-6 mt-2">
             <label className="fw-bold d-block mb-1 mt-3">Aadhar Card:</label>
             <img src={maintenanceStaff?.aadharCard} alt="aadharCard" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+          </div>
+          <div className="col-md-6 mt-3">
+            <label className="fw-bold d-block mb-1 mt-3">Rent Agreement:</label>
+            <img src={maintenanceStaff?.rentAgreement} alt="rentAgreement" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+          </div>
+          <div className="col-md-6 mt-3">
+            <label className="fw-bold d-block mb-1 mt-3">Police Verification:</label>
+            <img src={maintenanceStaff?.policeVerification} alt="policeVerification" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+          </div>
+          <div className="col-md-6 mt-3">
+            <label className="fw-bold d-block mb-1 mt-3">Vehicle RC:</label>
+            <img src={maintenanceStaff?.vehicleRC} alt="vehicleRC" className="img-thumbnail" style={{ maxHeight: "200px" }} />
           </div>
         </div>
       </div>
@@ -71,4 +83,4 @@ const MaintenanceStaffDetail = () => {
   );
 };
 
-export default MaintenanceStaffDetail;
+export default TenantDetail;

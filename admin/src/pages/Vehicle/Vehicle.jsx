@@ -7,6 +7,8 @@ import PageSizeSelector from '../../components/Table/PageSizeSelector';
 import useDelete from '../../hooks/useDelete';
 import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
+import useUpdateStatus from '../../hooks/useUpdateStatus';
+import StatusUpdateForm from '../../components/Form/StatusUpdateForm';
 
 const Vehicle = () => {
   const { validToken } = useAuth();
@@ -24,6 +26,13 @@ const Vehicle = () => {
     limit: 10,
     search: "",
   });
+
+  const {
+    status,
+    approving,
+    handleStatusChange,
+    updateStatus,
+  } = useUpdateStatus({ token: validToken, refetch });
 
   const handleSearch = (value) => {
     setParams({ search: value, page: 1 });
@@ -50,7 +59,7 @@ const Vehicle = () => {
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5>All Vehicle<span className="badge bg-secondary ms-2">{total}</span></h5>
-        <Link to="/create-vehicle"><button className="btn btn-primary btn-sm">Create New Vehicle</button></Link>
+        {/* <Link to="/create-vehicle"><button className="btn btn-primary">Add New Vehicle</button></Link> */}
         <SearchBar value={params.search} onChange={handleSearch} />
       </div>
       <TableWrapper>
@@ -58,8 +67,10 @@ const Vehicle = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
+            <th>Vehicle Photo</th>
             <th>Vehicle Number</th>
-            <th>Vehicle Type</th>
+            <th>Vehicle Owner</th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -70,12 +81,23 @@ const Vehicle = () => {
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
+                  <td><img className="profile-photo" src={item?.vehiclePhoto} alt="vehicle-photo" /></td>
                   <td>{item?.vehicleNumber}</td>
-                  <td>{item?.vehicleType}</td>
+                  <td>{item?.createdBy?.fullName}</td>
                   <td>
-                    <Link to={`/vehicle-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
-                    <Link to={`/update-vehicle/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item?._id)}>Delete</button>
+                    <StatusUpdateForm
+                      id={item?._id}
+                      currentStatus={item?.status}
+                      status={status}
+                      approving={approving}
+                      onChange={handleStatusChange}
+                      onSubmit={(id) => updateStatus("/api/v1/vehicle/update-vehicle", id)}
+                    />
+                  </td>
+                  <td>
+                    <Link to={`/vehicle-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
+                    {/* <Link to={`/update-vehicle/${item?._id}`}><button className="btn btn-primary me-3 actionBtn">Edit</button></Link> */}
+                    <button className="btn btn-danger" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>
                 </tr>
               ))

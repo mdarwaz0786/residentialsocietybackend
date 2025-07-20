@@ -4,17 +4,17 @@ import FormWrapper from "../../components/form/FormWrapper";
 import Input from "../../components/Input/Input";
 import SingleImage from "../../components/Input/SingleImage";
 import useFetch from "../../hooks/useFetch";
-import useUpdate from "../../hooks/useUpdate";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
 import useFormValidation from "../../hooks/useFormValidation";
+import usePatch from "../../hooks/usePatch";
 
 const UpdateSecurityGuard = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { validToken } = useAuth();
   const { data } = useFetch(`/api/v1/securityGuard/get-single-securityGuard/${id}`, validToken);
-  const { updateData, response, updateError } = useUpdate(`/api/v1/securityGuard/update-securityGuard/${id}`);
+  const { updateData, response, updateError } = usePatch(`/api/v1/securityGuard/update-securityGuard/${id}`);
   const { errors, setErrors, validate } = useFormValidation();
 
   const [form, setForm] = useState({

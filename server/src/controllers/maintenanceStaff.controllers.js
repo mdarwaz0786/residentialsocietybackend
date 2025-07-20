@@ -147,6 +147,7 @@ export const updateMaintenanceStaff = asyncHandler(async (req, res) => {
     password,
     currentAddress,
     permanentAddress,
+    status,
   } = req.body;
 
   const profilePhoto = req?.files?.profilePhoto?.[0];
@@ -177,6 +178,7 @@ export const updateMaintenanceStaff = asyncHandler(async (req, res) => {
   if (fullName) maintenanceStaffUpdates.fullName = fullName;
   if (mobile) maintenanceStaffUpdates.mobile = mobile;
   if (email) maintenanceStaffUpdates.email = email;
+  if (status) maintenanceStaffUpdates.status = status;
   if (currentAddress) maintenanceStaffUpdates.currentAddress = currentAddress;
   if (permanentAddress) maintenanceStaffUpdates.permanentAddress = permanentAddress;
   if (aadharCardBase64) maintenanceStaffUpdates.aadharCard = aadharCardBase64;

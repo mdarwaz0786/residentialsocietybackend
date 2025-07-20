@@ -164,6 +164,7 @@ export const updateTenant = asyncHandler(async (req, res) => {
     permanentAddress,
     fromDate,
     toDate,
+    status,
   } = req.body;
 
   const conflictUser = await User.findOne({
@@ -197,7 +198,7 @@ export const updateTenant = asyncHandler(async (req, res) => {
   if (fullName) updates.fullName = fullName;
   if (mobile) updates.mobile = mobile;
   if (email) updates.email = email;
-  if (flat) updates.flat = flat;
+  if (status) updates.status = status;
   if (currentAddress) updates.currentAddress = currentAddress;
   if (permanentAddress) updates.permanentAddress = permanentAddress;
   if (fromDate) updates.fromDate = fromDate;

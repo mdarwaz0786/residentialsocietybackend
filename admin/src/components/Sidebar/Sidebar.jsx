@@ -15,7 +15,6 @@ import {
   FaCar,
   FaBroom,
   FaUserTag,
-  FaUsers,
 } from "react-icons/fa";
 import logo from "../../assets/logo.png";
 import styles from "./Sidebar.module.css";
@@ -136,13 +135,6 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
               <Link to="/role" className={`${styles.navLink} ${activeLink === "Role" ? styles.active : ""}`} onClick={() => handleLinkClick("Role")}>
                 <FaUserTag />
                 <span className={styles.navLabel}>Role</span>
-              </Link>
-            </li>
-
-            <li className={styles.navItem}>
-              <Link to="/user" className={`${styles.navLink} ${activeLink === "User" ? styles.active : ""}`} onClick={() => handleLinkClick("User")}>
-                <FaUsers />
-                <span className={styles.navLabel}>User</span>
               </Link>
             </li>
 

@@ -34,6 +34,9 @@ import Role from './pages/Role/Role';
 import Maid from './pages/Maid/Maid';
 import Tenant from './pages/Tenant/Tenant';
 import Visitor from './pages/Visitor/Visitor';
+import TenantDetail from './pages/Tenant/TenantDetail';
+import VisitorDetail from './pages/Visitor/VisitorDetail';
+import MaidDetail from './pages/Maid/MaidDetail';
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -80,8 +83,11 @@ const App = () => {
             <Route path="maintenance-staff-detail/:id" element={<MaintenanceStaffDetail />} />
             <Route path="role" element={<Role />} />
             <Route path="maid" element={<Maid />} />
+            <Route path="maid-detail/:id" element={<MaidDetail />} />
             <Route path="tenant" element={<Tenant />} />
+            <Route path="tenant-detail/:id" element={<TenantDetail />} />
             <Route path="visitor" element={<Visitor />} />
+            <Route path="visitor-detail/:id" element={<VisitorDetail />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </>

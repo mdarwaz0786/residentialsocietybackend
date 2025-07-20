@@ -18,7 +18,7 @@ const SecurityGuardDetail = () => {
   const handleDownloadPDF = () => {
     html2pdf(pdfRef.current, {
       margin: 0.5,
-      filename: `${securityGuard?.userId?.fullName}_securityGuard.pdf`,
+      filename: `${securityGuard?.fullName}_securityGuard.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
@@ -37,29 +37,29 @@ const SecurityGuardDetail = () => {
 
       <div className="card shadow-sm p-3" ref={pdfRef}>
         <div className="row">
-          <div className="col-md-6 mb-2">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Name:</label>
-            <span>{" "}{securityGuard?.userId?.fullName}</span>
+            <span>{" "}{securityGuard?.fullName}</span>
           </div>
-          <div className="col-md-6 mb-2">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Mobile:</label>
-            <span>{" "}{securityGuard?.userId?.mobile}</span>
+            <span>{" "}{securityGuard?.mobile}</span>
           </div>
-          <div className="col-md-6 mb-2">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Email:</label>
-            <span>{" "}{securityGuard?.userId?.email}</span>
+            <span>{" "}{securityGuard?.email}</span>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label className="fw-bold">Status:</label>
-            <span>{" "}{securityGuard?.userId?.status}</span>
+            <span>{" "}{securityGuard?.status}</span>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label className="fw-bold">ID:</label>
-            <span>{" "}{securityGuard?.userId?.memberId}</span>
+            <span>{" "}{securityGuard?.memberId}</span>
           </div>
           <div className="col-md-6">
-            <label className="fw-bold d-block mb-1">Profile Photo:</label>
-            <img src={securityGuard?.userId?.profilePhoto} alt="Vehicle" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <label className="fw-bold d-block mb-1 mt-3">Profile Photo:</label>
+            <img src={securityGuard?.profilePhoto} alt="Vehicle" className="img-thumbnail" style={{ maxHeight: "200px" }} />
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Aadhar Card:</label>

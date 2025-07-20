@@ -18,7 +18,7 @@ const VehicleDetail = () => {
   const handleDownloadPDF = () => {
     html2pdf(pdfRef.current, {
       margin: 0.5,
-      filename: `${vehicle?.vehicleOwner?.fullName}_vehicle.pdf`,
+      filename: `${vehicle?.createdBy?.fullName}_vehicle.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
@@ -47,7 +47,7 @@ const VehicleDetail = () => {
           </div>
           <div className="col-md-6 mb-2">
             <label className="fw-bold">Vehicle Owner:</label>
-            <span>{" "}{vehicle?.vehicleOwner?.fullName}</span>
+            <span>{" "}{vehicle?.createdBy?.fullName}</span>
           </div>
           <div className="col-md-6">
             <label className="fw-bold">Status:</label>

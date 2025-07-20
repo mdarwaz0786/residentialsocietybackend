@@ -3,6 +3,7 @@ import { FaArrowLeft } from "react-icons/fa";
 
 const FormWrapper = ({ title, onSubmit, children }) => {
   const navigation = useNavigate();
+
   return (
     <div className="container mt-2">
       <div className="card">

@@ -175,6 +175,7 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
     currentAddress,
     permanentAddress,
     flat,
+    status,
   } = req.body;
 
   const profilePhoto = req?.files?.profilePhoto?.[0];
@@ -218,6 +219,7 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   if (mobile) flatOwnerUpdates.mobile = mobile;
   if (email) flatOwnerUpdates.email = email;
   if (flat) flatOwnerUpdates.flat = flat;
+  if (status) flatOwnerUpdates.status = status;
   if (currentAddress) flatOwnerUpdates.currentAddress = currentAddress;
   if (permanentAddress) flatOwnerUpdates.permanentAddress = permanentAddress;
   if (profilePhotoBase64) flatOwnerUpdates.profilePhoto = profilePhotoBase64;

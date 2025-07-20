@@ -150,6 +150,7 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
     currentAddress,
     permanentAddress,
     gateNumber,
+    status,
   } = req.body;
 
   const profilePhoto = req?.files?.profilePhoto?.[0];
@@ -180,6 +181,7 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
   if (fullName) securityGuardUpdates.fullName = fullName;
   if (mobile) securityGuardUpdates.mobile = mobile;
   if (email) securityGuardUpdates.email = email;
+  if (status) securityGuardUpdates.status = status;
   if (gateNumber) securityGuardUpdates.gateNumber = gateNumber;
   if (currentAddress) securityGuardUpdates.currentAddress = currentAddress;
   if (permanentAddress) securityGuardUpdates.permanentAddress = permanentAddress;

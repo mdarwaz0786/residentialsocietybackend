@@ -53,6 +53,7 @@ export const getVehicles = asyncHandler(async (req, res) => {
 
   const vehicles = await Vehicle
     .find(query)
+    .populate("createdBy")
     .sort(sort)
     .skip(skip)
     .limit(limit);
@@ -70,7 +71,7 @@ export const getVehicle = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid vehicle ID.");
   };
 
-  const vehicle = await Vehicle.findOne({ _id: id, isDeleted: false });
+  const vehicle = await Vehicle.findOne({ _id: id, isDeleted: false }).populate("createdBy");
 
   if (!vehicle) {
     throw new ApiError(404, "Vehicle not found or has been deleted.");

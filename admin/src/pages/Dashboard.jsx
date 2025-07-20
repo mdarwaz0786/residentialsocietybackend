@@ -8,7 +8,6 @@ import {
   FaTools,
   FaCog,
   FaUserTag,
-  FaUsers,
   FaHome,
 } from "react-icons/fa";
 import DashboardCard from "../components/Card/DashboardCard";
@@ -77,13 +76,6 @@ const Dashboard = () => {
       icon: <FaUserTag size={20} />,
       color: "text-muted",
       to: "/role",
-    },
-    {
-      label: "Users",
-      value: 120,
-      icon: <FaUsers size={20} />,
-      color: "text-info",
-      to: "/user",
     },
     {
       label: "Settings",

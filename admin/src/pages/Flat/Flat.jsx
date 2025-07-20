@@ -22,7 +22,7 @@ const Flat = () => {
     refetch,
   } = useFetchData(fetchDataUrl, validToken, {
     page: 1,
-    limit: 10,
+    limit: 20,
     search: "",
   });
 
@@ -62,7 +62,7 @@ const Flat = () => {
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5>All Flat<span className="badge bg-secondary ms-2">{total}</span></h5>
-        <Link to="/create-flat"><button className="btn btn-primary btn-sm">Add New Flat</button></Link>
+        <Link to="/create-flat"><button className="btn btn-primary">Add New Flat</button></Link>
         <SearchBar value={params.search} onChange={handleSearch} />
       </div>
       <TableWrapper>
@@ -70,10 +70,10 @@ const Flat = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
+            <th>Block</th>
             <th>Flat Number</th>
             <th>Flat Type</th>
             <th>Floor</th>
-            <th>Block</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -84,14 +84,14 @@ const Flat = () => {
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
+                  <td>{item?.block}</td>
                   <td>{item?.flatNumber}</td>
                   <td>{item?.flatType}</td>
                   <td>{item?.floor}</td>
-                  <td>{item?.block}</td>
                   <td>
-                    <Link to={`/flat-detail/${item?._id}`}><button className="btn btn-secondary btn-sm me-3 actionBtn">View</button></Link>
-                    <Link to={`/update-flat/${item?._id}`}><button className="btn btn-primary btn-sm me-3 actionBtn">Edit</button></Link>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item?._id)}>Delete</button>
+                    <Link to={`/flat-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
+                    <Link to={`/update-flat/${item?._id}`}><button className="btn btn-primary me-3 actionBtn">Edit</button></Link>
+                    <button className="btn btn-danger" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>
                 </tr>
               ))
