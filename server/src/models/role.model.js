@@ -31,14 +31,6 @@ const roleSchema = new mongoose.Schema({
     required: [true, "Role name is required"],
   },
   permissions: {
-    user: {
-      type: PermissionSchema,
-      default: () => ({}),
-    },
-    role: {
-      type: PermissionSchema,
-      default: () => ({}),
-    },
     flat: {
       type: PermissionSchema,
       default: () => ({}),

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
+import Role from "../models/role.model.js";
 import ApiError from "../helpers/apiError.js";
 import asyncHandler from "../helpers/asynsHandler.js";
 
@@ -17,6 +18,17 @@ const isLoggedIn = asyncHandler(async (req, res, next) => {
 
   if (!user) {
     throw new ApiError(401, "Your account not found.");
+  };
+
+  const userRole = await Role.findById(user?.role);
+
+  if (!userRole) {
+    throw new ApiError(401, "Role not found.");
+  };
+
+  if (userRole?.roleName?.toLowerCase() === "admin") {
+    req.user = user;
+    return next();
   };
 
   req.user = user;

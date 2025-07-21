@@ -14,6 +14,7 @@ export const createUser = asyncHandler(async (req, res) => {
     email,
     password,
     role,
+    memberId,
   } = req.body;
 
   const profilePhoto = req.files?.profilePhoto?.[0];
@@ -33,6 +34,7 @@ export const createUser = asyncHandler(async (req, res) => {
     password: hashedPassword,
     role,
     profilePhoto: profilePhotoBase64,
+    memberId,
   });
 
   res.status(201).json({ success: true, data: user });
@@ -118,51 +120,5 @@ export const updateUser = asyncHandler(async (req, res) => {
   };
 
   res.status(200).json({ success: true, data: updatedUser });
-});
-
-// Soft delete single user
-export const softDeleteUser = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid user ID.");
-  };
-
-  const user = await User.findById(id);
-
-  if (!user) {
-    throw new ApiError(404, "User not found.");
-  };
-
-  if (user.isDeleted) {
-    throw new ApiError(400, "User is already deleted.");
-  };
-
-  user.isDeleted = true;
-  await user.save();
-
-  res.status(200).json({ success: true, message: "User deleted successfully." });
-});
-
-// Soft delete multiple users
-export const softDeleteUsers = asyncHandler(async (req, res) => {
-  const { ids } = req.body;
-
-  if (!Array.isArray(ids) || ids.length === 0) {
-    throw new ApiError(400, "Please provide user IDs to delete.");
-  };
-
-  const invalidIds = ids.filter((id) => !mongoose.Types.ObjectId.isValid(id));
-
-  if (invalidIds.length > 0) {
-    throw new ApiError(400, `Invalid user IDs: ${invalidIds.join(", ")}`);
-  };
-
-  const result = await User.updateMany(
-    { _id: { $in: ids }, isDeleted: false },
-    { $set: { isDeleted: true } },
-  );
-
-  res.status(200).json({ success: true, message: `${result.modifiedCount} users deleted successfully.` });
 });
 

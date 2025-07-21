@@ -31,7 +31,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     profilePhotoBase64 = `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`;
   };
 
-  const memberId = await generateMemberId("ADM");
+  const memberId = await generateMemberId("ADM-");
 
   const newUser = await User.create({
     fullName,
@@ -69,7 +69,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid password.");
   };
 
-  const token = generateToken(user._id);
+  const token = generateToken(user?._id);
 
   res.status(200).json({ success: true, message: "Login successful.", token, user });
 });
