@@ -18,6 +18,7 @@ import securityGuardRoutes from "./src/routes/securityGuard.routes.js";
 import maintenanceStaffRoutes from "./src/routes/maintenanceStaff.routes.js";
 import tenantRoutes from "./src/routes/tenant.routes.js";
 import visitorRoutes from "./src/routes/visitor.routes.js";
+import complaintRoutes from "./src/routes/complaint.routes.js";
 
 // Path to current file
 const __filename = fileURLToPath(import.meta.url);
@@ -53,6 +54,7 @@ server.use("/api/v1/securityGuard", securityGuardRoutes);
 server.use("/api/v1/maintenanceStaff", maintenanceStaffRoutes);
 server.use("/api/v1/tenant", tenantRoutes);
 server.use("/api/v1/visitor", visitorRoutes);
+server.use("/api/v1/complaint", complaintRoutes);
 
 // Serve static files from the React admin build folder
 server.use(express.static(path.join(__dirname, "../admin", "dist")));

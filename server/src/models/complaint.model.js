@@ -3,12 +3,12 @@ import mongoose from 'mongoose';
 const complaintSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: [true, 'Complaint title is required'],
+    required: [true, 'Complaint title is required.'],
     trim: true,
   },
   type: {
     type: String,
-    required: [true, 'Complaint type is required'],
+    required: [true, 'Complaint type is required.'],
     enum: ['Plumbing', 'Electricity', 'Cleanliness', 'Other'],
   },
   status: {
@@ -31,6 +31,10 @@ const complaintSchema = new mongoose.Schema({
   updatedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false,
   },
 }, { timestamps: true });
 
