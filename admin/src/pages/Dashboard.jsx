@@ -9,6 +9,7 @@ import {
   FaCog,
   FaUserTag,
   FaHome,
+  FaExclamationCircle,
 } from "react-icons/fa";
 import DashboardCard from "../components/Card/DashboardCard";
 
@@ -57,18 +58,25 @@ const Dashboard = () => {
       to: "/visitor",
     },
     {
-      label: "Maids",
-      value: 25,
-      icon: <FaBroom size={20} />,
-      color: "text-danger",
-      to: "/maid",
-    },
-    {
       label: "Vehicles",
       value: 70,
       icon: <FaCar size={20} />,
       color: "text-secondary",
       to: "/vehicle",
+    },
+    {
+      label: "Complaints",
+      value: 20,
+      icon: <FaExclamationCircle size={20} />,
+      color: "text-danger",
+      to: "/complaint",
+    },
+    {
+      label: "Maids",
+      value: 25,
+      icon: <FaBroom size={20} />,
+      color: "text-danger",
+      to: "/maid",
     },
     {
       label: "Roles",

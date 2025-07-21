@@ -6,6 +6,7 @@ import {
   MdClose,
   MdStorefront,
   MdHome,
+  MdReportProblem,
 } from "react-icons/md";
 import {
   FaUserFriends,
@@ -121,6 +122,17 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
               <Link to="/vehicle" className={`${styles.navLink} ${activeLink === "Vehicle" ? styles.active : ""}`} onClick={() => handleLinkClick("Vehicle")}>
                 <FaCar />
                 <span className={styles.navLabel}>Vehicle</span>
+              </Link>
+            </li>
+
+            <li className={styles.navItem}>
+              <Link
+                to="/complaint"
+                className={`${styles.navLink} ${activeLink === "Complaint" ? styles.active : ""}`}
+                onClick={() => handleLinkClick("Complaint")}
+              >
+                <MdReportProblem />
+                <span className={styles.navLabel}>Complaint</span>
               </Link>
             </li>
 

@@ -91,6 +91,7 @@ export const getVisitors = asyncHandler(async (req, res) => {
   const visitors = await Visitor
     .find(query)
     .populate("flat")
+    .populate("createdBy")
     .sort(sort)
     .skip(skip)
     .limit(limit);
@@ -108,7 +109,7 @@ export const getVisitor = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid visitor ID.");
   };
 
-  const visitor = await Visitor.findOne({ _id: id, isDeleted: false }).populate("flat");
+  const visitor = await Visitor.findOne({ _id: id, isDeleted: false }).populate("flat").populate("createdBy");
 
   if (!visitor) {
     throw new ApiError(404, "Visitor not found or has been deleted.");

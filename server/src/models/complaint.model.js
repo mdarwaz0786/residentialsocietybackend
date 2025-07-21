@@ -11,6 +11,10 @@ const complaintSchema = new mongoose.Schema({
     required: [true, 'Complaint type is required.'],
     enum: ['Plumbing', 'Electricity', 'Cleanliness', 'Other'],
   },
+  image: {
+    type: String,
+    default: "",
+  },
   status: {
     type: String,
     enum: ['Pending', 'In Progress', 'Resolved'],
@@ -19,10 +23,6 @@ const complaintSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now,
-  },
-  image: {
-    type: String,
-    default: "",
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

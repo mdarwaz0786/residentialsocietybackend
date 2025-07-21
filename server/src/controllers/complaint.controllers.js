@@ -12,7 +12,7 @@ export const createComplaint = asyncHandler(async (req, res) => {
 
   const photo = req?.files?.image?.[0];
 
-  const imageBase64 = image
+  const imageBase64 = photo
     ? `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`
     : null;
 
@@ -44,7 +44,8 @@ export const getComplaints = asyncHandler(async (req, res) => {
     }
   );
 
-  const complaints = await Complaint.find(query)
+  const complaints = await Complaint
+    .find(query)
     .populate("createdBy")
     .sort(sort)
     .skip(skip)
@@ -85,12 +86,11 @@ export const updateComplaint = asyncHandler(async (req, res) => {
     title,
     type,
     status,
-    image,
   } = req.body;
 
   const photo = req?.files?.image?.[0];
 
-  const imageBase64 = image
+  const imageBase64 = photo
     ? `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`
     : null;
 
