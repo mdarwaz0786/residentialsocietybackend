@@ -18,7 +18,7 @@ const Payment = () => {
     page: 1,
     limit: 20,
     isDeleted: false,
-
+    status: "success",
     search: "",
   });
 
