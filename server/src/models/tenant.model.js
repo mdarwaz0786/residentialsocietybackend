@@ -84,6 +84,11 @@ const tenantPersonSchema = new mongoose.Schema({
     enum: ["Approved", "Pending", "Rejected"],
     default: "Pending",
   },
+  paymentStatus: {
+    type: String,
+    enum: ["Pending", "Success", "Failed"],
+    default: "Pending",
+  },
   canLogin: {
     type: Boolean,
     default: false,

@@ -4,37 +4,23 @@ import TableWrapper from '../../components/Table/TableWrapper';
 import useFetchData from '../../hooks/useFetchData';
 import { useAuth } from '../../context/auth.context';
 import PageSizeSelector from '../../components/Table/PageSizeSelector';
-import useDelete from '../../hooks/useDelete';
-import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
-import useUpdateStatus from '../../hooks/useUpdateStatus';
-import StatusUpdateForm from '../../components/Form/StatusUpdateForm';
 
-const Tenant = () => {
+const Payment = () => {
   const { validToken } = useAuth();
-  const fetchDataUrl = "/api/v1/tenant/get-all-tenant";
-  const singleDeleteUrl = "/api/v1/tenantr/delete-single-tenant";
-  const { deleteData, response, deleteError } = useDelete();
+  const fetchDataUrl = "/api/v1/tenantRegistrationPayment/get-all-tenantRegistrationPayment";
 
   const {
     data,
     params,
     setParams,
-    refetch,
   } = useFetchData(fetchDataUrl, validToken, {
     page: 1,
     limit: 20,
     isDeleted: false,
+
     search: "",
   });
-
-  const {
-    status,
-    approving,
-    handleStatusChange,
-    updateStatus,
-  } = useUpdateStatus({ token: validToken, refetch });
 
   const handleSearch = (value) => {
     setParams({ search: value, page: 1 });
@@ -48,24 +34,7 @@ const Tenant = () => {
     setParams({ limit: newLimit, page: 1 });
   };
 
-  const handleDelete = async (id) => {
-    await deleteData(`${singleDeleteUrl}/${id}`, validToken);
-  };
-
-  useEffect(() => {
-    if (response?.success) {
-      toast.success("Deleted successful");
-      refetch();
-    };
-  }, [response, refetch]);
-
-  useEffect(() => {
-    if (deleteError) {
-      toast.error(deleteError);
-    };
-  }, [deleteError]);
-
-  const tenants = data?.data || [];
+  const payments = data?.data || [];
   const total = data?.total || 0;
 
   return (
@@ -79,38 +48,28 @@ const Tenant = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
-            <th>Profile Photo</th>
+            <th>T. Id</th>
             <th>Flat</th>
-            <th>Name</th>
-            <th>Mobile</th>
+            <th>Tenant</th>
+            <th>Amount</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {
-            tenants?.length > 0 ? (
-              tenants?.map((item, index) => (
+            payments?.length > 0 ? (
+              payments?.map((item, index) => (
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
-                  <td><img className="profile-photo" src={item?.profilePhoto} alt="profile-photo" /></td>
+                  <td>{item?.txnid}</td>
                   <td>{item?.flat?.flatNumber}</td>
-                  <td>{item?.fullName}</td>
-                  <td>{item?.mobile}</td>
+                  <td>{item?.tenant?.fullName}</td>
+                  <td>{item?.amount}</td>
+                  <td>{item?.status}</td>
                   <td>
-                    <StatusUpdateForm
-                      id={item?._id}
-                      currentStatus={item?.status}
-                      status={status}
-                      approving={approving}
-                      onChange={handleStatusChange}
-                      onSubmit={(id) => updateStatus(`/api/v1/tenantRegistrationPayment/approve/tenant/${status[id]}`, id)}
-                    />
-                  </td>
-                  <td>
-                    <Link to={`/tenant-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
-                    <button className="btn btn-danger" onClick={() => handleDelete(item?._id)}>Delete</button>
+                    <Link to={`/payment-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
                   </td>
                 </tr>
               ))
@@ -141,4 +100,4 @@ const Tenant = () => {
   );
 };
 
-export default Tenant;
+export default Payment;

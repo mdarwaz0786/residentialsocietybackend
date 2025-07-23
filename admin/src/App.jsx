@@ -39,6 +39,7 @@ import VisitorDetail from './pages/Visitor/VisitorDetail';
 import MaidDetail from './pages/Maid/MaidDetail';
 import Complaint from './pages/Complaint/Complaint';
 import ComplaintDetail from './pages/Complaint/ComplaintDetail';
+import Payment from './pages/Payment/Payment';
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -92,6 +93,7 @@ const App = () => {
             <Route path="visitor-detail/:id" element={<VisitorDetail />} />
             <Route path="complaint" element={<Complaint />} />
             <Route path="complaint-detail/:id" element={<ComplaintDetail />} />
+            <Route path="payment" element={<Payment />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </>

@@ -20,28 +20,32 @@ const tenantRegistrationPaymentSchema = new mongoose.Schema({
     type: String,
     default: "Tenant Registration",
   },
-  paymentStatus: {
+  status: {
     type: String,
-    enum: ["Pending", "Success", "Failed"],
-    default: "Pending",
-  },
-  paymentLink: {
-    type: String,
-  },
-  transactionId: {
-    type: String,
-    unique: true,
-    trim: true,
+    enum: ["pending", "success", "failed"],
+    default: "pending",
   },
   amount: {
     type: Number,
     trim: true,
   },
+  txnid: {
+    type: String,
+    unique: true,
+    trim: true,
+  },
+  paymentUrl: {
+    type: String,
+  },
+  paymentData: {
+    type: Object,
+  },
   paymentDate: {
     type: Date,
   },
-  paymentGatewayResponse: {
-    type: Object,
+  isDeleted: {
+    type: Boolean,
+    default: false,
   },
 }, { timestamps: true });
 

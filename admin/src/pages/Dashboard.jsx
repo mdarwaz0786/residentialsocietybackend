@@ -10,6 +10,7 @@ import {
   FaUserTag,
   FaHome,
   FaExclamationCircle,
+  FaMoneyBillWave,
 } from "react-icons/fa";
 import DashboardCard from "../components/Card/DashboardCard";
 
@@ -77,6 +78,13 @@ const Dashboard = () => {
       icon: <FaBroom size={20} />,
       color: "text-danger",
       to: "/maid",
+    },
+    {
+      label: "Payments",
+      value: 120,
+      icon: <FaMoneyBillWave size={20} />,
+      color: "text-primary",
+      to: "/payment",
     },
     {
       label: "Roles",

@@ -7,6 +7,7 @@ import {
   MdStorefront,
   MdHome,
   MdReportProblem,
+  MdPayment,
 } from "react-icons/md";
 import {
   FaUserFriends,
@@ -140,6 +141,17 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
               <Link to="/maid" className={`${styles.navLink} ${activeLink === "Maid" ? styles.active : ""}`} onClick={() => handleLinkClick("Maid")}>
                 <FaBroom />
                 <span className={styles.navLabel}>Maid</span>
+              </Link>
+            </li>
+
+            <li className={styles.navItem}>
+              <Link
+                to="/payment"
+                className={`${styles.navLink} ${activeLink === "Payment" ? styles.active : ""}`}
+                onClick={() => handleLinkClick("Payment")}
+              >
+                <MdPayment />
+                <span className={styles.navLabel}>Payments</span>
               </Link>
             </li>
 

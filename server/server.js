@@ -19,6 +19,7 @@ import maintenanceStaffRoutes from "./src/routes/maintenanceStaff.routes.js";
 import tenantRoutes from "./src/routes/tenant.routes.js";
 import visitorRoutes from "./src/routes/visitor.routes.js";
 import complaintRoutes from "./src/routes/complaint.routes.js";
+import tenantRegistrationPaymentRoutes from "./src/routes/tenantRegistrationPayment.routes.js";
 
 // Path to current file
 const __filename = fileURLToPath(import.meta.url);
@@ -34,6 +35,10 @@ connectDatabase();
 
 // Initialize Express app
 const server = express();
+
+// Set view engine
+server.set("view engine", "ejs");
+server.set("views", "./src/views");
 
 // Register Middlewares
 server.use(express.json());
@@ -55,6 +60,7 @@ server.use("/api/v1/maintenanceStaff", maintenanceStaffRoutes);
 server.use("/api/v1/tenant", tenantRoutes);
 server.use("/api/v1/visitor", visitorRoutes);
 server.use("/api/v1/complaint", complaintRoutes);
+server.use("/api/v1/tenantRegistrationPayment", tenantRegistrationPaymentRoutes);
 
 // Serve static files from the React admin build folder
 server.use(express.static(path.join(__dirname, "../admin", "dist")));
