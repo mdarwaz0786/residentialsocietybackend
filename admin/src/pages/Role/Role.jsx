@@ -59,13 +59,13 @@ const Role = () => {
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
                   <td>{item?.roleName}</td>
                   <td>
-                    <Link to={`/edit-role/${item?._id}`}><button className="btn btn-primary me-3 actionBtn">Edit</button></Link>
+                    <Link to={`/update-role/${item?._id}`}><button className="btn btn-primary me-3 actionBtn">Edit</button></Link>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center">
+                <td colSpan="4" className="text-center">
                   No Data.
                 </td>
               </tr>

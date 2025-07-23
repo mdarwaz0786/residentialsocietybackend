@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   FaUserFriends,
   FaUserAlt,
@@ -13,89 +14,117 @@ import {
   FaMoneyBillWave,
 } from "react-icons/fa";
 import DashboardCard from "../components/Card/DashboardCard";
+import { useAuth } from "../context/auth.context";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Dashboard = () => {
+  const { validToken } = useAuth();
+  const [stat, setStat] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await axios.get('/api/v1/dashboard/stats', {
+          headers: {
+            Authorization: validToken,
+          },
+        });
+        setStat(res?.data?.data);
+      } catch (err) {
+        console.error('Error fetching stats:', err.message);
+      } finally {
+        setLoading(false);
+      };
+    };
+
+    fetchStats();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+
   const stats = [
     {
       label: "Flats",
-      value: 80,
+      value: stat?.totalFlats || 0,
       icon: <FaHome size={20} />,
       color: "text-primary",
       to: "/flat",
     },
     {
       label: "Flat Owners",
-      value: 40,
+      value: stat?.totalFlatOwners || 0,
       icon: <FaUserFriends size={20} />,
       color: "text-primary",
       to: "/flat-owner",
     },
     {
       label: "Tenants",
-      value: 65,
+      value: stat?.totalTenants || 0,
       icon: <FaUserAlt size={20} />,
       color: "text-success",
       to: "/tenant",
     },
     {
       label: "Security Guards",
-      value: 6,
+      value: stat?.totalSecurityGuards || 0,
       icon: <FaUserShield size={20} />,
       color: "text-warning",
       to: "/security-guard",
     },
     {
       label: "Maintenance Staff",
-      value: 12,
+      value: stat?.totalMaintenanceStaff || 0,
       icon: <FaTools size={20} />,
       color: "text-dark",
       to: "/maintenance-staff",
     },
     {
       label: "Visitors",
-      value: 150,
+      value: stat.totalVisitors || 0,
       icon: <FaUserCheck size={20} />,
       color: "text-info",
       to: "/visitor",
     },
     {
       label: "Vehicles",
-      value: 70,
+      value: stat?.totalVehicles || 0,
       icon: <FaCar size={20} />,
       color: "text-secondary",
       to: "/vehicle",
     },
     {
       label: "Complaints",
-      value: 20,
+      value: stat?.totalComplaints || 0,
       icon: <FaExclamationCircle size={20} />,
       color: "text-danger",
       to: "/complaint",
     },
     {
       label: "Maids",
-      value: 25,
+      value: stat?.totalMaids || 0,
       icon: <FaBroom size={20} />,
       color: "text-danger",
       to: "/maid",
     },
     {
       label: "Payments",
-      value: 120,
+      value: stat?.totalPayments || 0,
       icon: <FaMoneyBillWave size={20} />,
       color: "text-primary",
       to: "/payment",
     },
     {
       label: "Roles",
-      value: 5,
+      value: stat?.totalRoles || 0,
       icon: <FaUserTag size={20} />,
       color: "text-muted",
       to: "/role",
     },
     {
       label: "Settings",
-      value: 1,
+      value: stat?.totalSettings || 0,
       icon: <FaCog size={20} />,
       color: "text-black-50",
       to: "/setting",

@@ -53,14 +53,16 @@ export const getUsers = asyncHandler(async (req, res) => {
     defaultLimit: 10
   });
 
-  const users = await User.find(query)
+  const users = await User
+    .find(query)
     .populate("role")
+    .populate("profile")
     .sort(sort)
     .skip(skip)
     .limit(limit);
 
   if (!users) {
-    throw new ApiError(404, "Users not found")
+    throw new ApiError(404, "Users not found.");
   };
 
   const total = await User.countDocuments(query);
@@ -77,11 +79,12 @@ export const getUser = asyncHandler(async (req, res) => {
   };
 
   const user = await User
-    .findOne({ _id: id, isDeleted: false })
-    .populate("role");
+    .findById(id)
+    .populate("role")
+    .populate("profile");
 
   if (!user) {
-    throw new ApiError(404, "User not found or has been deleted.");
+    throw new ApiError(404, "User not found.");
   };
 
   res.status(200).json({ success: true, data: user });
@@ -109,6 +112,7 @@ export const updateUser = asyncHandler(async (req, res) => {
   };
 
   const profilePhoto = req.files?.profilePhoto?.[0];
+
   if (profilePhoto) {
     updates.profilePhoto = `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`;
   };

@@ -40,6 +40,7 @@ import MaidDetail from './pages/Maid/MaidDetail';
 import Complaint from './pages/Complaint/Complaint';
 import ComplaintDetail from './pages/Complaint/ComplaintDetail';
 import Payment from './pages/Payment/Payment';
+import UpdateRole from './pages/Role/UpdateRole';
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -85,6 +86,7 @@ const App = () => {
             <Route path="update-maintenance-staff/:id" element={<UpdateMaintenanceStaff />} />
             <Route path="maintenance-staff-detail/:id" element={<MaintenanceStaffDetail />} />
             <Route path="role" element={<Role />} />
+            <Route path="update-role/:id" element={<UpdateRole />} />
             <Route path="maid" element={<Maid />} />
             <Route path="maid-detail/:id" element={<MaidDetail />} />
             <Route path="tenant" element={<Tenant />} />

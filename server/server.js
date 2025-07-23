@@ -20,6 +20,7 @@ import tenantRoutes from "./src/routes/tenant.routes.js";
 import visitorRoutes from "./src/routes/visitor.routes.js";
 import complaintRoutes from "./src/routes/complaint.routes.js";
 import tenantRegistrationPaymentRoutes from "./src/routes/tenantRegistrationPayment.routes.js";
+import dashboardRoutes from "./src/routes/dashboard.routes.js";
 
 // Path to current file
 const __filename = fileURLToPath(import.meta.url);
@@ -61,6 +62,7 @@ server.use("/api/v1/tenant", tenantRoutes);
 server.use("/api/v1/visitor", visitorRoutes);
 server.use("/api/v1/complaint", complaintRoutes);
 server.use("/api/v1/tenantRegistrationPayment", tenantRegistrationPaymentRoutes);
+server.use("/api/v1/dashboard", dashboardRoutes);
 
 // Serve static files from the React admin build folder
 server.use(express.static(path.join(__dirname, "../admin", "dist")));

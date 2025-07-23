@@ -151,14 +151,14 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
                 onClick={() => handleLinkClick("Payment")}
               >
                 <MdPayment />
-                <span className={styles.navLabel}>Payments</span>
+                <span className={styles.navLabel}>Payment</span>
               </Link>
             </li>
 
             <li className={styles.navItem}>
               <Link to="/role" className={`${styles.navLink} ${activeLink === "Role" ? styles.active : ""}`} onClick={() => handleLinkClick("Role")}>
                 <FaUserTag />
-                <span className={styles.navLabel}>Role</span>
+                <span className={styles.navLabel}>Role & Permission</span>
               </Link>
             </li>
 

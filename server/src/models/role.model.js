@@ -28,7 +28,7 @@ const roleSchema = new mongoose.Schema({
   roleName: {
     type: String,
     enum: ['Flat Owner', 'Tenant', 'Security Guard', 'Maintenance Staff', 'Admin', 'Sub Admin'],
-    required: [true, "Role name is required"],
+    required: [true, "Role name is required."],
   },
   permissions: {
     flat: {
