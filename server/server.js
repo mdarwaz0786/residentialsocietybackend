@@ -21,65 +21,80 @@ import visitorRoutes from "./src/routes/visitor.routes.js";
 import complaintRoutes from "./src/routes/complaint.routes.js";
 import tenantRegistrationPaymentRoutes from "./src/routes/tenantRegistrationPayment.routes.js";
 import dashboardRoutes from "./src/routes/dashboard.routes.js";
+import cluster from "cluster";
+import os from "os";
 
-// Path to current file
+// Get the current file 
 const __filename = fileURLToPath(import.meta.url);
 
-// Path to current folder
+// Get the directory name of the current file
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
+// Load Environment variables
 dotenv.config();
+const port = process.env.PORT || 8080;
+const mode = process.env.NODE_ENV || "development";
 
-// Connect to mongodb database
-connectDatabase();
+// Check if the current environment is production
+if (cluster.isPrimary) {
+  const numCPUs = os.cpus().length;
 
-// Initialize Express app
-const server = express();
+  // Fork workers for each CPU core
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  };
 
-// Set view engine
-server.set("view engine", "ejs");
-server.set("views", "./src/views");
+  // Handle worker exit and fork a new worker
+  cluster.on("exit", (worker, code, signal) => {
+    cluster.fork();
+  });
+} else {
+  // Connect to MongoDB Database
+  connectDatabase();
 
-// Register Middlewares
-server.use(express.json());
-server.use(express.urlencoded({ extended: true }));
-server.use(compression());
-server.use(cors());
+  // Init Express
+  const server = express();
 
-// API Routes
-server.use("/api/v1", testRoutes);
-server.use("/api/v1/auth", authRoutes);
-server.use("/api/v1/user", userRoutes);
-server.use("/api/v1/role", roleRoutes);
-server.use("/api/v1/maid", maidRoutes);
-server.use("/api/v1/vehicle", vehicleRoutes);
-server.use("/api/v1/flat", flatRoutes);
-server.use("/api/v1/flatOwner", flatOwnerRoutes);
-server.use("/api/v1/securityGuard", securityGuardRoutes);
-server.use("/api/v1/maintenanceStaff", maintenanceStaffRoutes);
-server.use("/api/v1/tenant", tenantRoutes);
-server.use("/api/v1/visitor", visitorRoutes);
-server.use("/api/v1/complaint", complaintRoutes);
-server.use("/api/v1/tenantRegistrationPayment", tenantRegistrationPaymentRoutes);
-server.use("/api/v1/dashboard", dashboardRoutes);
+  // Set up view engine
+  server.set("view engine", "ejs");
+  server.set("views", "./src/views");
 
-// Serve static files from the React admin build folder
-server.use(express.static(path.join(__dirname, "../admin", "dist")));
+  // Middleware
+  server.use(express.json());
+  server.use(express.urlencoded({ extended: true }));
+  server.use(compression());
+  server.use(cors());
 
-// Serve index.html for the root route
-server.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../admin", "dist", "index.html"));
-});
+  // API Routes
+  server.use("/api/v1", testRoutes);
+  server.use("/api/v1/auth", authRoutes);
+  server.use("/api/v1/user", userRoutes);
+  server.use("/api/v1/role", roleRoutes);
+  server.use("/api/v1/maid", maidRoutes);
+  server.use("/api/v1/vehicle", vehicleRoutes);
+  server.use("/api/v1/flat", flatRoutes);
+  server.use("/api/v1/flatOwner", flatOwnerRoutes);
+  server.use("/api/v1/securityGuard", securityGuardRoutes);
+  server.use("/api/v1/maintenanceStaff", maintenanceStaffRoutes);
+  server.use("/api/v1/tenant", tenantRoutes);
+  server.use("/api/v1/visitor", visitorRoutes);
+  server.use("/api/v1/complaint", complaintRoutes);
+  server.use("/api/v1/tenantRegistrationPayment", tenantRegistrationPaymentRoutes);
+  server.use("/api/v1/dashboard", dashboardRoutes);
 
-// Global error handler middleware
-server.use(errorHandler);
+  // Server static files for admin panel
+  server.use(express.static(path.join(__dirname, "../admin", "dist")));
 
-// Environment variables
-const port = process.env.PORT;
-const mode = process.env.NODE_ENV;
+  // Catch-all route for admin panel
+  server.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(__dirname, "../admin", "dist", "index.html"));
+  });
 
-// Start server
-server.listen(port, () => {
-  console.log(`✅ Server is successfully running in ${mode} mode at url http://localhost:${port}`);
-});
+  // Global error handling middleware
+  server.use(errorHandler);
+
+  // Start the server
+  server.listen(port, () => {
+    console.log(`✅ Worker ${process.pid} running in ${mode} mode at http://localhost:${port}`);
+  });
+};

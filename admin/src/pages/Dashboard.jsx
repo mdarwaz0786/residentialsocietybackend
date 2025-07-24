@@ -82,7 +82,7 @@ const Dashboard = () => {
     },
     {
       label: "Visitors",
-      value: stat.totalVisitors || 0,
+      value: stat?.totalVisitors || 0,
       icon: <FaUserCheck size={20} />,
       color: "text-info",
       to: "/visitor",
