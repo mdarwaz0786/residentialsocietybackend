@@ -33,7 +33,7 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
   const flatOwnerRole = await Role.findOne({ roleName: "Flat Owner", isDeleted: false });
 
   if (!flatOwnerRole) {
-    throw new ApiError(404, "Flat Owner role not found. Please create it in Role collection first.");
+    throw new ApiError(404, "Flat Owner role not found.");
   };
 
   const profilePhoto = req?.files?.profilePhoto?.[0];
@@ -68,44 +68,71 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
     };
   };
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  let hashedPassword = null;
+  let salt = null;
+
+  if (password) {
+    salt = await bcrypt.genSalt(10);
+    hashedPassword = await bcrypt.hash(password, salt);
+  };
 
   const flatNumber = ownerFlat?.flatNumber;
+
+  if (!flatNumber) {
+    throw new ApiError(400, "Flat number is required to generate member ID.");
+  };
+
   const memberId = await generateMemberId("FOWN-", flatNumber);
 
-  const newUser = await User.create({
-    profilePhoto: profilePhotoBase64,
-    fullName,
-    mobile,
-    email,
-    password: hashedPassword,
-    role: flatOwnerRole?._id,
-    memberId,
-    profileType: "FlatOwner",
-  });
+  if (!memberId) {
+    throw new ApiError(500, "Failed to generate member ID.");
+  };
 
-  const flatOwner = await FlatOwner.create({
-    userId: newUser._id,
-    profilePhoto: profilePhotoBase64,
-    fullName,
-    mobile,
-    email,
-    role: flatOwnerRole._id,
-    memberId,
-    flat,
-    currentAddress,
-    permanentAddress,
-    aadharCard: aadharCardBase64,
-    allotment: allotmentBase64,
-    vehicleRC: vehicleRCBase64,
-    createdBy,
-  });
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  newUser.profile = flatOwner?._id;
-  await newUser.save();
+  try {
+    const newUser = await User.create([{
+      profilePhoto: profilePhotoBase64,
+      fullName,
+      mobile,
+      email,
+      password: hashedPassword,
+      role: flatOwnerRole?._id,
+      memberId,
+      profileType: "FlatOwner",
+    }], { session });
 
-  res.status(201).json({ success: true, data: { user: newUser, flatOwner } });
+    const flatOwner = await FlatOwner.create([{
+      userId: newUser?.[0]?._id,
+      profilePhoto: profilePhotoBase64,
+      fullName,
+      mobile,
+      email,
+      password: hashedPassword,
+      role: flatOwnerRole?._id,
+      memberId,
+      flat,
+      currentAddress,
+      permanentAddress,
+      aadharCard: aadharCardBase64,
+      allotment: allotmentBase64,
+      vehicleRC: vehicleRCBase64,
+      createdBy,
+    }], { session });
+
+    newUser[0].profile = flatOwner?.[0]?._id;
+    await newUser[0].save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(201).json({ success: true, data: { user: newUser[0], flatOwner: flatOwner[0] } });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, error.message || "Something went wrong.");
+  };
 });
 
 // Get all Flat Owner
@@ -178,6 +205,25 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
     status,
   } = req.body;
 
+  const orConditions = [];
+  if (email) orConditions.push({ email });
+  if (mobile) orConditions.push({ mobile });
+
+  if (orConditions.length > 0) {
+    const existingUser = await User.findOne({ $or: orConditions, _id: { $ne: flatOwner?.userId?._id }, });
+    if (existingUser) {
+      throw new ApiError(400, "User already exists with this email or mobile.");
+    };
+  };
+
+  let hashedPassword = null;
+  let salt = null;
+
+  if (password) {
+    salt = await bcrypt.genSalt(10);
+    hashedPassword = await bcrypt.hash(password, salt);
+  };
+
   const profilePhoto = req?.files?.profilePhoto?.[0];
   const aadharCard = req?.files?.aadharCard?.[0];
   const allotment = req?.files?.allotment?.[0];
@@ -205,19 +251,15 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   if (mobile) userUpdates.mobile = mobile;
   if (email) userUpdates.email = email;
   if (profilePhotoBase64) userUpdates.profilePhoto = profilePhotoBase64;
-  if (password) {
-    const salt = await bcrypt.genSalt(10);
-    userUpdates.password = await bcrypt.hash(password, salt);
-  };
-
-  await User.findByIdAndUpdate(flatOwner.userId._id, userUpdates, { new: true });
+  if (hashedPassword) userUpdates.password = hashedPassword;
 
   // Update FlatOwner
   const flatOwnerUpdates = {};
-  flatOwnerUpdates.updatedBy = updatedBy;
+  if (updatedBy) flatOwnerUpdates.updatedBy = updatedBy;
   if (fullName) flatOwnerUpdates.fullName = fullName;
   if (mobile) flatOwnerUpdates.mobile = mobile;
   if (email) flatOwnerUpdates.email = email;
+  if (hashedPassword) flatOwnerUpdates.password = hashedPassword;
   if (flat) flatOwnerUpdates.flat = flat;
   if (status) flatOwnerUpdates.status = status;
   if (currentAddress) flatOwnerUpdates.currentAddress = currentAddress;
@@ -227,9 +269,29 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   if (allotmentBase64) flatOwnerUpdates.allotment = allotmentBase64;
   if (vehicleRCBase64) flatOwnerUpdates.vehicleRC = vehicleRCBase64;
 
-  const updatedFlatOwner = await FlatOwner.findByIdAndUpdate(id, flatOwnerUpdates, { new: true });
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  res.status(200).json({ success: true, data: updatedFlatOwner });
+  try {
+    const updatedUser = await User.findByIdAndUpdate(flatOwner?.userId?._id, userUpdates, {
+      new: true,
+      session,
+    });
+
+    const updatedFlatOwner = await FlatOwner.findByIdAndUpdate(id, flatOwnerUpdates, {
+      new: true,
+      session,
+    });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ success: true, data: { user: updatedUser, flatOwner: updatedFlatOwner } });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, error.message || "Update failed.");
+  };
 });
 
 // Soft Delete Flat Owner
@@ -266,13 +328,13 @@ export const softDeleteFlatOwners = asyncHandler(async (req, res) => {
     throw new ApiError(400, `Invalid Flat Owner IDs: ${invalidIds.join(", ")}`);
   };
 
-  const flatOwners = await FlatOwner.find({ _id: { $in: ids } }).lean();
+  const flatOwners = await FlatOwner.find({ _id: { $in: ids }, isDeleted: false }).lean();
 
-  if (flatOwners.length === 0) {
+  if (flatOwners?.length === 0) {
     throw new ApiError(404, "No Flat Owners found for the provided IDs.");
   };
 
-  const idsToDelete = flatOwners.map((owner) => owner?._id);
+  const idsToDelete = flatOwners.map((o) => o?._id);
 
   const result = await FlatOwner.updateMany(
     { _id: { $in: idsToDelete }, isDeleted: false },

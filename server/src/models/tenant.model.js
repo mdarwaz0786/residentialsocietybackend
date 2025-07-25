@@ -30,6 +30,13 @@ const tenantPersonSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, "Enter a valid email."]
   },
+  password: {
+    type: String,
+    required: [true, "Password is required."],
+    trim: true,
+    select: false,
+    minlength: [6, "Password must be at least 6 characters long."],
+  },
   role: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Role",

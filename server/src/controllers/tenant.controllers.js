@@ -15,14 +15,26 @@ import fileToBase64 from "../helpers/fileToBase64.js";
 export const createTenant = asyncHandler(async (req, res) => {
   const createdBy = req.user?._id;
 
-  const flatOwner = await FlatOwner.findOne({ userId: createdBy }).populate("flat").select("flat");
+  const flatOwner = await FlatOwner
+    .findOne({ userId: createdBy })
+    .populate("flat")
+    .select("flat");
 
   if (!flatOwner) {
     throw new ApiError(404, "Flat owner not found.")
   };
 
   const flatID = flatOwner?.flat?._id;
+
+  if (!flatID) {
+    throw new ApiError(400, "Flat ID is required.");
+  };
+
   const flatNumber = flatOwner?.flat?.flatNumber;
+
+  if (!flatNumber) {
+    throw new ApiError(400, "Flat number is required.");
+  };
 
   const {
     fullName,
@@ -31,14 +43,32 @@ export const createTenant = asyncHandler(async (req, res) => {
     password,
     currentAddress,
     permanentAddress,
-    fromDate,
-    toDate,
   } = req.body;
 
   const role = await Role.findOne({ roleName: "Tenant", isDeleted: false });
 
   if (!role) {
-    throw new ApiError(404, "Tenant role not found");
+    throw new ApiError(404, "Tenant role not found.");
+  };
+
+  const existingUser = await User.findOne({ $or: [{ email }, { mobile }] });
+
+  if (existingUser) {
+    throw new ApiError(400, "User already exists with this email or mobile.");
+  };
+
+  let hashedPassword = null;
+  let salt = null;
+
+  if (password) {
+    salt = await bcrypt.genSalt(10);
+    hashedPassword = await bcrypt.hash(password, salt);
+  };
+
+  const memberId = await generateMemberId("TENANT-", flatNumber);
+
+  if (!memberId) {
+    throw new ApiError(500, "Failed to generate member ID.");
   };
 
   const profilePhoto = fileToBase64(req?.files?.profilePhoto?.[0]);
@@ -47,51 +77,54 @@ export const createTenant = asyncHandler(async (req, res) => {
   const policeVerification = fileToBase64(req?.files?.policeVerification?.[0]);
   const vehicleRC = fileToBase64(req?.files?.vehicleRC?.[0]);
 
-  const existingUser = await User.findOne({ $or: [{ email }, { mobile }] });
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  if (existingUser) {
-    throw new ApiError(400, "User already exists with this email or mobile.");
+  try {
+    const [newUser] = await User.create([{
+      profilePhoto,
+      fullName,
+      email,
+      mobile,
+      password: hashedPassword,
+      role: role?._id,
+      memberId,
+      profileType: "Tenant",
+    }], { session });
+
+    const [tenant] = await Tenant.create([{
+      userId: newUser?._id,
+      profilePhoto,
+      fullName,
+      email,
+      mobile,
+      password: hashedPassword,
+      flat: flatID,
+      role: role?._id,
+      memberId,
+      currentAddress,
+      permanentAddress,
+      fromDate,
+      toDate,
+      aadharCard,
+      rentAgreement,
+      policeVerification,
+      vehicleRC,
+      createdBy,
+    }], { session });
+
+    newUser.profile = tenant?._id;
+    await newUser.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(201).json({ success: true, data: { user: newUser, tenant } });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, error.message || "Something went wrong.");
   };
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-  const memberId = await generateMemberId("TENANT-", flatNumber);
-
-  const newUser = await User.create({
-    profilePhoto,
-    fullName,
-    email,
-    mobile,
-    password: hashedPassword,
-    role: role?._id,
-    memberId,
-    profileType: "Tenant",
-  });
-
-  const tenant = await Tenant.create({
-    userId: newUser?._id,
-    profilePhoto,
-    fullName,
-    email,
-    mobile,
-    flat: flatID,
-    role: role?._id,
-    memberId,
-    currentAddress,
-    permanentAddress,
-    fromDate,
-    toDate,
-    aadharCard,
-    rentAgreement,
-    policeVerification,
-    vehicleRC,
-    createdBy,
-  });
-
-  newUser.profile = tenant?._id;
-  await newUser.save();
-
-  res.status(201).json({ success: true, data: { user: newUser, tenant } });
 });
 
 // Get all Tenants
@@ -162,18 +195,23 @@ export const updateTenant = asyncHandler(async (req, res) => {
     password,
     currentAddress,
     permanentAddress,
-    fromDate,
-    toDate,
-    status,
   } = req.body;
 
-  const conflictUser = await User.findOne({
-    _id: { $ne: tenant.userId._id },
+  const existingUser = await User.findOne({
     $or: [{ email }, { mobile }],
+    _id: { $ne: tenant?.userId?._id },
   });
 
-  if (conflictUser) {
-    throw new ApiError(400, "Another user exists with this email or mobile.");
+  if (existingUser) {
+    throw new ApiError(400, "User already exists with this email or mobile.");
+  };
+
+  let hashedPassword = null;
+  let salt = null;
+
+  if (password) {
+    salt = await bcrypt.genSalt(10);
+    hashedPassword = await bcrypt.hash(password, salt);
   };
 
   const profilePhoto = fileToBase64(req?.files?.profilePhoto?.[0]);
@@ -182,36 +220,50 @@ export const updateTenant = asyncHandler(async (req, res) => {
   const policeVerification = fileToBase64(req?.files?.policeVerification?.[0]);
   const vehicleRC = fileToBase64(req?.files?.vehicleRC?.[0]);
 
-  const userUpdates = {};
-  if (fullName) userUpdates.fullName = fullName;
-  if (mobile) userUpdates.mobile = mobile;
-  if (email) userUpdates.email = email;
-  if (profilePhoto) userUpdates.profilePhoto = profilePhoto;
-  if (password) {
-    const salt = await bcrypt.genSalt(10);
-    userUpdates.password = await bcrypt.hash(password, salt);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const userUpdates = {};
+    if (fullName) userUpdates.fullName = fullName;
+    if (mobile) userUpdates.mobile = mobile;
+    if (email) userUpdates.email = email;
+    if (hashedPassword) userUpdates.password = hashedPassword;
+    if (profilePhoto) userUpdates.profilePhoto = profilePhoto;
+
+    await User.findByIdAndUpdate(tenant?.userId?._id, userUpdates, {
+      new: true,
+      session,
+    });
+
+    const updates = {};
+    if (updatedBy) updates.updatedBy = updatedBy;
+    if (fullName) updates.fullName = fullName;
+    if (mobile) updates.mobile = mobile;
+    if (email) updates.email = email;
+    if (currentAddress) updates.currentAddress = currentAddress;
+    if (permanentAddress) updates.permanentAddress = permanentAddress;
+    if (hashedPassword) updates.password = hashedPassword;
+    if (profilePhoto) updates.profilePhoto = profilePhoto;
+    if (aadharCard) updates.aadharCard = aadharCard;
+    if (rentAgreement) updates.rentAgreement = rentAgreement;
+    if (policeVerification) updates.policeVerification = policeVerification;
+    if (vehicleRC) updates.vehicleRC = vehicleRC;
+
+    const updatedTenant = await Tenant.findByIdAndUpdate(id, updates, {
+      new: true,
+      session,
+    });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ success: true, data: updatedTenant });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, error.message || "Failed to update.");
   };
-
-  await User.findByIdAndUpdate(tenant?.userId?._id, userUpdates, { new: true });
-
-  const updates = { updatedBy };
-  if (fullName) updates.fullName = fullName;
-  if (mobile) updates.mobile = mobile;
-  if (email) updates.email = email;
-  if (status) updates.status = status;
-  if (currentAddress) updates.currentAddress = currentAddress;
-  if (permanentAddress) updates.permanentAddress = permanentAddress;
-  if (fromDate) updates.fromDate = fromDate;
-  if (toDate) updates.toDate = toDate;
-  if (profilePhoto) updates.profilePhoto = profilePhoto;
-  if (aadharCard) updates.aadharCard = aadharCard;
-  if (rentAgreement) updates.rentAgreement = rentAgreement;
-  if (policeVerification) updates.policeVerification = policeVerification;
-  if (vehicleRC) updates.vehicleRC = vehicleRC;
-
-  const updatedTenant = await Tenant.findByIdAndUpdate(id, updates, { new: true });
-
-  res.status(200).json({ success: true, data: updatedTenant });
 });
 
 // Soft delete single Tenant
@@ -248,12 +300,12 @@ export const softDeleteTenants = asyncHandler(async (req, res) => {
     throw new ApiError(400, `Invalid IDs: ${invalidIds.join(", ")}`);
   };
 
-  const tenants = await Tenant.find({ _id: { $in: ids }, isDeleted: false });
+  const tenants = await Tenant.find({ _id: { $in: ids }, isDeleted: false }).lean();
 
   const idsToDelete = tenants.map((t) => t?._id);
 
   const result = await Tenant.updateMany(
-    { _id: { $in: idsToDelete } },
+    { _id: { $in: idsToDelete }, isDeleted: false },
     { $set: { isDeleted: true } },
   );
 

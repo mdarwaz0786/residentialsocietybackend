@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema({
   },
   profileType: {
     type: String,
-    enum: ["Admin", "FlatOwner", "Tenant", "SecurityGuard", "MaintenanceStaff"],
+    enum: ["Admin", "SubAdmin", "FlatOwner", "Tenant", "SecurityGuard", "MaintenanceStaff"],
   },
 }, { timestamps: true });
 
