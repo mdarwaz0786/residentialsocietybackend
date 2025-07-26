@@ -20,6 +20,7 @@ import tenantRoutes from "./src/routes/tenant.routes.js";
 import visitorRoutes from "./src/routes/visitor.routes.js";
 import complaintRoutes from "./src/routes/complaint.routes.js";
 import tenantRegistrationPaymentRoutes from "./src/routes/tenantRegistrationPayment.routes.js";
+import maidRegistrationPaymentRoutes from "./src/routes/maidRegistrationPayment.route.js";
 import dashboardRoutes from "./src/routes/dashboard.routes.js";
 import cluster from "cluster";
 import os from "os";
@@ -79,8 +80,9 @@ if (cluster.isPrimary) {
   server.use("/api/v1/tenant", tenantRoutes);
   server.use("/api/v1/visitor", visitorRoutes);
   server.use("/api/v1/complaint", complaintRoutes);
-  server.use("/api/v1/tenantRegistrationPayment", tenantRegistrationPaymentRoutes);
   server.use("/api/v1/dashboard", dashboardRoutes);
+  server.use("/api/v1/tenantRegistrationPayment", tenantRegistrationPaymentRoutes);
+  server.use("/api/v1/maidRegistrationPayment", maidRegistrationPaymentRoutes);
 
   // Server static files for admin panel
   server.use(express.static(path.join(__dirname, "../admin", "dist")));

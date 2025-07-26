@@ -6,6 +6,7 @@ import ApiError from '../helpers/apiError.js';
 import ApiFeatures from "../helpers/ApiFeatures.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
 
+// Approve Tenant and Generate Payment
 export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => {
   const { PAYU_KEY, PAYU_SALT, PAYU_BASE_URL, SERVER_BASE_URL } = process.env;
   const tenantId = req.params.id;
@@ -78,6 +79,7 @@ export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => 
   res.status(200).json({ success: true, data: payment });
 });
 
+// Get Flat Owner Payments
 export const getFlatOwnerPayments = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const payments = await TenantRegistrationPayment.find({ flatOwner: id }).sort({ createdAt: -1 });
@@ -114,6 +116,7 @@ export const getTenantRegistrationPayments = asyncHandler(async (req, res) => {
   res.status(200).json(formatApiResponse({ data: payments, total, page, limit }));
 });
 
+// Handle Tenant Registration Payment Success
 export const tenantRegistrationPaymentSuccess = asyncHandler(async (req, res) => {
   const { txnid } = req.body;
   const date = new Date();
@@ -133,6 +136,7 @@ export const tenantRegistrationPaymentSuccess = asyncHandler(async (req, res) =>
   res.render('paymentSuccess', { txnid });
 });
 
+// Handle Tenant Registration Payment Failure
 export const tenantRegistrationPaymentFailure = asyncHandler(async (req, res) => {
   const { txnid } = req.body;
 

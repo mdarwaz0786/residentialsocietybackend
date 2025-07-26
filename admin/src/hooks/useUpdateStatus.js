@@ -27,13 +27,12 @@ const useUpdateStatus = ({ token, refetch }) => {
 
       if (response?.data?.success) {
         toast.success("Status Updated Successfully");
-        setStatus((prev) => ({ ...prev, [id]: "" }));
-        refetch();
       };
     } catch (err) {
       toast.error(err?.response?.data?.message || "Error while updating");
     } finally {
       setApproving((prev) => ({ ...prev, [id]: false }));
+      refetch();
     };
   };
 

@@ -13,7 +13,6 @@ export const createFlat = asyncHandler(async (req, res) => {
     flatNumber,
     floor,
     flatType,
-    block,
     status,
   } = req.body;
 
@@ -21,7 +20,6 @@ export const createFlat = asyncHandler(async (req, res) => {
     flatNumber,
     floor,
     flatType,
-    block,
     status,
     createdBy,
   });
@@ -31,8 +29,8 @@ export const createFlat = asyncHandler(async (req, res) => {
 
 // Get All Flats
 export const getFlats = asyncHandler(async (req, res) => {
-  const searchableFields = ["flatNumber", "floor", "flatType", "block"];
-  const filterableFields = ["flatType", "block"];
+  const searchableFields = ["flatNumber", "floor", "flatType"];
+  const filterableFields = ["flatType"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
     softDelete: true,
@@ -73,6 +71,7 @@ export const getFlat = asyncHandler(async (req, res) => {
 // Update Flat
 export const updateFlat = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const updatedBy = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new ApiError(400, "Invalid Flat ID");
@@ -84,7 +83,10 @@ export const updateFlat = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Flat not found");
   };
 
-  const updates = { ...req.body };
+  const updates = {
+    ...req.body,
+    updatedBy,
+  };
 
   const updatedFlat = await Flat.findByIdAndUpdate(id, updates, { new: true });
 

@@ -17,7 +17,6 @@ const CreateFlat = () => {
     flatNumber: "",
     floor: "",
     flatType: "",
-    block: "",
     status: "Approved",
   });
 
@@ -31,7 +30,6 @@ const CreateFlat = () => {
     flatNumber: { required: true, label: "Flat Number" },
     floor: { required: true, label: "Floor" },
     flatType: { required: true, label: "Flat Type" },
-    block: { required: true, label: "Block" },
   };
 
   const handleSubmit = async (e) => {
@@ -61,6 +59,7 @@ const CreateFlat = () => {
     { _id: 1, flatType: "1BHK" },
     { _id: 1, flatType: "2BHK" },
     { _id: 1, flatType: "3BHK" },
+    { _id: 1, flatType: "4BHK" },
     { _id: 1, flatType: "Studio" },
     { _id: 1, flatType: "Penthouse" },
     { _id: 1, flatType: "Other" },
@@ -75,7 +74,7 @@ const CreateFlat = () => {
         onChange={handleChange}
         required
         error={errors.flatNumber}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Floor"
@@ -84,16 +83,7 @@ const CreateFlat = () => {
         onChange={handleChange}
         required
         error={errors.floor}
-        width="col-md-6"
-      />
-      <Input
-        label="Block"
-        name="block"
-        value={form.block}
-        onChange={handleChange}
-        required
-        error={errors.block}
-        width="col-md-6"
+        width="col-md-4"
       />
       <SingleSelect
         label="Flat Type"
@@ -105,7 +95,7 @@ const CreateFlat = () => {
         optionKey="flatType"
         required
         error={errors.flatType}
-        width="col-md-6"
+        width="col-md-4"
       />
     </FormWrapper>
   );

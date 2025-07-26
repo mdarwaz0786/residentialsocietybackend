@@ -105,7 +105,7 @@ const Maid = () => {
                       status={status}
                       approving={approving}
                       onChange={handleStatusChange}
-                      onSubmit={(id) => updateStatus("/api/v1/maid/update-maid", id)}
+                      onSubmit={(id) => updateStatus(`/api/v1/maidRegistrationPayment/approve/maid/${status[id]}`, id)}
                     />
                   </td>
                   <td>

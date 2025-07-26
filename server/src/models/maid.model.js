@@ -35,6 +35,22 @@ const maidSchema = new mongoose.Schema({
     enum: ["Approved", "Pending", "Rejected"],
     default: "Pending",
   },
+  paymentStatus: {
+    type: String,
+    enum: ["Pending", "Success", "Failed"],
+    default: "Pending",
+  },
+  paymentDate: {
+    type: Date,
+  },
+  validTill: {
+    type: Date,
+  },
+  validityStatus: {
+    type: String,
+    enum: ["Active", "Expired"],
+    default: "Active",
+  },
   isDeleted: {
     type: Boolean,
     default: false,

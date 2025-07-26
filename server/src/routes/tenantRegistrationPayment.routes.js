@@ -1,5 +1,5 @@
 import express from 'express';
-import { approveTenantAndGeneratePayment, getFlatOwnerPayments, getTenantRegistrationPayments, tenantRegistrationPaymentFailure, tenantRegistrationPaymentSuccess } from '../controllers/TenantRegistrationPayment.controllers.js';
+import { approveTenantAndGeneratePayment, getFlatOwnerPayments, getTenantRegistrationPayments, tenantRegistrationPaymentFailure, tenantRegistrationPaymentSuccess } from '../controllers/tenantRegistrationPayment.controllers.js';
 
 const router = express.Router();
 

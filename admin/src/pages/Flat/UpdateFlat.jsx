@@ -20,19 +20,15 @@ const UpdateFlat = () => {
     flatNumber: "",
     floor: "",
     flatType: "",
-    block: "",
-    status: "Approved",
   });
 
   useEffect(() => {
     if (flatData?.data) {
-      const { flatNumber, floor, flatType, block } = flatData.data;
+      const { flatNumber, floor, flatType } = flatData.data;
       setForm({
         flatNumber,
         floor,
         flatType,
-        block,
-        status: "Approved",
       });
     };
   }, [flatData]);
@@ -47,7 +43,6 @@ const UpdateFlat = () => {
     flatNumber: { required: true, label: "Flat Number" },
     floor: { required: true, label: "Floor" },
     flatType: { required: true, label: "Flat Type" },
-    block: { required: true, label: "Block" },
   };
 
   const handleSubmit = async (e) => {
@@ -73,6 +68,7 @@ const UpdateFlat = () => {
     { _id: 1, flatType: "1BHK" },
     { _id: 2, flatType: "2BHK" },
     { _id: 3, flatType: "3BHK" },
+    { _id: 3, flatType: "4BHK" },
     { _id: 4, flatType: "Studio" },
     { _id: 5, flatType: "Penthouse" },
     { _id: 6, flatType: "Other" },
@@ -87,7 +83,7 @@ const UpdateFlat = () => {
         onChange={handleChange}
         required
         error={errors.flatNumber}
-        width="col-md-6"
+        width="col-md-4"
       />
       <Input
         label="Floor"
@@ -96,16 +92,7 @@ const UpdateFlat = () => {
         onChange={handleChange}
         required
         error={errors.floor}
-        width="col-md-6"
-      />
-      <Input
-        label="Block"
-        name="block"
-        value={form.block}
-        onChange={handleChange}
-        required
-        error={errors.block}
-        width="col-md-6"
+        width="col-md-4"
       />
       <SingleSelect
         label="Flat Type"
@@ -117,7 +104,7 @@ const UpdateFlat = () => {
         optionKey="flatType"
         required
         error={errors.flatType}
-        width="col-md-6"
+        width="col-md-4"
       />
     </FormWrapper>
   );

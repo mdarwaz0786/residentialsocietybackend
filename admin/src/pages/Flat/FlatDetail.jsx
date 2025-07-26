@@ -37,21 +37,17 @@ const FlatDetail = () => {
 
       <div className="card shadow-sm p-3" ref={pdfRef}>
         <div className="row">
-          <div className="col-md-6 mb-2">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Flat Number:</label>
             <span>{" "}{flat?.flatNumber}</span>
           </div>
-          <div className="col-md-6 mb-2">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Flat Type:</label>
             <span>{" "}{flat?.flatType}</span>
           </div>
-          <div className="col-md-6 mb-2">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Floor:</label>
             <span>{" "}{flat?.floor}</span>
-          </div>
-          <div className="col-md-6 mb-2">
-            <label className="fw-bold">Block:</label>
-            <span>{" "}{flat?.block}</span>
           </div>
         </div>
       </div>
