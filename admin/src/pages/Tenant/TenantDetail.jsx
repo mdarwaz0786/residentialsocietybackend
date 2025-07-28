@@ -75,7 +75,7 @@ const TenantDetail = () => {
           </div>
           <div className="col-md-6 mt-3">
             <label className="fw-bold d-block mb-1 mt-3">Vehicle RC:</label>
-            <img src={maintenanceStaff?.vehicleRC} alt="vehicleRC" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={maintenanceStaff?.vehicleRC?.[0]} alt="vehicleRC" className="img-thumbnail" style={{ maxHeight: "200px" }} />
           </div>
         </div>
       </div>

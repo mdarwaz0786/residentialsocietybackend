@@ -75,7 +75,11 @@ export const createTenant = asyncHandler(async (req, res) => {
   const aadharCard = fileToBase64(req?.files?.aadharCard?.[0]);
   const rentAgreement = fileToBase64(req?.files?.rentAgreement?.[0]);
   const policeVerification = fileToBase64(req?.files?.policeVerification?.[0]);
-  const vehicleRC = fileToBase64(req?.files?.vehicleRC?.[0]);
+  const vehicleRCFiles = req?.files?.vehicleRC || [];
+
+  const vehicleRCBase64Array = vehicleRCFiles ? vehicleRCFiles.map((file) => (
+    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
+  )) : [];
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -104,12 +108,10 @@ export const createTenant = asyncHandler(async (req, res) => {
       memberId,
       currentAddress,
       permanentAddress,
-      fromDate,
-      toDate,
       aadharCard,
       rentAgreement,
       policeVerification,
-      vehicleRC,
+      vehicleRC: vehicleRCBase64Array,
       createdBy,
     }], { session });
 
@@ -218,7 +220,11 @@ export const updateTenant = asyncHandler(async (req, res) => {
   const aadharCard = fileToBase64(req?.files?.aadharCard?.[0]);
   const rentAgreement = fileToBase64(req?.files?.rentAgreement?.[0]);
   const policeVerification = fileToBase64(req?.files?.policeVerification?.[0]);
-  const vehicleRC = fileToBase64(req?.files?.vehicleRC?.[0]);
+  const vehicleRCFiles = req?.files?.vehicleRC || [];
+
+  const vehicleRCBase64Array = vehicleRCFiles ? vehicleRCFiles.map((file) => (
+    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
+  )) : [];
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -248,7 +254,7 @@ export const updateTenant = asyncHandler(async (req, res) => {
     if (aadharCard) updates.aadharCard = aadharCard;
     if (rentAgreement) updates.rentAgreement = rentAgreement;
     if (policeVerification) updates.policeVerification = policeVerification;
-    if (vehicleRC) updates.vehicleRC = vehicleRC;
+    if (vehicleRCBase64Array) updates.vehicleRC = vehicleRCBase64Array;
 
     const updatedTenant = await Tenant.findByIdAndUpdate(id, updates, {
       new: true,

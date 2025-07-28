@@ -15,13 +15,11 @@ const router = express.Router();
 
 router.post(
   "/create-flatOwner",
-  isLoggedIn,
-  checkPermission("flatOwner", "create"),
   upload.fields([
     { name: "profilePhoto", maxCount: 1 },
     { name: "aadharCard", maxCount: 1 },
     { name: "allotment", maxCount: 1 },
-    { name: "vehicleRC", maxCount: 1 }
+    { name: "vehicleRC", maxCount: 5 }
   ]),
   validateFileSize,
   createFlatOwner
@@ -49,7 +47,7 @@ router.patch(
     { name: "profilePhoto", maxCount: 1 },
     { name: "aadharCard", maxCount: 1 },
     { name: "allotment", maxCount: 1 },
-    { name: "vehicleRC", maxCount: 1 }
+    { name: "vehicleRC", maxCount: 5 }
   ]),
   validateFileSize,
   updateFlatOwner

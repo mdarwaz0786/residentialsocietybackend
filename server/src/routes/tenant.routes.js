@@ -22,7 +22,7 @@ router.post(
     { name: "aadharCard", maxCount: 1 },
     { name: "policeVerification", maxCount: 1 },
     { name: "rentAgreement", maxCount: 1 },
-    { name: "vehicleRC", maxCount: 1 },
+    { name: "vehicleRC", maxCount: 5 },
   ]),
   validateFileSize,
   createTenant
@@ -51,7 +51,7 @@ router.patch(
     { name: "aadharCard", maxCount: 1 },
     { name: "policeVerification", maxCount: 1 },
     { name: "rentAgreement", maxCount: 1 },
-    { name: "vehicleRC", maxCount: 1 },
+    { name: "vehicleRC", maxCount: 5 },
   ]),
   validateFileSize,
   updateTenant

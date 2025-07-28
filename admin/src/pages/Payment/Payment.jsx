@@ -48,9 +48,7 @@ const Payment = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
-            <th>T. Id</th>
-            <th>Flat</th>
-            <th>Tenant</th>
+            <th>Transaction Id</th>
             <th>Amount</th>
             <th>Status</th>
             <th>Action</th>
@@ -64,8 +62,6 @@ const Payment = () => {
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
                   <td>{item?.txnid}</td>
-                  <td>{item?.flat?.flatNumber}</td>
-                  <td>{item?.tenant?.fullName}</td>
                   <td>{item?.amount}</td>
                   <td>{item?.status}</td>
                   <td>

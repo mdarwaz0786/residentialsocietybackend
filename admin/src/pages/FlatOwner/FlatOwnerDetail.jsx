@@ -71,7 +71,7 @@ const FlatOwnerDetail = () => {
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Vehicle RC:</label>
-            <img src={flatOwner?.vehicleRC} alt="image" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={flatOwner?.vehicleRC?.[0]} alt="image" className="img-thumbnail" style={{ maxHeight: "200px" }} />
           </div>
         </div>
       </div>

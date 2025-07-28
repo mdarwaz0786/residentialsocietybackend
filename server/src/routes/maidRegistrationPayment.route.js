@@ -1,5 +1,5 @@
 import express from 'express';
-import { approveMaidAndGeneratePayment, getMaidPayments, getMaidRegistrationPayments, maidRegistrationPaymentFailure, maidRegistrationPaymentSuccess } from '../controllers/maidRegistrationPayment.controller.js';
+import { approveMaidAndGeneratePayment, getMaidPayments, getMaidRegistrationPayments, maidRegistrationPaymentFailure, maidRegistrationPaymentSuccess } from '../controllers/maidRegistrationPayment.controllers.js';
 
 const router = express.Router();
 

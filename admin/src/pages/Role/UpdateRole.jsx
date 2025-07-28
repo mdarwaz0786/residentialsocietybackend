@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FaArrowLeft } from "react-icons/fa";
 
 const permissionTypes = [
   "flat", "vehicle", "visitor", "maid", "tenant",
@@ -63,10 +64,15 @@ const UpdateRole = () => {
 
   return (
     <div className="container mt-2 mb-2">
-      <h5 style={{ textAlign: "center" }}>Update Role</h5>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+        <h5>Update Role</h5>
+        <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+          <FaArrowLeft className="me-1" /> Back
+        </button>
+      </div>
       <form onSubmit={handleSubmit} className="mt-2">
         <div className="mb-3">
-          <h6>Role</h6>
+          <h6>Role Name</h6>
           <input
             type="text"
             className="form-control"

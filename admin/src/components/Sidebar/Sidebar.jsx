@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import {
   MdDashboard,
-  MdSettings,
   MdLogout,
   MdClose,
   MdStorefront,
@@ -159,13 +158,6 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
               <Link to="/role" className={`${styles.navLink} ${activeLink === "Role" ? styles.active : ""}`} onClick={() => handleLinkClick("Role")}>
                 <FaUserTag />
                 <span className={styles.navLabel}>Role & Permission</span>
-              </Link>
-            </li>
-
-            <li className={styles.navItem}>
-              <Link to="/setting" className={`${styles.navLink} ${activeLink === "Setting" ? styles.active : ""}`} onClick={() => handleLinkClick("Setting")}>
-                <MdSettings />
-                <span className={styles.navLabel}>Setting</span>
               </Link>
             </li>
 

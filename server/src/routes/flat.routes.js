@@ -5,7 +5,7 @@ import { createFlat, getFlat, getFlats, softDeleteFlat, softDeleteFlats, updateF
 const router = express.Router();
 
 router.post("/create-flat", isLoggedIn, checkPermission("flat", "create"), createFlat);
-router.get("/get-all-flat", isLoggedIn, checkPermission("flat", "access"), getFlats);
+router.get("/get-all-flat", getFlats);
 router.get("/get-single-flat/:id", isLoggedIn, checkPermission("flat", "access"), getFlat);
 router.put("/update-flat/:id", isLoggedIn, checkPermission("flat", "update"), updateFlat);
 router.delete("/delete-single-flat/:id", isLoggedIn, checkPermission("flat", "delete"), softDeleteFlat);

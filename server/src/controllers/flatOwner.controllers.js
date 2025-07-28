@@ -12,7 +12,6 @@ import formatApiResponse from "../helpers/formatApiResponse.js";
 
 // Create Flat Owner
 export const createFlatOwner = asyncHandler(async (req, res) => {
-  const createdBy = req.user?._id;
 
   const {
     fullName,
@@ -35,27 +34,6 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
   if (!flatOwnerRole) {
     throw new ApiError(404, "Flat Owner role not found.");
   };
-
-  const profilePhoto = req?.files?.profilePhoto?.[0];
-  const aadharCard = req?.files?.aadharCard?.[0];
-  const allotment = req?.files?.allotment?.[0];
-  const vehicleRC = req?.files?.vehicleRC?.[0];
-
-  const profilePhotoBase64 = profilePhoto
-    ? `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`
-    : null;
-
-  const aadharCardBase64 = aadharCard
-    ? `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`
-    : null;
-
-  const allotmentBase64 = allotment
-    ? `data:${allotment.mimetype};base64,${allotment.buffer.toString("base64")}`
-    : null;
-
-  const vehicleRCBase64 = vehicleRC
-    ? `data:${vehicleRC.mimetype};base64,${vehicleRC.buffer.toString("base64")}`
-    : null;
 
   const orConditions = [];
   if (email) orConditions.push({ email });
@@ -88,6 +66,27 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Failed to generate member ID.");
   };
 
+  const profilePhoto = req?.files?.profilePhoto?.[0];
+  const aadharCard = req?.files?.aadharCard?.[0];
+  const allotment = req?.files?.allotment?.[0];
+  const vehicleRCFiles = req?.files?.vehicleRC || [];
+
+  const profilePhotoBase64 = profilePhoto
+    ? `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`
+    : null;
+
+  const aadharCardBase64 = aadharCard
+    ? `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`
+    : null;
+
+  const allotmentBase64 = allotment
+    ? `data:${allotment.mimetype};base64,${allotment.buffer.toString("base64")}`
+    : null;
+
+  const vehicleRCBase64Array = vehicleRCFiles ? vehicleRCFiles.map((file) => (
+    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
+  )) : [];
+
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -117,8 +116,7 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
       permanentAddress,
       aadharCard: aadharCardBase64,
       allotment: allotmentBase64,
-      vehicleRC: vehicleRCBase64,
-      createdBy,
+      vehicleRC: vehicleRCBase64Array,
     }], { session });
 
     newUser[0].profile = flatOwner?.[0]?._id;
@@ -227,7 +225,7 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   const profilePhoto = req?.files?.profilePhoto?.[0];
   const aadharCard = req?.files?.aadharCard?.[0];
   const allotment = req?.files?.allotment?.[0];
-  const vehicleRC = req?.files?.vehicleRC?.[0];
+  const vehicleRCFiles = req?.files?.vehicleRC || [];
 
   const profilePhotoBase64 = profilePhoto
     ? `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`
@@ -241,9 +239,9 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
     ? `data:${allotment.mimetype};base64,${allotment.buffer.toString("base64")}`
     : null;
 
-  const vehicleRCBase64 = vehicleRC
-    ? `data:${vehicleRC.mimetype};base64,${vehicleRC.buffer.toString("base64")}`
-    : null;
+  const vehicleRCBase64Array = vehicleRCFiles ? vehicleRCFiles.map((file) => (
+    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
+  )) : [];
 
   // Update User
   const userUpdates = {};
@@ -267,7 +265,7 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   if (profilePhotoBase64) flatOwnerUpdates.profilePhoto = profilePhotoBase64;
   if (aadharCardBase64) flatOwnerUpdates.aadharCard = aadharCardBase64;
   if (allotmentBase64) flatOwnerUpdates.allotment = allotmentBase64;
-  if (vehicleRCBase64) flatOwnerUpdates.vehicleRC = vehicleRCBase64;
+  if (vehicleRCBase64Array) flatOwnerUpdates.vehicleRC = vehicleRCBase64Array;
 
   const session = await mongoose.startSession();
   session.startTransaction();

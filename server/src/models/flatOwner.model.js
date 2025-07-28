@@ -70,7 +70,7 @@ const flatOwnerSchema = new mongoose.Schema({
     required: [true, "Allotment is required."],
   },
   vehicleRC: {
-    type: String,
+    type: [String],
   },
   fromDate: {
     type: Date,
@@ -86,19 +86,15 @@ const flatOwnerSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ["Approved", "Pending", "Rejected"],
-    default: "Approved",
+    default: "Pending",
   },
   canLogin: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   isDeleted: {
     type: Boolean,
     default: false,
-  },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
   },
   updatedBy: {
     type: mongoose.Schema.Types.ObjectId,

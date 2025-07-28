@@ -7,7 +7,6 @@ import {
   FaBroom,
   FaCar,
   FaTools,
-  FaCog,
   FaUserTag,
   FaHome,
   FaExclamationCircle,
@@ -121,13 +120,6 @@ const Dashboard = () => {
       icon: <FaUserTag size={20} />,
       color: "text-muted",
       to: "/role",
-    },
-    {
-      label: "Settings",
-      value: stat?.totalSettings || 0,
-      icon: <FaCog size={20} />,
-      color: "text-black-50",
-      to: "/setting",
     },
   ];
 
