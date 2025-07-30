@@ -59,7 +59,6 @@ const Vehicle = () => {
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5>All Vehicle<span className="badge bg-secondary ms-2">{total}</span></h5>
-        {/* <Link to="/create-vehicle"><button className="btn btn-primary">Add New Vehicle</button></Link> */}
         <SearchBar value={params.search} onChange={handleSearch} />
       </div>
       <TableWrapper>
@@ -96,14 +95,13 @@ const Vehicle = () => {
                   </td>
                   <td>
                     <Link to={`/vehicle-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
-                    {/* <Link to={`/update-vehicle/${item?._id}`}><button className="btn btn-primary me-3 actionBtn">Edit</button></Link> */}
                     <button className="btn btn-danger" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center">
+                <td colSpan="7" className="text-center">
                   No Data.
                 </td>
               </tr>

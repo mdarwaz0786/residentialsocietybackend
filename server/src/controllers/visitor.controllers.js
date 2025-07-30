@@ -88,6 +88,19 @@ export const getVisitors = asyncHandler(async (req, res) => {
     defaultLimit: 10,
   });
 
+  const { dateType = "all" } = req.query;
+
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayEnd = new Date();
+  todayEnd.setHours(23, 59, 59, 999);
+
+  if (dateType === "today") {
+    query.date = { $gte: todayStart, $lte: todayEnd };
+  } else if (dateType === "upcoming") {
+    query.date = { $gt: todayEnd };
+  };
+
   const visitors = await Visitor
     .find(query)
     .populate("flat")
