@@ -16,7 +16,7 @@ const User = () => {
     setParams,
   } = useFetchData(fetchDataUrl, validToken, {
     page: 1,
-    limit: 10,
+    limit: 20,
     search: "",
   });
 

@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 const ApiFeatures = (req, searchableFields = [], filterableFields = [], options = {}) => {
   const { search = "", ...restFilters } = req.query;
 
+  let query = {};
+
   // Query parameters
   const sortBy = req.query.sortBy || options.defaultSortBy || "createdAt";
   const order = req.query.order || options.defaultOrder || "desc";

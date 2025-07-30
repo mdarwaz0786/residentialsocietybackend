@@ -23,7 +23,8 @@ const Vehicle = () => {
     refetch,
   } = useFetchData(fetchDataUrl, validToken, {
     page: 1,
-    limit: 10,
+    limit: 20,
+    isDeleted: false,
     search: "",
   });
 
