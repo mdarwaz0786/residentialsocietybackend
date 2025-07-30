@@ -40,15 +40,12 @@ export const createVehicle = asyncHandler(async (req, res) => {
 
 // Get All Vehicles
 export const getVehicles = asyncHandler(async (req, res) => {
-  const searchableFields = ["vehicleNumber", "vehicleType"];
+  const searchableFields = ["vehicleNumber", "vehicleType", "status"];
   const filterableFields = ["vehicleType", "status"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
-    softDelete: true,
     defaultSortBy: "createdAt",
     defaultOrder: "desc",
-    defaultPage: 1,
-    defaultLimit: 10,
   });
 
   const vehicles = await Vehicle

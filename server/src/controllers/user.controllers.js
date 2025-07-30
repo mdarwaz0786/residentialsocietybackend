@@ -46,11 +46,8 @@ export const getUsers = asyncHandler(async (req, res) => {
   const filterableFields = [""];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
-    softDelete: false,
     defaultSortBy: "createdAt",
     defaultOrder: "desc",
-    defaultPage: 1,
-    defaultLimit: 10
   });
 
   const users = await User

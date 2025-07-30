@@ -30,14 +30,11 @@ export const createFlat = asyncHandler(async (req, res) => {
 // Get All Flats
 export const getFlats = asyncHandler(async (req, res) => {
   const searchableFields = ["flatNumber", "floor", "flatType"];
-  const filterableFields = ["flatType"];
+  const filterableFields = ["flatType", "isDeleted"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
-    softDelete: true,
     defaultSortBy: "createdAt",
     defaultOrder: "desc",
-    defaultPage: 1,
-    defaultLimit: 10,
   });
 
   const flats = await Flat

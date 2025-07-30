@@ -136,14 +136,11 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
 // Get all Flat Owner
 export const getFlatOwners = async (req, res) => {
   const searchableFields = ["fullName", "email", "mobile"];
-  const filterableFields = ["status"];
+  const filterableFields = ["status", "isDeleted"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
-    softDelete: true,
     defaultSortBy: "createdAt",
     defaultOrder: "desc",
-    defaultPage: 1,
-    defaultLimit: 10,
   });
 
   const flatOwners = await FlatOwner

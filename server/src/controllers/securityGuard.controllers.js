@@ -89,14 +89,11 @@ export const createSecurityGuard = asyncHandler(async (req, res) => {
 // Get all Security Guards
 export const getSecurityGuards = async (req, res) => {
   const searchableFields = ["fullName", "email", "mobile"];
-  const filterableFields = ["status"];
+  const filterableFields = ["status", "isDeleted"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
-    softDelete: true,
     defaultSortBy: "createdAt",
     defaultOrder: "desc",
-    defaultPage: 1,
-    defaultLimit: 10,
   });
 
   const securityGuard = await SecurityGuard

@@ -6,10 +6,8 @@ const ApiFeatures = (req, searchableFields = [], filterableFields = [], options 
   // Query parameters
   const sortBy = req.query.sortBy || options.defaultSortBy || "createdAt";
   const order = req.query.order || options.defaultOrder || "desc";
-  const page = parseInt(req.query.page) || options.defaultPage || 1;
-  const limit = parseInt(req.query.limit) || options.defaultLimit || 10;
-
-  const query = { ...options.softDelete && { isDeleted: false } };
+  const page = parseInt(req.query.page);
+  const limit = parseInt(req.query.limit);
 
   // Fuzzy search with regex on multiple fields
   if (search && searchableFields.length > 0) {

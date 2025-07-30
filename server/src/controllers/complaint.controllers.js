@@ -29,18 +29,15 @@ export const createComplaint = asyncHandler(async (req, res) => {
 // Get Copmlaints
 export const getComplaints = asyncHandler(async (req, res) => {
   const searchableFields = ["title", "type", "status"];
-  const filterableFields = ["type", "status"];
+  const filterableFields = ["type", "status", "isDeleted"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(
     req,
     searchableFields,
     filterableFields,
     {
-      softDelete: true,
       defaultSortBy: "createdAt",
       defaultOrder: "desc",
-      defaultPage: 1,
-      defaultLimit: 10,
     }
   );
 

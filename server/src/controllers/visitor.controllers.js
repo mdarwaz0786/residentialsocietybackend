@@ -81,11 +81,8 @@ export const getVisitors = asyncHandler(async (req, res) => {
   const filterableFields = ["status"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
-    softDelete: true,
     defaultSortBy: "createdAt",
     defaultOrder: "desc",
-    defaultPage: 1,
-    defaultLimit: 10,
   });
 
   const { dateType = "all" } = req.query;
@@ -122,7 +119,7 @@ export const getVisitor = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid visitor ID.");
   };
 
-  const visitor = await Visitor.findOne({ _id: id, isDeleted: false }).populate("flat").populate("createdBy");
+  const visitor = await Visitor.findOne({ _id: id }).populate("flat").populate("createdBy");
 
   if (!visitor) {
     throw new ApiError(404, "Visitor not found or has been deleted.");
@@ -142,7 +139,7 @@ export const updateVisitor = asyncHandler(async (req, res) => {
 
   const visitor = await Visitor.findById(id);
 
-  if (!visitor || visitor.isDeleted) {
+  if (!visitor) {
     throw new ApiError(404, "Visitor not found or already deleted.");
   };
 
@@ -199,7 +196,7 @@ export const softDeleteVisitors = asyncHandler(async (req, res) => {
   };
 
   const result = await Visitor.updateMany(
-    { _id: { $in: ids }, isDeleted: false },
+    { _id: { $in: ids } },
     { $set: { isDeleted: true } }
   );
 

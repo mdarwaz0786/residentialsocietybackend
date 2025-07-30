@@ -93,8 +93,6 @@ export const getMaintenanceStaffs = async (req, res) => {
     softDelete: true,
     defaultSortBy: "createdAt",
     defaultOrder: "desc",
-    defaultPage: 1,
-    defaultLimit: 10,
   });
 
   const maintenanceStaff = await MaintenanceStaff

@@ -88,19 +88,16 @@ export const getFlatOwnerPayments = asyncHandler(async (req, res) => {
 
 // Get all Tenant Registration Payment
 export const getTenantRegistrationPayments = asyncHandler(async (req, res) => {
-  const searchableFields = ["status"];
-  const filterableFields = ["status"];
+  const searchableFields = ["status", "txnid"];
+  const filterableFields = ["status", "isDeleted"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(
     req,
     searchableFields,
     filterableFields,
     {
-      softDelete: true,
-      defaultSortBy: "createdAt",
+      defaultSortBy: "paymentDate",
       defaultOrder: "desc",
-      defaultPage: 1,
-      defaultLimit: 10,
     }
   );
 

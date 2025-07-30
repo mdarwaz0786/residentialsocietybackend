@@ -132,18 +132,15 @@ export const createTenant = asyncHandler(async (req, res) => {
 // Get all Tenants
 export const getTenants = asyncHandler(async (req, res) => {
   const searchableFields = ["fullName", "email", "mobile"];
-  const filterableFields = ["status"];
+  const filterableFields = ["status", "isDeleted", "paymentStatus"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(
     req,
     searchableFields,
     filterableFields,
     {
-      softDelete: true,
       defaultSortBy: "createdAt",
       defaultOrder: "desc",
-      defaultPage: 1,
-      defaultLimit: 10,
     }
   );
 

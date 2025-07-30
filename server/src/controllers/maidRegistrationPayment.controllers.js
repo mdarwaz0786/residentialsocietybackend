@@ -88,19 +88,16 @@ export const getMaidPayments = asyncHandler(async (req, res) => {
 
 // Get all Maid Registration Payment
 export const getMaidRegistrationPayments = asyncHandler(async (req, res) => {
-  const searchableFields = ["status"];
-  const filterableFields = ["status"];
+  const searchableFields = ["status", "txnid", "purpose"];
+  const filterableFields = ["status", "purpose", "isDeleted"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(
     req,
     searchableFields,
     filterableFields,
     {
-      softDelete: true,
-      defaultSortBy: "createdAt",
+      defaultSortBy: "paymentDate",
       defaultOrder: "desc",
-      defaultPage: 1,
-      defaultLimit: 10,
     }
   );
 
@@ -154,7 +151,7 @@ export const maidRegistrationPaymentFailure = asyncHandler(async (req, res) => {
   const { txnid } = req.body;
 
   const maidRegistrationPayment = await MaidRegistrationPayment.findOne({ txnid: txnid });
-  const maidId = maidRegistrationPayment?.tenant;
+  const maidId = maidRegistrationPayment?.maid;
   const maid = await Maid.findById(maidId);
 
   maidRegistrationPayment.status = "failed";

@@ -68,14 +68,11 @@ export const createMaid = asyncHandler(async (req, res) => {
 // Get All Maids
 export const getMaids = asyncHandler(async (req, res) => {
   const searchableFields = ["name", "mobile", "memberId"];
-  const filterableFields = ["status"];
+  const filterableFields = ["status", "isDeleted"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
-    softDelete: true,
     defaultSortBy: "createdAt",
     defaultOrder: "desc",
-    defaultPage: 1,
-    defaultLimit: 10,
   });
 
   const maids = await Maid

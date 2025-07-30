@@ -16,14 +16,11 @@ export const createRole = asyncHandler(async (req, res) => {
 // Get All Roles
 export const getRoles = asyncHandler(async (req, res) => {
   const searchableFields = ["roleName"];
-  const filterableFields = [];
+  const filterableFields = ["isDeleted"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
-    softDelete: true,
     defaultSortBy: "createdAt",
     defaultOrder: "desc",
-    defaultPage: 1,
-    defaultLimit: 10
   });
 
   const roles = await Role.find(query)
