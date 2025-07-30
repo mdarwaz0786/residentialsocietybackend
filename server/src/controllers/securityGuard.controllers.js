@@ -53,37 +53,53 @@ export const createSecurityGuard = asyncHandler(async (req, res) => {
 
   const memberId = await generateMemberId("SGD-");
 
-  const newUser = await User.create({
-    profilePhoto: profilePhotoBase64,
-    fullName,
-    mobile,
-    email,
-    password: hashedPassword,
-    role: role?._id,
-    memberId,
-    profileType: "SecurityGuard",
-  });
+  if (!memberId) {
+    throw new ApiError(500, "Failed to generate member ID.");
+  };
 
-  const securityGuard = await SecurityGuard.create({
-    userId: newUser?._id,
-    fullName,
-    profilePhoto: profilePhotoBase64,
-    mobile,
-    email,
-    password: hashedPassword,
-    role: role?._id,
-    memberId,
-    currentAddress,
-    permanentAddress,
-    aadharCard: aadharCardBase64,
-    gateNumber,
-    createdBy,
-  });
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  newUser.profile = securityGuard?._id;
-  await newUser.save();
+  try {
+    const [newUser] = await User.create([{
+      profilePhoto: profilePhotoBase64,
+      fullName,
+      mobile,
+      email,
+      password: hashedPassword,
+      role: role?._id,
+      memberId,
+      profileType: "SecurityGuard",
+    }], { session });
 
-  res.status(201).json({ success: true, data: { user: newUser, securityGuard } });
+    const [securityGuard] = await SecurityGuard.create([{
+      userId: newUser?._id,
+      fullName,
+      profilePhoto: profilePhotoBase64,
+      mobile,
+      email,
+      password: hashedPassword,
+      role: role?._id,
+      memberId,
+      currentAddress,
+      permanentAddress,
+      aadharCard: aadharCardBase64,
+      gateNumber,
+      createdBy,
+    }], { session });
+
+    newUser.profile = securityGuard?._id;
+    await newUser.save();
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(201).json({ success: true, data: { user: newUser, securityGuard } });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, error.message || "Something went wrong.");
+  };
 });
 
 // Get all Security Guards
@@ -150,6 +166,23 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
     status,
   } = req.body;
 
+  const existingUser = await User.findOne({
+    $or: [{ email }, { mobile }],
+    _id: { $ne: securityGuard?.userId?._id },
+  });
+
+  if (existingUser) {
+    throw new ApiError(400, "User already exists with this email or mobile.");
+  };
+
+  let hashedPassword = null;
+  let salt = null;
+
+  if (password) {
+    salt = await bcrypt.genSalt(10);
+    hashedPassword = await bcrypt.hash(password, salt);
+  };
+
   const profilePhoto = req?.files?.profilePhoto?.[0];
   const aadharCard = req?.files?.aadharCard?.[0];
 
@@ -161,32 +194,48 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
     ? `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`
     : null;
 
-  const userUpdates = {};
-  if (fullName) userUpdates.fullName = fullName;
-  if (mobile) userUpdates.mobile = mobile;
-  if (email) userUpdates.email = email;
-  if (profilePhotoBase64) userUpdates.profilePhoto = profilePhotoBase64;
-  if (password) {
-    const salt = await bcrypt.genSalt(10);
-    userUpdates.password = await bcrypt.hash(password, salt);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const userUpdates = {};
+    if (fullName) userUpdates.fullName = fullName;
+    if (mobile) userUpdates.mobile = mobile;
+    if (email) userUpdates.email = email;
+    if (profilePhotoBase64) userUpdates.profilePhoto = profilePhotoBase64;
+    if (hashedPassword) userUpdates.password = hashedPassword;
+
+    const updatedUser = await User.findByIdAndUpdate(securityGuard.userId?._id, userUpdates, {
+      new: true,
+      session,
+    });
+
+    const securityGuardUpdates = {};
+    securityGuardUpdates.updatedBy = updatedBy;
+    if (fullName) securityGuardUpdates.fullName = fullName;
+    if (mobile) securityGuardUpdates.mobile = mobile;
+    if (email) securityGuardUpdates.email = email;
+    if (hashedPassword) securityGuardUpdates.password = hashedPassword;
+    if (status) securityGuardUpdates.status = status;
+    if (gateNumber) securityGuardUpdates.gateNumber = gateNumber;
+    if (currentAddress) securityGuardUpdates.currentAddress = currentAddress;
+    if (permanentAddress) securityGuardUpdates.permanentAddress = permanentAddress;
+    if (aadharCardBase64) securityGuardUpdates.aadharCard = aadharCardBase64;
+
+    const updatedSecurityGuard = await SecurityGuard.findByIdAndUpdate(id, securityGuardUpdates, {
+      new: true,
+      session,
+    });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ success: true, data: { user: updatedUser, securityGuard: updatedSecurityGuard } });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, error.message || "Failed to update.");
   };
-
-  await User.findByIdAndUpdate(securityGuard.userId._id, userUpdates);
-
-  const securityGuardUpdates = {};
-  securityGuardUpdates.updatedBy = updatedBy;
-  if (fullName) securityGuardUpdates.fullName = fullName;
-  if (mobile) securityGuardUpdates.mobile = mobile;
-  if (email) securityGuardUpdates.email = email;
-  if (status) securityGuardUpdates.status = status;
-  if (gateNumber) securityGuardUpdates.gateNumber = gateNumber;
-  if (currentAddress) securityGuardUpdates.currentAddress = currentAddress;
-  if (permanentAddress) securityGuardUpdates.permanentAddress = permanentAddress;
-  if (aadharCardBase64) securityGuardUpdates.aadharCard = aadharCardBase64;
-
-  const updatedSecurityGuard = await SecurityGuard.findByIdAndUpdate(id, securityGuardUpdates, { new: true });
-
-  res.status(200).json({ success: true, data: updatedSecurityGuard });
 });
 
 // Soft Delete Security Guard

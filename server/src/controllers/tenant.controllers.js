@@ -234,7 +234,7 @@ export const updateTenant = asyncHandler(async (req, res) => {
     if (hashedPassword) userUpdates.password = hashedPassword;
     if (profilePhoto) userUpdates.profilePhoto = profilePhoto;
 
-    await User.findByIdAndUpdate(tenant?.userId?._id, userUpdates, {
+    const updatedUser = await User.findByIdAndUpdate(tenant?.userId?._id, userUpdates, {
       new: true,
       session,
     });
@@ -261,7 +261,7 @@ export const updateTenant = asyncHandler(async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    res.status(200).json({ success: true, data: updatedTenant });
+    res.status(200).json({ success: true, data: { tenant: updatedTenant, user: updatedUser } });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
