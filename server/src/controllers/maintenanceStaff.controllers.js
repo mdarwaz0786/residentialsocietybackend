@@ -103,10 +103,9 @@ export const createMaintenanceStaff = asyncHandler(async (req, res) => {
 // Get all Maintenance Staffs
 export const getMaintenanceStaffs = async (req, res) => {
   const searchableFields = ["fullName", "email", "mobile"];
-  const filterableFields = ["status"];
+  const filterableFields = ["status", "isDeleted"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
-    softDelete: true,
     defaultSortBy: "createdAt",
     defaultOrder: "desc",
   });
@@ -127,7 +126,7 @@ export const getMaintenanceStaff = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid maintenance staff ID.");
+    throw new ApiError(400, "Invalid Maintenance Staff ID.");
   };
 
   const maintenanceStaff = await MaintenanceStaff.findById(id);
@@ -231,12 +230,12 @@ export const updateMaintenanceStaff = asyncHandler(async (req, res) => {
   };
 });
 
-// Soft Delete Maintenance Staff
-export const softDeleteMaintenanceStaff = asyncHandler(async (req, res) => {
+// Delete Maintenance Staff
+export const deleteMaintenanceStaff = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid ID.");
+    throw new ApiError(400, "Invalid Maintenance Staff ID.");
   };
 
   const maintenanceStaff = await MaintenanceStaff.findById(id);
@@ -245,39 +244,22 @@ export const softDeleteMaintenanceStaff = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Maintenance Staff not found.");
   };
 
-  maintenanceStaff.isDeleted = true;
-  await maintenanceStaff.save();
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  res.status(200).json({ success: true, message: "Maintenance Staff deleted successfully." });
+  try {
+    await User.deleteOne({ _id: maintenanceStaff?.userId }, { session });
+    await MaintenanceStaff.deleteOne({ _id: id }, { session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ success: true, message: "Maintenance staff deleted successfully." });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, error.message || "Failed to delete.");
+  };
 });
 
-// Soft delete multiple Maintenance Staff
-export const softDeletemaintenanceStaffs = asyncHandler(async (req, res) => {
-  const { ids } = req.body;
-
-  if (!Array.isArray(ids) || ids.length === 0) {
-    throw new ApiError(400, "Please provide an array of IDs.");
-  };
-
-  const invalidIds = ids.filter((id) => !mongoose.Types.ObjectId.isValid(id));
-
-  if (invalidIds.length > 0) {
-    throw new ApiError(400, `Invalid IDs: ${invalidIds.join(", ")}`);
-  };
-
-  const maintenanceStaffs = await MaintenanceStaff.find({ _id: { $in: ids } }).lean();
-
-  if (maintenanceStaffs.length === 0) {
-    throw new ApiError(404, "No maintenance staff found for the provided IDs.");
-  };
-
-  const idsToDelete = maintenanceStaffs.map((owner) => owner?._id);
-
-  const result = await MaintenanceStaff.updateMany(
-    { _id: { $in: idsToDelete }, isDeleted: false },
-    { $set: { isDeleted: true } }
-  );
-
-  res.status(200).json({ success: true, message: `${result.modifiedCount} maintenance staff deleted successfully.` });
-});
 

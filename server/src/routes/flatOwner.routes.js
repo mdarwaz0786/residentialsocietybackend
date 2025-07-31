@@ -7,9 +7,8 @@ import {
   createFlatOwner,
   getFlatOwner,
   getFlatOwners,
-  softDeleteFlatOwner,
-  softDeleteFlatOwners,
-  updateFlatOwner
+  updateFlatOwner,
+  deleteFlatOwner,
 } from "../controllers/flatOwner.controllers.js";
 const router = express.Router();
 
@@ -57,14 +56,7 @@ router.delete(
   "/delete-single-flatOwner/:id",
   isLoggedIn,
   checkPermission("flatOwner", "delete"),
-  softDeleteFlatOwner
-);
-
-router.patch(
-  "/delete-multiple-flatOwner",
-  isLoggedIn,
-  checkPermission("flatOwner", "delete"),
-  softDeleteFlatOwners
+  deleteFlatOwner
 );
 
 export default router;

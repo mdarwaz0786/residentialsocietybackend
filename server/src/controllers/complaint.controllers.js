@@ -79,6 +79,12 @@ export const updateComplaint = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid Complaint ID.");
   };
 
+  const complaint = await Complaint.findById(id);
+
+  if (!complaint) {
+    throw new ApiError(404, "Complaint not found.");
+  };
+
   const {
     title,
     type,
@@ -91,7 +97,7 @@ export const updateComplaint = asyncHandler(async (req, res) => {
     ? `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`
     : null;
 
-  const updates = { updatedBy, };
+  const updates = { updatedBy };
 
   if (title) updates.title = title;
   if (type) updates.type = type;
@@ -99,20 +105,16 @@ export const updateComplaint = asyncHandler(async (req, res) => {
   if (imageBase64) updates.image = imageBase64;
 
   const updatedComplaint = await Complaint.findOneAndUpdate(
-    { _id: id, isDeleted: { $ne: true } },
+    { _id: id },
     updates,
     { new: true },
   );
 
-  if (!updatedComplaint) {
-    throw new ApiError(404, "Complaint not found or already deleted.");
-  };
-
   res.status(200).json({ success: true, data: updatedComplaint });
 });
 
-// Soft Delete Single Complaint
-export const softDeleteComplaint = asyncHandler(async (req, res) => {
+// Delete Single Complaint
+export const deleteComplaint = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -121,37 +123,11 @@ export const softDeleteComplaint = asyncHandler(async (req, res) => {
 
   const complaint = await Complaint.findById(id);
 
-  if (!complaint || complaint.isDeleted) {
+  if (!complaint) {
     throw new ApiError(404, "Complaint not found.");
   };
 
-  complaint.isDeleted = true;
-  await complaint.save();
+  await Complaint.findByIdAndDelete(id);
 
   res.status(200).json({ success: true, message: "Complaint deleted successfully." });
-});
-
-// Soft Delete Multiple Complaints
-export const softDeleteComplaints = asyncHandler(async (req, res) => {
-  const { ids } = req.body;
-
-  if (!Array.isArray(ids) || ids.length === 0) {
-    throw new ApiError(400, "Please provide an array of Complaint IDs.");
-  };
-
-  const invalidIds = ids.filter((id) => !mongoose.Types.ObjectId.isValid(id));
-
-  if (invalidIds.length > 0) {
-    throw new ApiError(400, `Invalid Complaint IDs: ${invalidIds.join(", ")}`);
-  };
-
-  const result = await Complaint.updateMany(
-    { _id: { $in: ids }, isDeleted: { $ne: true } },
-    { $set: { isDeleted: true } }
-  );
-
-  res.status(200).json({
-    success: true,
-    message: `${result.modifiedCount} complaints deleted successfully.`,
-  });
 });

@@ -5,10 +5,9 @@ import validateFileSize from "../middlewares/validateFileSize.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
 import {
   createTenant,
+  deleteTenant,
   getTenant,
   getTenants,
-  softDeleteTenant,
-  softDeleteTenants,
   updateTenant
 } from "../controllers/tenant.controllers.js";
 const router = express.Router();
@@ -61,14 +60,7 @@ router.delete(
   "/delete-single-tenant/:id",
   isLoggedIn,
   checkPermission("tenant", "delete"),
-  softDeleteTenant
-);
-
-router.patch(
-  "/delete-multiple-tenant",
-  isLoggedIn,
-  checkPermission("tenant", "delete"),
-  softDeleteTenants
+  deleteTenant
 );
 
 export default router;

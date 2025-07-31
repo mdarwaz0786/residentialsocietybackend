@@ -23,7 +23,7 @@ export const createSecurityGuard = asyncHandler(async (req, res) => {
     gateNumber,
   } = req.body;
 
-  const role = await Role.findOne({ roleName: "Security Guard", isDeleted: false });
+  const role = await Role.findOne({ roleName: "Security Guard" });
 
   if (!role) {
     throw new ApiError(404, "Security guard role not found.");
@@ -237,52 +237,35 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
   };
 });
 
-// Soft Delete Security Guard
-export const softDeleteSecurityGuard = asyncHandler(async (req, res) => {
+// Delete Security Guard
+export const deleteSecurityGuard = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid ID.");
+    throw new ApiError(400, "Invalid Security Guard ID.");
   };
 
   const securityGuard = await SecurityGuard.findById(id);
 
   if (!securityGuard) {
-    throw new ApiError(404, "Security Guard not found.");
+    throw new ApiError(404, "Security guard not found.");
   };
 
-  securityGuard.isDeleted = true;
-  await securityGuard.save();
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  res.status(200).json({ success: true, message: "Security Guard deleted successfully." });
+  try {
+    await User.deleteOne({ _id: securityGuard?.userId }, { session });
+    await SecurityGuard.deleteOne({ _id: id }, { session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ success: true, message: "Security guard deleted successfully." });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, error.message || "Failed to delete.");
+  };
 });
 
-// Soft delete multiple Security Guard
-export const softDeleteScurityGuards = asyncHandler(async (req, res) => {
-  const { ids } = req.body;
-
-  if (!Array.isArray(ids) || ids.length === 0) {
-    throw new ApiError(400, "Please provide an array of IDs.");
-  };
-
-  const invalidIds = ids.filter((id) => !mongoose.Types.ObjectId.isValid(id));
-
-  if (invalidIds.length > 0) {
-    throw new ApiError(400, `Invalid IDs: ${invalidIds.join(", ")}`);
-  };
-
-  const securityGuards = await SecurityGuard.find({ _id: { $in: ids } }).lean();
-
-  if (securityGuards.length === 0) {
-    throw new ApiError(404, "No security guard found for the provided IDs.");
-  };
-
-  const idsToDelete = securityGuards.map((owner) => owner?._id);
-
-  const result = await SecurityGuard.updateMany(
-    { _id: { $in: idsToDelete }, isDeleted: false },
-    { $set: { isDeleted: true } }
-  );
-
-  res.status(200).json({ success: true, message: `${result.modifiedCount} security guard deleted successfully.` });
-});

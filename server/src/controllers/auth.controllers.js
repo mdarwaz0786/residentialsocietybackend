@@ -19,7 +19,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   const existingUser = await User.findOne({ $or: [{ email }, { mobile }] });
 
   if (existingUser) {
-    throw new ApiError(409, "User already exists with the same email or mobile.");
+    throw new ApiError(409, "User already exists with this email or mobile.");
   };
 
   const salt = await bcrypt.genSalt(10);

@@ -45,7 +45,7 @@ export const createTenant = asyncHandler(async (req, res) => {
     permanentAddress,
   } = req.body;
 
-  const role = await Role.findOne({ roleName: "Tenant", isDeleted: false });
+  const role = await Role.findOne({ roleName: "Tenant" });
 
   if (!role) {
     throw new ApiError(404, "Tenant role not found.");
@@ -163,7 +163,7 @@ export const getTenant = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid Tenant ID.");
   };
 
-  const tenant = await Tenant.findOne({ _id: id, isDeleted: false }).populate("flat role");
+  const tenant = await Tenant.findOne({ _id: id }).populate("flat role");
 
   if (!tenant) {
     throw new ApiError(404, "Tenant not found.");
@@ -269,8 +269,8 @@ export const updateTenant = asyncHandler(async (req, res) => {
   };
 });
 
-// Soft delete single Tenant
-export const softDeleteTenant = asyncHandler(async (req, res) => {
+// Delete Tenant
+export const deleteTenant = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -283,34 +283,20 @@ export const softDeleteTenant = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Tenant not found.");
   };
 
-  tenant.isDeleted = true;
-  await tenant.save();
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  res.status(200).json({ success: true, message: "Tenant deleted successfully." });
-});
+  try {
+    await User.deleteOne({ _id: tenant?.userId }, { session });
+    await Tenant.deleteOne({ _id: id }, { session });
 
-// Sof delete multiple Tenants
-export const softDeleteTenants = asyncHandler(async (req, res) => {
-  const { ids } = req.body;
+    await session.commitTransaction();
+    session.endSession();
 
-  if (!Array.isArray(ids) || ids.length === 0) {
-    throw new ApiError(400, "Please provide an array of Tenant IDs.");
+    res.status(200).json({ success: true, message: "Tenant deleted successfully." });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, error.message || "Failed to delete.");
   };
-
-  const invalidIds = ids.filter((id) => !mongoose.Types.ObjectId.isValid(id));
-
-  if (invalidIds.length > 0) {
-    throw new ApiError(400, `Invalid IDs: ${invalidIds.join(", ")}`);
-  };
-
-  const tenants = await Tenant.find({ _id: { $in: ids }, isDeleted: false }).lean();
-
-  const idsToDelete = tenants.map((t) => t?._id);
-
-  const result = await Tenant.updateMany(
-    { _id: { $in: idsToDelete }, isDeleted: false },
-    { $set: { isDeleted: true } },
-  );
-
-  res.status(200).json({ success: true, message: `${result.modifiedCount} tenants deleted successfully.` });
 });

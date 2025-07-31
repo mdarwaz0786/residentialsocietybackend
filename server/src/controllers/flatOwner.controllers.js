@@ -289,8 +289,8 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   };
 });
 
-// Soft Delete Flat Owner
-export const softDeleteFlatOwner = asyncHandler(async (req, res) => {
+// Delete Flat Owner
+export const deleteFlatOwner = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -303,40 +303,23 @@ export const softDeleteFlatOwner = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Flat Owner not found.");
   };
 
-  flatOwner.isDeleted = true;
-  await flatOwner.save();
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  res.status(200).json({ success: true, message: "Flat owner deleted successfully." });
+  try {
+    await User.deleteOne({ _id: flatOwner?.userId }, { session });
+    await FlatOwner.deleteOne({ _id: id }, { session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ success: true, message: "Flat owner deleted successfully." });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, error.message || "Failed to delete.");
+  };
 });
 
-// Soft delete multiple flat owners
-export const softDeleteFlatOwners = asyncHandler(async (req, res) => {
-  const { ids } = req.body;
-
-  if (!Array.isArray(ids) || ids.length === 0) {
-    throw new ApiError(400, "Please provide an array of Flat Owner IDs.");
-  };
-
-  const invalidIds = ids.filter((id) => !mongoose.Types.ObjectId.isValid(id));
-
-  if (invalidIds.length > 0) {
-    throw new ApiError(400, `Invalid Flat Owner IDs: ${invalidIds.join(", ")}`);
-  };
-
-  const flatOwners = await FlatOwner.find({ _id: { $in: ids }, isDeleted: false }).lean();
-
-  if (flatOwners?.length === 0) {
-    throw new ApiError(404, "No Flat Owners found for the provided IDs.");
-  };
-
-  const idsToDelete = flatOwners.map((o) => o?._id);
-
-  const result = await FlatOwner.updateMany(
-    { _id: { $in: idsToDelete }, isDeleted: false },
-    { $set: { isDeleted: true } }
-  );
-
-  res.status(200).json({ success: true, message: `${result.modifiedCount} flat owners deleted successfully.` });
-});
 
 
