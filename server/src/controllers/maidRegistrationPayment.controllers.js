@@ -122,14 +122,6 @@ export const maidRegistrationPaymentSuccess = asyncHandler(async (req, res) => {
   const maidId = maidRegistrationPayment?.maid;
   const maid = await Maid.findById(maidId);
 
-  if (!maidRegistrationPayment) {
-    throw new ApiError(404, 'Payment not found.');
-  };
-
-  if (!maid) {
-    throw new ApiError(404, 'Maid not found.');
-  };
-
   maidRegistrationPayment.status = "success";
   maidRegistrationPayment.paymentDate = date;
   await maidRegistrationPayment.save();

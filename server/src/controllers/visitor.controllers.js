@@ -26,14 +26,21 @@ export const createVisitor = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Role not found.");
   };
 
-  let tenant = await Tenant.findOne({ userId: createdBy }).populate("flat").select("flat");
+  let tenant = await Tenant
+    .findOne({ userId: createdBy })
+    .populate("flat")
+    .select("flat");
+
   let flatOwner = null;
   let flat = null;
   let flatID = null;
 
   if (role?.roleName?.toLowerCase() === "tenant" || role?.roleName?.toLowerCase() === "flat owner") {
     if (!tenant) {
-      flatOwner = await FlatOwner.findOne({ userId: createdBy }).populate("flat").select("flat");
+      flatOwner = await FlatOwner
+        .findOne({ userId: createdBy })
+        .populate("flat")
+        .select("flat");
 
       if (!flatOwner) {
         throw new ApiError(404, "Flat owner not found.");
@@ -51,14 +58,18 @@ export const createVisitor = asyncHandler(async (req, res) => {
     flatID = flat?._id;
   };
 
+  const visitorId = await generateVisitorId("VIS-");
+
+  if (!visitorId) {
+    throw new ApiError(500, "Failed to generate visitor ID.");
+  };
+
   const photo = req.files?.photo?.[0];
   let photoBase64 = "";
 
   if (photo) {
     photoBase64 = `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`;
   };
-
-  const visitorId = await generateVisitorId("VIS-");
 
   const maid = await Visitor.create({
     fullName,
@@ -77,8 +88,8 @@ export const createVisitor = asyncHandler(async (req, res) => {
 
 // Get all Visitor
 export const getVisitors = asyncHandler(async (req, res) => {
-  const searchableFields = ["fullName", "mobile"];
-  const filterableFields = ["status"];
+  const searchableFields = ["fullName", "mobile", "visitorId"];
+  const filterableFields = ["status", "isDeleted"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
     defaultSortBy: "createdAt",
@@ -116,13 +127,16 @@ export const getVisitor = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid visitor ID.");
+    throw new ApiError(400, "Invalid Visitor ID.");
   };
 
-  const visitor = await Visitor.findOne({ _id: id }).populate("flat").populate("createdBy");
+  const visitor = await Visitor
+    .findById(id)
+    .populate("flat")
+    .populate("createdBy");
 
   if (!visitor) {
-    throw new ApiError(404, "Visitor not found or has been deleted.");
+    throw new ApiError(404, "Visitor not found.");
   };
 
   res.status(200).json({ success: true, data: visitor });
@@ -134,13 +148,13 @@ export const updateVisitor = asyncHandler(async (req, res) => {
   const updatedBy = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid visitor ID.");
+    throw new ApiError(400, "Invalid Visitor ID.");
   };
 
   const visitor = await Visitor.findById(id);
 
   if (!visitor) {
-    throw new ApiError(404, "Visitor not found or already deleted.");
+    throw new ApiError(404, "Visitor not found.");
   };
 
   const updates = { ...req.body };
@@ -157,12 +171,12 @@ export const updateVisitor = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: updatedVisitor });
 });
 
-// Soft delete Visitor
-export const softDeleteVisitor = asyncHandler(async (req, res) => {
+// Delete Visitor
+export const deleteVisitor = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid visitor ID.");
+    throw new ApiError(400, "Invalid Visitor ID.");
   };
 
   const visitor = await Visitor.findById(id);
@@ -171,34 +185,7 @@ export const softDeleteVisitor = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Visitor not found.");
   };
 
-  if (visitor.isDeleted) {
-    throw new ApiError(400, "Vistor is already deleted.");
-  };
-
-  visitor.isDeleted = true;
-  await visitor.save();
+  await Visitor.findByIdAndDelete(id);
 
   res.status(200).json({ success: true, message: "Visitor deleted successfully." });
-});
-
-// Soft delete multiple Visitors
-export const softDeleteVisitors = asyncHandler(async (req, res) => {
-  const { ids } = req.body;
-
-  if (!Array.isArray(ids) || ids.length === 0) {
-    throw new ApiError(400, "Please provide visitors IDs to delete.");
-  };
-
-  const invalidIds = ids.filter((id) => !mongoose.Types.ObjectId.isValid(id));
-
-  if (invalidIds.length > 0) {
-    throw new ApiError(400, `Invalid visitor IDs: ${invalidIds.join(", ")}`);
-  };
-
-  const result = await Visitor.updateMany(
-    { _id: { $in: ids } },
-    { $set: { isDeleted: true } }
-  );
-
-  res.status(200).json({ success: true, message: `${result.modifiedCount} visitors deleted successfully.` });
 });

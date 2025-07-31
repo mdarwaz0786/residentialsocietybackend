@@ -29,7 +29,7 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Flat not found.");
   };
 
-  const flatOwnerRole = await Role.findOne({ roleName: "Flat Owner", isDeleted: false });
+  const flatOwnerRole = await Role.findOne({ roleName: "Flat Owner" });
 
   if (!flatOwnerRole) {
     throw new ApiError(404, "Flat Owner role not found.");

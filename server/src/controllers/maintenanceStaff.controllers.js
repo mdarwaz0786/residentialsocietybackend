@@ -22,7 +22,7 @@ export const createMaintenanceStaff = asyncHandler(async (req, res) => {
     permanentAddress,
   } = req.body;
 
-  const role = await Role.findOne({ roleName: "Maintenance Staff", isDeleted: false });
+  const role = await Role.findOne({ roleName: "Maintenance Staff" });
 
   if (!role) {
     throw new ApiError(404, "Maintenance staff role not found.");

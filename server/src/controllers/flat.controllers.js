@@ -56,7 +56,7 @@ export const getFlat = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid flat ID.");
   };
 
-  const flat = await Flat.findOne({ _id: id, isDeleted: false });
+  const flat = await Flat.findOne({ _id: id });
 
   if (!flat) {
     throw new ApiError(404, "Flat not found.");
@@ -76,8 +76,8 @@ export const updateFlat = asyncHandler(async (req, res) => {
 
   const flat = await Flat.findById(id);
 
-  if (!flat || flat.isDeleted) {
-    throw new ApiError(404, "Flat not found");
+  if (!flat) {
+    throw new ApiError(404, "Flat not found.");
   };
 
   const updates = {
@@ -90,8 +90,8 @@ export const updateFlat = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: updatedFlat });
 });
 
-// Soft Delete Flat
-export const softDeleteFlat = asyncHandler(async (req, res) => {
+// Delete Flat
+export const deleteFlat = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -104,31 +104,8 @@ export const softDeleteFlat = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Flat not found.");
   };
 
-  flat.isDeleted = true;
-  await flat.save();
+  await Flat.findByIdAndDelete(id);
 
   res.status(200).json({ success: true, message: "Flat deleted successfully." });
-});
-
-// Soft Delete Multiple Flats
-export const softDeleteFlats = asyncHandler(async (req, res) => {
-  const { ids } = req.body;
-
-  if (!Array.isArray(ids) || ids.length === 0) {
-    throw new ApiError(400, "Please provide flats IDs to delete.");
-  };
-
-  const invalidIds = ids.filter((id) => !mongoose.Types.ObjectId.isValid(id));
-
-  if (invalidIds.length > 0) {
-    throw new ApiError(400, `Invalid flat IDs: ${invalidIds.join(", ")}`);
-  };
-
-  const result = await Flat.updateMany(
-    { _id: { $in: ids }, isDeleted: false },
-    { $set: { isDeleted: true } }
-  );
-
-  res.status(200).json({ success: true, message: `${result.modifiedCount} flats deleted successfully.` });
 });
 

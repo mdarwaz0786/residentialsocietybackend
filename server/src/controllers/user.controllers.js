@@ -72,7 +72,7 @@ export const getUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid user ID.");
+    throw new ApiError(400, "Invalid User ID.");
   };
 
   const user = await User
@@ -115,10 +115,6 @@ export const updateUser = asyncHandler(async (req, res) => {
   };
 
   const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
-
-  if (!updatedUser) {
-    throw new ApiError(404, "user not found.");
-  };
 
   res.status(200).json({ success: true, data: updatedUser });
 });

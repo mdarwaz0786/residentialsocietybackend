@@ -34,7 +34,22 @@ export const createMaid = asyncHandler(async (req, res) => {
   };
 
   const flatID = flat?._id;
+
+  if (!flatID) {
+    throw new ApiError(400, "Flat ID is required.");
+  };
+
   const flatNumber = flat?.flatNumber;
+
+  if (!flatNumber) {
+    throw new ApiError(400, "Flat number is required.");
+  };
+
+  const memberId = await generateMaidId("MAID-", flatNumber);
+
+  if (!memberId) {
+    throw new ApiError(500, "Failed to generate maid ID.");
+  };
 
   const photo = req.files?.photo?.[0];
   const aadharCard = req.files?.aadharCard?.[0];
@@ -49,8 +64,6 @@ export const createMaid = asyncHandler(async (req, res) => {
   if (aadharCard) {
     aadharBase64 = `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`;
   };
-
-  const memberId = await generateMaidId("MAID-", flatNumber);
 
   const maid = await Maid.create({
     fullName,
@@ -95,10 +108,10 @@ export const getMaid = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid maid ID.");
   };
 
-  const maid = await Maid.findOne({ _id: id, isDeleted: false }).populate("flat");
+  const maid = await Maid.findOne({ _id: id }).populate("flat");
 
   if (!maid) {
-    throw new ApiError(404, "Maid not found or has been deleted.");
+    throw new ApiError(404, "Maid not found.");
   };
 
   res.status(200).json({ success: true, data: maid });
@@ -115,8 +128,8 @@ export const updateMaid = asyncHandler(async (req, res) => {
 
   const maid = await Maid.findById(id);
 
-  if (!maid || maid.isDeleted) {
-    throw new ApiError(404, "Maid not found or already deleted.");
+  if (!maid) {
+    throw new ApiError(404, "Maid not found.");
   };
 
   const updates = { ...req.body };
@@ -138,8 +151,8 @@ export const updateMaid = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: updatedMaid });
 });
 
-// Soft Delete Maid
-export const softDeleteMaid = asyncHandler(async (req, res) => {
+// Delete Maid
+export const deleteMaid = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -152,34 +165,7 @@ export const softDeleteMaid = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Maid not found.");
   };
 
-  if (maid.isDeleted) {
-    throw new ApiError(400, "Maid is already deleted.");
-  };
-
-  maid.isDeleted = true;
-  await maid.save();
+  await Maid.findByIdAndDelete(id);
 
   res.status(200).json({ success: true, message: "Maid deleted successfully." });
-});
-
-// Soft Delete Multiple Maids
-export const softDeleteMaids = asyncHandler(async (req, res) => {
-  const { ids } = req.body;
-
-  if (!Array.isArray(ids) || ids.length === 0) {
-    throw new ApiError(400, "Please provide maid IDs to delete.");
-  };
-
-  const invalidIds = ids.filter((id) => !mongoose.Types.ObjectId.isValid(id));
-
-  if (invalidIds.length > 0) {
-    throw new ApiError(400, `Invalid maid IDs: ${invalidIds.join(", ")}`);
-  };
-
-  const result = await Maid.updateMany(
-    { _id: { $in: ids }, isDeleted: false },
-    { $set: { isDeleted: true } }
-  );
-
-  res.status(200).json({ success: true, message: `${result.modifiedCount} maids deleted successfully.` });
 });

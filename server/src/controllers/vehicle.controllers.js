@@ -9,12 +9,9 @@ import formatApiResponse from "../helpers/formatApiResponse.js";
 export const createVehicle = asyncHandler(async (req, res) => {
   const { vehicleNumber, vehicleType, } = req.body;
   const createdBy = req.user?._id;
+
   const photo = req.files?.vehiclePhoto?.[0];
   const rc = req.files?.vehicleRC?.[0];
-
-  if (createdBy && !mongoose.Types.ObjectId.isValid(createdBy)) {
-    throw new ApiError(400, "Invalid Vehicle Owner");
-  };
 
   let photoBase64;
   let rcBase64;
@@ -65,13 +62,13 @@ export const getVehicle = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid vehicle ID.");
+    throw new ApiError(400, "Invalid Vehicle ID.");
   };
 
-  const vehicle = await Vehicle.findOne({ _id: id, isDeleted: false }).populate("createdBy");
+  const vehicle = await Vehicle.findOne({ _id: id }).populate("createdBy");
 
   if (!vehicle) {
-    throw new ApiError(404, "Vehicle not found or has been deleted.");
+    throw new ApiError(404, "Vehicle not found.");
   };
 
   res.status(200).json({ success: true, data: vehicle });
@@ -83,13 +80,13 @@ export const updateVehicle = asyncHandler(async (req, res) => {
   const updatedBy = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid vehicle ID.");
+    throw new ApiError(400, "Invalid Vehicle ID.");
   };
 
   const vehicle = await Vehicle.findById(id);
 
-  if (!vehicle || vehicle.isDeleted) {
-    throw new ApiError(404, "Vehicle not found or already deleted.");
+  if (!vehicle) {
+    throw new ApiError(404, "Vehicle not found.");
   };
 
   const updates = { ...req.body };
@@ -111,12 +108,12 @@ export const updateVehicle = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: updated });
 });
 
-// Soft Delete Vehicle
-export const softDeleteVehicle = asyncHandler(async (req, res) => {
+// Delete Vehicle
+export const deleteVehicle = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid vehicle ID.");
+    throw new ApiError(400, "Invalid Vehicle ID.");
   };
 
   const vehicle = await Vehicle.findById(id);
@@ -125,34 +122,7 @@ export const softDeleteVehicle = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Vehicle not found.");
   };
 
-  if (vehicle.isDeleted) {
-    throw new ApiError(400, "Vehicle already deleted.");
-  };
-
-  vehicle.isDeleted = true;
-  await vehicle.save();
+  await Vehicle.findByIdAndDelete(id);
 
   res.status(200).json({ success: true, message: "Vehicle deleted successfully." });
-});
-
-// Soft Delete Multiple Vehicles
-export const softDeleteVehicles = asyncHandler(async (req, res) => {
-  const { ids } = req.body;
-
-  if (!Array.isArray(ids) || ids.length === 0) {
-    throw new ApiError(400, "Please provide vehicle IDs to delete.");
-  };
-
-  const invalidIds = ids.filter((id) => !mongoose.Types.ObjectId.isValid(id));
-
-  if (invalidIds.length > 0) {
-    throw new ApiError(400, `Invalid vehicle IDs: ${invalidIds.join(", ")}`);
-  };
-
-  const result = await Vehicle.updateMany(
-    { _id: { $in: ids }, isDeleted: false },
-    { $set: { isDeleted: true } }
-  );
-
-  res.status(200).json({ success: true, message: `${result.modifiedCount} vehicles deleted successfully.` });
 });

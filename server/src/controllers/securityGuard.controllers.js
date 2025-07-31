@@ -128,7 +128,7 @@ export const getSecurityGuard = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid security guard ID.");
+    throw new ApiError(400, "Invalid Security Guard ID.");
   };
 
   const securityGuard = await SecurityGuard.findById(id);
@@ -146,7 +146,7 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
   const updatedBy = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid security guard ID.");
+    throw new ApiError(400, "Invalid Security Guard ID.");
   };
 
   const securityGuard = await SecurityGuard.findById(id).populate("userId");
