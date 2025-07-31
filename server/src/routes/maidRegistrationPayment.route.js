@@ -9,10 +9,29 @@ import {
 
 const router = express.Router();
 
-router.patch('/approve/maid/:status/:id', approveMaidAndGeneratePayment);
-router.get('/get-all-maidRegistrationPayment', getMaidRegistrationPayments);
-router.get('/maid/payments/:id', getMaidPayments);
-router.post('/payment-success', maidRegistrationPaymentSuccess);
-router.post('/payment-failure', maidRegistrationPaymentFailure);
+router.patch(
+  '/approve/maid/:status/:id',
+  approveMaidAndGeneratePayment,
+);
+
+router.get(
+  '/get-all-maidRegistrationPayment',
+  getMaidRegistrationPayments,
+);
+
+router.get(
+  '/maid/payments/:id',
+  getMaidPayments,
+);
+
+router.post(
+  '/payment-success',
+  maidRegistrationPaymentSuccess,
+);
+
+router.post(
+  '/payment-failure',
+  maidRegistrationPaymentFailure,
+);
 
 export default router;

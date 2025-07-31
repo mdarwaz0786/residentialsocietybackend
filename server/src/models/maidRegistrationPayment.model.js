@@ -16,11 +16,6 @@ const maidRegistrationPaymentSchema = new mongoose.Schema({
     enum: ["Maid Registration", " Maid Renewal"],
     required: true,
   },
-  status: {
-    type: String,
-    enum: ["pending", "success", "failed"],
-    default: "pending",
-  },
   amount: {
     type: Number,
     trim: true,
@@ -38,6 +33,11 @@ const maidRegistrationPaymentSchema = new mongoose.Schema({
   },
   paymentDate: {
     type: Date,
+  },
+  status: {
+    type: String,
+    enum: ["pending", "success", "failed"],
+    default: "pending",
   },
   isDeleted: {
     type: Boolean,

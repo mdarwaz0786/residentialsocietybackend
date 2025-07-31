@@ -9,6 +9,7 @@ import Role from "../models/role.model.js";
 import SecurityGuard from "../models/securityGuard.model.js";
 import MaintenanceStaff from "../models/maintenanceStaff.model.js";
 import TenantRegistrationPayment from "../models/tenantRegistrationPayment.model.js";
+import MaidRegistrationPayment from "../models/maidRegistrationPayment.model.js";
 
 export const getDashboardStats = async (req, res) => {
   try {
@@ -23,7 +24,8 @@ export const getDashboardStats = async (req, res) => {
       totalRoles,
       totalSecurityGuards,
       totalMaintenanceStaff,
-      totalPayments
+      totalTenantRegistrationPayments,
+      totalMaidRegistrationPayments,
     ] = await Promise.all([
       Flat.countDocuments(),
       FlatOwner.countDocuments(),
@@ -35,7 +37,8 @@ export const getDashboardStats = async (req, res) => {
       Role.countDocuments(),
       SecurityGuard.countDocuments(),
       MaintenanceStaff.countDocuments(),
-      TenantRegistrationPayment.countDocuments()
+      TenantRegistrationPayment.countDocuments(),
+      MaidRegistrationPayment.countDocuments(),
     ]);
 
     res.status(200).json({
@@ -51,7 +54,8 @@ export const getDashboardStats = async (req, res) => {
         totalRoles,
         totalSecurityGuards,
         totalMaintenanceStaff,
-        totalPayments,
+        totalTenantRegistrationPayments,
+        totalMaidRegistrationPayments,
         totalSettings: 1,
       },
     });

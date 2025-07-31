@@ -128,6 +128,7 @@ export const tenantRegistrationPaymentSuccess = asyncHandler(async (req, res) =>
 
   tenant.canLogin = true;
   tenant.paymentStatus = "Success";
+  tenant.paymentDate = date;
   await tenant.save();
 
   res.render('paymentSuccess', { txnid });

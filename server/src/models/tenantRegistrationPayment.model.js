@@ -20,11 +20,6 @@ const tenantRegistrationPaymentSchema = new mongoose.Schema({
     type: String,
     default: "Tenant Registration",
   },
-  status: {
-    type: String,
-    enum: ["pending", "success", "failed"],
-    default: "pending",
-  },
   amount: {
     type: Number,
     trim: true,
@@ -42,6 +37,11 @@ const tenantRegistrationPaymentSchema = new mongoose.Schema({
   },
   paymentDate: {
     type: Date,
+  },
+  status: {
+    type: String,
+    enum: ["pending", "success", "failed"],
+    default: "pending",
   },
   isDeleted: {
     type: Boolean,

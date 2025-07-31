@@ -23,7 +23,7 @@ router.get(
   getRole,
 );
 
-router.put(
+router.patch(
   "/update-role/:id",
   updateRole,
 );
