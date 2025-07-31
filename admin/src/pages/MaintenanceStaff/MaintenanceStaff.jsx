@@ -80,7 +80,7 @@ const MaintenanceStaff = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
-            <th>Profile Photo</th>
+            <th>Photo</th>
             <th>Full Name</th>
             <th>Mobile</th>
             <th>Status</th>
@@ -110,7 +110,7 @@ const MaintenanceStaff = () => {
                   <td>
                     <Link to={`/maintenance-staff-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
                     <Link to={`/update-maintenance-staff/${item?._id}`}><button className="btn btn-primary me-3 actionBtn">Edit</button></Link>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item?._id)}>Delete</button>
+                    <button className="btn btn-danger" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>
                 </tr>
               ))

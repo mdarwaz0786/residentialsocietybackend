@@ -80,7 +80,7 @@ const SecurityGuard = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
-            <th>Profile Photo</th>
+            <th>Photo</th>
             <th>Full Name</th>
             <th>Mobile</th>
             <th>Status</th>

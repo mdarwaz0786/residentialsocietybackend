@@ -25,7 +25,21 @@ export const createMaintenanceStaff = asyncHandler(async (req, res) => {
   const role = await Role.findOne({ roleName: "Maintenance Staff", isDeleted: false });
 
   if (!role) {
-    throw new ApiError(404, "Maintenance staff role not found. Please create it in Role collection first.");
+    throw new ApiError(404, "Maintenance staff role not found.");
+  };
+
+  const existingUser = await User.findOne({
+    $or: [{ email }, { mobile }],
+  });
+
+  if (existingUser) {
+    throw new ApiError(400, "User already exists with this email or mobile.");
+  };
+
+  const memberId = await generateMemberId("MTS-");
+
+  if (!memberId) {
+    throw new ApiError(500, "Failed to generate member ID.");
   };
 
   const profilePhoto = req?.files?.profilePhoto?.[0];
@@ -39,49 +53,51 @@ export const createMaintenanceStaff = asyncHandler(async (req, res) => {
     ? `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`
     : null;
 
-  const existingUser = await User.findOne({
-    $or: [{ email }, { mobile }],
-  });
-
-  if (existingUser) {
-    throw new ApiError(400, "User already exists with this email or mobile.");
-  };
-
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  const memberId = await generateMemberId("MTS-");
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  const newUser = await User.create({
-    profilePhoto: profilePhotoBase64,
-    fullName,
-    mobile,
-    email,
-    password: hashedPassword,
-    role: role?._id,
-    memberId,
-    profileType: "MaintenanceStaff",
-  });
+  try {
+    const [newUser] = await User.create([{
+      profilePhoto: profilePhotoBase64,
+      fullName,
+      mobile,
+      email,
+      password: hashedPassword,
+      role: role?._id,
+      memberId,
+      profileType: "MaintenanceStaff",
+    }], { session });
 
-  const maintenanceStaff = await MaintenanceStaff.create({
-    userId: newUser?._id,
-    fullName,
-    profilePhoto: profilePhotoBase64,
-    mobile,
-    email,
-    password: hashedPassword,
-    role: role?._id,
-    memberId,
-    currentAddress,
-    permanentAddress,
-    aadharCard: aadharCardBase64,
-    createdBy,
-  });
+    const [maintenanceStaff] = await MaintenanceStaff.create([{
+      userId: newUser?._id,
+      fullName,
+      profilePhoto: profilePhotoBase64,
+      mobile,
+      email,
+      password: hashedPassword,
+      role: role?._id,
+      memberId,
+      currentAddress,
+      permanentAddress,
+      aadharCard: aadharCardBase64,
+      createdBy,
+    }], { session });
 
-  newUser.profile = maintenanceStaff?._id;
-  await newUser.save();
+    newUser.profile = maintenanceStaff?._id;
+    await newUser.save();
 
-  res.status(201).json({ success: true, data: { user: newUser, maintenanceStaff } });
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(201).json({ success: true, data: { user: newUser, maintenanceStaff } });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, error.message || "Something went wrong.");
+  };
 });
 
 // Get all Maintenance Staffs
@@ -148,6 +164,23 @@ export const updateMaintenanceStaff = asyncHandler(async (req, res) => {
     status,
   } = req.body;
 
+  const existingUser = await User.findOne({
+    $or: [{ email }, { mobile }],
+    _id: { $ne: maintenanceStaff?.userId?._id },
+  });
+
+  if (existingUser) {
+    throw new ApiError(400, "User already exists with this email or mobile.");
+  };
+
+  let hashedPassword = null;
+  let salt = null;
+
+  if (password) {
+    salt = await bcrypt.genSalt(10);
+    hashedPassword = await bcrypt.hash(password, salt);
+  };
+
   const profilePhoto = req?.files?.profilePhoto?.[0];
   const aadharCard = req?.files?.aadharCard?.[0];
 
@@ -159,31 +192,43 @@ export const updateMaintenanceStaff = asyncHandler(async (req, res) => {
     ? `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`
     : null;
 
-  const userUpdates = {};
-  if (fullName) userUpdates.fullName = fullName;
-  if (mobile) userUpdates.mobile = mobile;
-  if (email) userUpdates.email = email;
-  if (profilePhotoBase64) userUpdates.profilePhoto = profilePhotoBase64;
-  if (password) {
-    const salt = await bcrypt.genSalt(10);
-    userUpdates.password = await bcrypt.hash(password, salt);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const userUpdates = {};
+    if (fullName) userUpdates.fullName = fullName;
+    if (mobile) userUpdates.mobile = mobile;
+    if (email) userUpdates.email = email;
+    if (profilePhotoBase64) userUpdates.profilePhoto = profilePhotoBase64;
+    if (hashedPassword) userUpdates.password = hashedPassword;
+
+    const updatedUser = await User.findByIdAndUpdate(maintenanceStaff?.userId._id, userUpdates, {
+      new: true,
+      session,
+    });
+
+    const maintenanceStaffUpdates = { updatedBy };
+    if (fullName) maintenanceStaffUpdates.fullName = fullName;
+    if (mobile) maintenanceStaffUpdates.mobile = mobile;
+    if (email) maintenanceStaffUpdates.email = email;
+    if (hashedPassword) maintenanceStaffUpdates.password = hashedPassword;
+    if (status) maintenanceStaffUpdates.status = status;
+    if (currentAddress) maintenanceStaffUpdates.currentAddress = currentAddress;
+    if (permanentAddress) maintenanceStaffUpdates.permanentAddress = permanentAddress;
+    if (aadharCardBase64) maintenanceStaffUpdates.aadharCard = aadharCardBase64;
+
+    const updatedMaintenanceStaff = await MaintenanceStaff.findByIdAndUpdate(id, maintenanceStaffUpdates, { new: true });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ success: true, data: { user: updatedUser, maintenanceStaff: updatedMaintenanceStaff } });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, error.message || "Failed to update.");
   };
-
-  await User.findByIdAndUpdate(maintenanceStaff.userId._id, userUpdates);
-
-  const maintenanceStaffUpdates = {};
-  maintenanceStaffUpdates.updatedBy = updatedBy;
-  if (fullName) maintenanceStaffUpdates.fullName = fullName;
-  if (mobile) maintenanceStaffUpdates.mobile = mobile;
-  if (email) maintenanceStaffUpdates.email = email;
-  if (status) maintenanceStaffUpdates.status = status;
-  if (currentAddress) maintenanceStaffUpdates.currentAddress = currentAddress;
-  if (permanentAddress) maintenanceStaffUpdates.permanentAddress = permanentAddress;
-  if (aadharCardBase64) maintenanceStaffUpdates.aadharCard = aadharCardBase64;
-
-  const updatedMaintenanceStaff = await MaintenanceStaff.findByIdAndUpdate(id, maintenanceStaffUpdates, { new: true });
-
-  res.status(200).json({ success: true, data: updatedMaintenanceStaff });
 });
 
 // Soft Delete Maintenance Staff

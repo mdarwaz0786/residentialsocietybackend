@@ -26,7 +26,21 @@ export const createSecurityGuard = asyncHandler(async (req, res) => {
   const role = await Role.findOne({ roleName: "Security Guard", isDeleted: false });
 
   if (!role) {
-    throw new ApiError(404, "Security guard role not found. Please create it in Role collection first.");
+    throw new ApiError(404, "Security guard role not found.");
+  };
+
+  const existingUser = await User.findOne({
+    $or: [{ email }, { mobile }],
+  });
+
+  if (existingUser) {
+    throw new ApiError(400, "User already exists with this email or mobile.");
+  };
+
+  const memberId = await generateMemberId("SGD-");
+
+  if (!memberId) {
+    throw new ApiError(500, "Failed to generate member ID.");
   };
 
   const profilePhoto = req?.files?.profilePhoto?.[0];
@@ -40,22 +54,8 @@ export const createSecurityGuard = asyncHandler(async (req, res) => {
     ? `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`
     : null;
 
-  const existingUser = await User.findOne({
-    $or: [{ email }, { mobile }],
-  });
-
-  if (existingUser) {
-    throw new ApiError(400, "User already exists with this email or mobile.");
-  };
-
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
-
-  const memberId = await generateMemberId("SGD-");
-
-  if (!memberId) {
-    throw new ApiError(500, "Failed to generate member ID.");
-  };
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -205,13 +205,12 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
     if (profilePhotoBase64) userUpdates.profilePhoto = profilePhotoBase64;
     if (hashedPassword) userUpdates.password = hashedPassword;
 
-    const updatedUser = await User.findByIdAndUpdate(securityGuard.userId?._id, userUpdates, {
+    const updatedUser = await User.findByIdAndUpdate(securityGuard?.userId?._id, userUpdates, {
       new: true,
       session,
     });
 
-    const securityGuardUpdates = {};
-    securityGuardUpdates.updatedBy = updatedBy;
+    const securityGuardUpdates = { updatedBy };
     if (fullName) securityGuardUpdates.fullName = fullName;
     if (mobile) securityGuardUpdates.mobile = mobile;
     if (email) securityGuardUpdates.email = email;

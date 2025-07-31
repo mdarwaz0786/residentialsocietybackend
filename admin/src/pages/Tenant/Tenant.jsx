@@ -79,7 +79,7 @@ const Tenant = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
-            <th>Profile Photo</th>
+            <th>Photo</th>
             <th>Flat</th>
             <th>Name</th>
             <th>Mobile</th>

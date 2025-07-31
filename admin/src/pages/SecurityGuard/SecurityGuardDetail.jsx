@@ -57,6 +57,10 @@ const SecurityGuardDetail = () => {
             <label className="fw-bold">ID:</label>
             <span>{" "}{securityGuard?.memberId}</span>
           </div>
+          <div className="col-md-4">
+            <label className="fw-bold">Gate Number:</label>
+            <span>{" "}{securityGuard?.gateNumber}</span>
+          </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Profile Photo:</label>
             <img src={securityGuard?.profilePhoto} alt="Vehicle" className="img-thumbnail" style={{ maxHeight: "200px" }} />
