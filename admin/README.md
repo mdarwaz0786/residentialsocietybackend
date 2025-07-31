@@ -1,1 +1,1 @@
-Vite + React Admin Dashboard Templete
+Society Management Admin Dashboard
