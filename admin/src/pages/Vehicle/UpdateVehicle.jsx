@@ -5,7 +5,7 @@ import Input from "../../components/Input/Input";
 import SingleImage from "../../components/Input/SingleImage";
 import SingleSelect from "../../components/Input/SingleSelect";
 import useFetch from "../../hooks/useFetch";
-import useUpdate from "../../hooks/useUpdate";
+import usePatch from "../../hooks/usePatch";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
 import useFormValidation from "../../hooks/useFormValidation";
@@ -16,7 +16,7 @@ const UpdateVehicle = () => {
   const { validToken } = useAuth();
   const { data: userData } = useFetch("/api/v1/user/get-all-user", validToken);
   const { data: vehicleData } = useFetch(`/api/v1/vehicle/get-single-vehicle/${id}`, validToken);
-  const { updateData, response, updateError } = useUpdate(`/api/v1/vehicle/update-vehicle/${id}`);
+  const { updateData, response, updateError } = usePatch(`/api/v1/vehicle/update-vehicle/${id}`);
   const { errors, setErrors, validate } = useFormValidation();
 
   const [form, setForm] = useState({

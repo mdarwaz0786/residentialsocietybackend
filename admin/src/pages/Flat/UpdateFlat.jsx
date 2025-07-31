@@ -4,7 +4,7 @@ import FormWrapper from "../../components/form/FormWrapper";
 import Input from "../../components/Input/Input";
 import SingleSelect from "../../components/Input/SingleSelect";
 import useFetch from "../../hooks/useFetch";
-import useUpdate from "../../hooks/useUpdate";
+import usePatch from "../../hooks/usePatch";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
 import useFormValidation from "../../hooks/useFormValidation";
@@ -14,7 +14,7 @@ const UpdateFlat = () => {
   const navigate = useNavigate();
   const { validToken } = useAuth();
   const { data: flatData } = useFetch(`/api/v1/flat/get-single-flat/${id}`, validToken);
-  const { updateData, response, updateError } = useUpdate(`/api/v1/flat/update-flat/${id}`);
+  const { updateData, response, updateError } = usePatch(`/api/v1/flat/update-flat/${id}`);
   const { errors, setErrors, validate } = useFormValidation();
   const [form, setForm] = useState({
     flatNumber: "",

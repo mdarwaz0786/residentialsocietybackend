@@ -67,7 +67,7 @@ const UpdateFlatOwner = () => {
     fullName: { required: true, label: "Full Name" },
     mobile: { required: true, label: "Mobile" },
     email: { required: true, label: "Email" },
-    flat: { required: true, label: "Email" },
+    flat: { required: true, label: "Flat" },
     currentAddress: { required: true, label: "Current Address" },
     permanentAddress: { required: true, label: "Permanent Address" },
     profilePhoto: { required: true, label: "Profile Photo" },

@@ -51,12 +51,11 @@ const UpdateRole = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`/api/v1/role/update-role/${id}`, formData);
+      await axios.patch(`/api/v1/role/update-role/${id}`, formData);
       toast.success("Role updated successfully");
       navigate("/role");
     } catch (error) {
-      toast.error("Role updated successfully");
-      console.error(error.message)
+      toast.error(error.response?.data?.message || "Something went wrong");
     };
   };
 
