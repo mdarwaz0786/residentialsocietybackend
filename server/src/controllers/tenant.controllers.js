@@ -251,7 +251,7 @@ export const updateTenant = asyncHandler(async (req, res) => {
     if (aadharCard) updates.aadharCard = aadharCard;
     if (rentAgreement) updates.rentAgreement = rentAgreement;
     if (policeVerification) updates.policeVerification = policeVerification;
-    if (vehicleRCBase64Array) updates.vehicleRC = vehicleRCBase64Array;
+    if (vehicleRCBase64Array?.length > 0) updates.vehicleRC = vehicleRCBase64Array;
 
     const updatedTenant = await Tenant.findByIdAndUpdate(id, updates, {
       new: true,

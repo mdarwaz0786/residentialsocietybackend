@@ -262,7 +262,7 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   if (profilePhotoBase64) flatOwnerUpdates.profilePhoto = profilePhotoBase64;
   if (aadharCardBase64) flatOwnerUpdates.aadharCard = aadharCardBase64;
   if (allotmentBase64) flatOwnerUpdates.allotment = allotmentBase64;
-  if (vehicleRCBase64Array) flatOwnerUpdates.vehicleRC = vehicleRCBase64Array;
+  if (vehicleRCBase64Array?.length > 0) flatOwnerUpdates.vehicleRC = vehicleRCBase64Array;
 
   const session = await mongoose.startSession();
   session.startTransaction();
