@@ -21,21 +21,21 @@ router.post(
     { name: "vehicleRC", maxCount: 5 }
   ]),
   validateFileSize,
-  createFlatOwner
+  createFlatOwner,
 );
 
 router.get(
   "/get-all-flatOwner",
   isLoggedIn,
   checkPermission("flatOwner", "read"),
-  getFlatOwners
+  getFlatOwners,
 );
 
 router.get(
   "/get-single-flatOwner/:id",
   isLoggedIn,
   checkPermission("flatOwner", "read"),
-  getFlatOwner
+  getFlatOwner,
 );
 
 router.patch(
@@ -49,14 +49,14 @@ router.patch(
     { name: "vehicleRC", maxCount: 5 }
   ]),
   validateFileSize,
-  updateFlatOwner
+  updateFlatOwner,
 );
 
 router.delete(
   "/delete-single-flatOwner/:id",
   isLoggedIn,
   checkPermission("flatOwner", "delete"),
-  deleteFlatOwner
+  deleteFlatOwner,
 );
 
 export default router;

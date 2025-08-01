@@ -21,24 +21,24 @@ router.post(
     { name: "aadharCard", maxCount: 1 },
     { name: "policeVerification", maxCount: 1 },
     { name: "rentAgreement", maxCount: 1 },
-    { name: "vehicleRC", maxCount: 5 },
+    { name: "vehicleRC", maxCount: 2 },
   ]),
   validateFileSize,
-  createTenant
+  createTenant,
 );
 
 router.get(
   "/get-all-tenant",
   isLoggedIn,
   checkPermission("tenant", "read"),
-  getTenants
+  getTenants,
 );
 
 router.get(
   "/get-single-tenant/:id",
   isLoggedIn,
   checkPermission("tenant", "read"),
-  getTenant
+  getTenant,
 );
 
 router.patch(
@@ -50,17 +50,17 @@ router.patch(
     { name: "aadharCard", maxCount: 1 },
     { name: "policeVerification", maxCount: 1 },
     { name: "rentAgreement", maxCount: 1 },
-    { name: "vehicleRC", maxCount: 5 },
+    { name: "vehicleRC", maxCount: 2 },
   ]),
   validateFileSize,
-  updateTenant
+  updateTenant,
 );
 
 router.delete(
   "/delete-single-tenant/:id",
   isLoggedIn,
   checkPermission("tenant", "delete"),
-  deleteTenant
+  deleteTenant,
 );
 
 export default router;
