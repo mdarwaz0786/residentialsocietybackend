@@ -16,6 +16,7 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
   const {
     fullName,
     mobile,
+    secondaryMobile,
     email,
     password,
     currentAddress,
@@ -107,6 +108,7 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
       profilePhoto: profilePhotoBase64,
       fullName,
       mobile,
+      secondaryMobile,
       email,
       password: hashedPassword,
       role: flatOwnerRole?._id,
@@ -135,7 +137,7 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
 
 // Get all Flat Owner
 export const getFlatOwners = async (req, res) => {
-  const searchableFields = ["fullName", "email", "mobile"];
+  const searchableFields = ["fullName", "email", "mobile", "secondaryMobile", "memberId"];
   const filterableFields = ["status", "isDeleted"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
@@ -192,6 +194,7 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   const {
     fullName,
     mobile,
+    secondaryMobile,
     email,
     password,
     currentAddress,
@@ -253,6 +256,7 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   if (updatedBy) flatOwnerUpdates.updatedBy = updatedBy;
   if (fullName) flatOwnerUpdates.fullName = fullName;
   if (mobile) flatOwnerUpdates.mobile = mobile;
+  if (secondaryMobile) flatOwnerUpdates.secondaryMobile = secondaryMobile;
   if (email) flatOwnerUpdates.email = email;
   if (hashedPassword) flatOwnerUpdates.password = hashedPassword;
   if (flat) flatOwnerUpdates.flat = flat;

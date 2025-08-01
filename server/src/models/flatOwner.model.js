@@ -24,6 +24,11 @@ const flatOwnerSchema = new mongoose.Schema({
     trim: true,
     match: [/^\d{10}$/, "Mobile number must be exactly 10 digits."],
   },
+  secondaryMobile: {
+    type: String,
+    trim: true,
+    match: [/^\d{10}$/, "Secondary mobile number must be exactly 10 digits."],
+  },
   email: {
     type: String,
     required: [true, "Email is required."],

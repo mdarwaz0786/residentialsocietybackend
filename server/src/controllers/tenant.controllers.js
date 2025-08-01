@@ -39,6 +39,7 @@ export const createTenant = asyncHandler(async (req, res) => {
   const {
     fullName,
     mobile,
+    secondaryMobile,
     email,
     password,
     currentAddress,
@@ -102,6 +103,7 @@ export const createTenant = asyncHandler(async (req, res) => {
       fullName,
       email,
       mobile,
+      secondaryMobile,
       password: hashedPassword,
       flat: flatID,
       role: role?._id,
@@ -131,7 +133,7 @@ export const createTenant = asyncHandler(async (req, res) => {
 
 // Get all Tenants
 export const getTenants = asyncHandler(async (req, res) => {
-  const searchableFields = ["fullName", "email", "mobile"];
+  const searchableFields = ["fullName", "email", "mobile", "memberId", "secondaryMobile"];
   const filterableFields = ["status", "isDeleted", "paymentStatus"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(
@@ -190,6 +192,7 @@ export const updateTenant = asyncHandler(async (req, res) => {
   const {
     fullName,
     mobile,
+    secondaryMobile,
     email,
     password,
     currentAddress,
@@ -243,6 +246,7 @@ export const updateTenant = asyncHandler(async (req, res) => {
     if (updatedBy) updates.updatedBy = updatedBy;
     if (fullName) updates.fullName = fullName;
     if (mobile) updates.mobile = mobile;
+    if (secondaryMobile) updates.secondaryMobile = secondaryMobile;
     if (email) updates.email = email;
     if (currentAddress) updates.currentAddress = currentAddress;
     if (permanentAddress) updates.permanentAddress = permanentAddress;
