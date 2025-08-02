@@ -15,7 +15,7 @@ const FlatOwner = () => {
   const { validToken } = useAuth();
   const fetchDataUrl = "/api/v1/flatOwner/get-all-flatOwner";
   const singleDeleteUrl = "/api/v1/flatOwner/delete-single-flatOwner";
-  const { deleteData, response, deleteError } = useDelete();
+  const { deleteData, deleteResponse, deleteError } = useDelete();
 
   const {
     data,
@@ -53,11 +53,11 @@ const FlatOwner = () => {
   };
 
   useEffect(() => {
-    if (response?.success) {
+    if (deleteResponse?.success) {
       toast.success("Deleted successful");
       refetch();
     };
-  }, [response, refetch]);
+  }, [deleteResponse, refetch]);
 
   useEffect(() => {
     if (deleteError) {

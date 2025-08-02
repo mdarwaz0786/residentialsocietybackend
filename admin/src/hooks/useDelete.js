@@ -20,7 +20,7 @@ function useDelete() {
         setDeleteResponse(res?.data);
       };
     } catch (error) {
-      setDeleteError(error?.response?.data?.message);
+      setDeleteError(error?.response?.data?.message || "Error while deleting");
     } finally {
       setIsDeleting(false);
     };

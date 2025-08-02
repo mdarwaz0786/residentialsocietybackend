@@ -21,7 +21,7 @@ function useCreate(apiUrl) {
         setResponse(res?.data);
       };
     } catch (error) {
-      setPostError(error?.response?.data?.message);
+      setPostError(error?.response?.data?.message || "Error while creating");
     } finally {
       setIsPosting(false);
     };

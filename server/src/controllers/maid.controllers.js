@@ -77,6 +77,7 @@ export const getMaids = asyncHandler(async (req, res) => {
   const maids = await Maid
     .find(query)
     .populate("flat")
+    .populate("createdBy")
     .sort(sort)
     .skip(skip)
     .limit(limit);
@@ -94,7 +95,7 @@ export const getMaid = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid Maid ID.");
   };
 
-  const maid = await Maid.findById(id).populate("flat");
+  const maid = await Maid.findById(id).populate("flat").populate("createdBy");
 
   if (!maid) {
     throw new ApiError(404, "Maid not found.");

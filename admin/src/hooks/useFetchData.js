@@ -24,7 +24,7 @@ function useFetchData(apiUrl, token = "", initialParams = {}) {
           setData(response?.data);
         };
       } catch (err) {
-        setError(err?.response?.data?.message);
+        setError(err?.response?.data?.message || "Error while fetching data");
       } finally {
         setIsLoading(false);
       };
@@ -46,7 +46,7 @@ function useFetchData(apiUrl, token = "", initialParams = {}) {
     error,
     params,
     setParams: updateParams,
-    refetch: () => setReloadFlag(prev => !prev),
+    refetch: () => setReloadFlag((prev) => !prev),
   };
 };
 

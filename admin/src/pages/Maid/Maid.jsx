@@ -15,7 +15,7 @@ const Maid = () => {
   const { validToken } = useAuth();
   const fetchDataUrl = "/api/v1/maid/get-all-maid";
   const singleDeleteUrl = "/api/v1/maid/delete-single-maid";
-  const { deleteData, response, deleteError } = useDelete();
+  const { deleteData, deleteResponse, deleteError } = useDelete();
 
   const {
     data,
@@ -25,7 +25,6 @@ const Maid = () => {
   } = useFetchData(fetchDataUrl, validToken, {
     page: 1,
     limit: 20,
-    isDeleted: false,
     search: "",
   });
 
@@ -53,11 +52,11 @@ const Maid = () => {
   };
 
   useEffect(() => {
-    if (response?.success) {
+    if (deleteResponse?.success) {
       toast.success("Deleted successful");
       refetch();
     };
-  }, [response, refetch]);
+  }, [deleteResponse, refetch]);
 
   useEffect(() => {
     if (deleteError) {

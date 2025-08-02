@@ -9,12 +9,13 @@ import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
 import useUpdateStatus from '../../hooks/useUpdateStatus';
 import ComplaintStatusForm from "../../components/Form/ComplainStatusForm";
+import { useEffect } from 'react';
 
 const Complaint = () => {
   const { validToken } = useAuth();
   const fetchDataUrl = "/api/v1/complaint/get-all-complaint";
   const singleDeleteUrl = "/api/v1/complaint/delete-single-complaint";
-  const { deleteData } = useDelete();
+  const { deleteData, deleteResponse, deleteError } = useDelete();
 
   const {
     data,
@@ -24,7 +25,6 @@ const Complaint = () => {
   } = useFetchData(fetchDataUrl, validToken, {
     page: 1,
     limit: 20,
-    isDeleted: false,
     search: "",
   });
 
@@ -49,9 +49,20 @@ const Complaint = () => {
 
   const handleDelete = async (id) => {
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
-    toast.success("Deleted successful");
-    refetch();
   };
+
+  useEffect(() => {
+    if (deleteResponse?.success) {
+      toast.success("Complaint Deleted");
+      refetch();
+    };
+  }, [deleteResponse, refetch]);
+
+  useEffect(() => {
+    if (deleteError) {
+      toast.error(deleteError);
+    };
+  }, [deleteError]);
 
   const complaints = data?.data || [];
   const total = data?.total || 0;

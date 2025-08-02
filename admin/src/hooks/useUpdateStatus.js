@@ -1,4 +1,3 @@
-// src/hooks/useUpdateStatus.js
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";

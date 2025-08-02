@@ -79,7 +79,10 @@ export const loggedInUser = asyncHandler(async (req, res) => {
   const user = await User
     .findOne({ _id: req.user?._id })
     .populate("role")
-    .populate("profile")
+    .populate({
+      path: 'profile',
+      populate: { path: 'flat' },
+    })
     .exec();
 
   if (!user) {

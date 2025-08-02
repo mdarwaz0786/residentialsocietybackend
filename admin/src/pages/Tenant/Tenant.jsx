@@ -15,7 +15,7 @@ const Tenant = () => {
   const { validToken } = useAuth();
   const fetchDataUrl = "/api/v1/tenant/get-all-tenant";
   const singleDeleteUrl = "/api/v1/tenantr/delete-single-tenant";
-  const { deleteData, response, deleteError } = useDelete();
+  const { deleteData, deleteResponse, deleteError } = useDelete();
 
   const {
     data,
@@ -25,7 +25,6 @@ const Tenant = () => {
   } = useFetchData(fetchDataUrl, validToken, {
     page: 1,
     limit: 20,
-    isDeleted: false,
     search: "",
   });
 
@@ -53,11 +52,11 @@ const Tenant = () => {
   };
 
   useEffect(() => {
-    if (response?.success) {
+    if (deleteResponse?.success) {
       toast.success("Deleted successful");
       refetch();
     };
-  }, [response, refetch]);
+  }, [deleteResponse, refetch]);
 
   useEffect(() => {
     if (deleteError) {

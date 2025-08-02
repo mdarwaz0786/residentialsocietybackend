@@ -21,7 +21,7 @@ function usePatch(apiUrl) {
         setResponse(res?.data);
       };
     } catch (error) {
-      setUpdateError(error?.response?.data?.message);
+      setUpdateError(error?.response?.data?.message || "Error while updating");
     } finally {
       setIsUpdating(false);
     };

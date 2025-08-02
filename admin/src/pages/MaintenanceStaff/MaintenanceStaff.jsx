@@ -15,7 +15,7 @@ const MaintenanceStaff = () => {
   const { validToken } = useAuth();
   const fetchDataUrl = "/api/v1/maintenanceStaff/get-all-maintenanceStaff";
   const singleDeleteUrl = "/api/v1/maintenanceStaff/delete-single-maintenanceStaff";
-  const { deleteData, response, deleteError } = useDelete();
+  const { deleteData, deleteResponse, deleteError } = useDelete();
 
   const {
     data,
@@ -25,7 +25,6 @@ const MaintenanceStaff = () => {
   } = useFetchData(fetchDataUrl, validToken, {
     page: 1,
     limit: 20,
-    isDeleted: false,
     search: "",
   });
 
@@ -53,11 +52,11 @@ const MaintenanceStaff = () => {
   };
 
   useEffect(() => {
-    if (response?.success) {
+    if (deleteResponse?.success) {
       toast.success("Deleted successful");
       refetch();
     };
-  }, [response, refetch]);
+  }, [deleteResponse, refetch]);
 
   useEffect(() => {
     if (deleteError) {
