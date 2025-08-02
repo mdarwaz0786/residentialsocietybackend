@@ -7,7 +7,6 @@ import ApiError from "../helpers/apiError.js";
 import FlatOwner from "../models/flatOwner.model.js";
 import asyncHandler from "../helpers/asynsHandler.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
-import generateMemberId from "../helpers/generateMemberId.js";
 import ApiFeatures from "../helpers/ApiFeatures.js";
 import fileToBase64 from "../helpers/fileToBase64.js";
 
@@ -28,12 +27,6 @@ export const createTenant = asyncHandler(async (req, res) => {
 
   if (!flatID) {
     throw new ApiError(400, "Flat ID is required.");
-  };
-
-  const flatNumber = flatOwner?.flat?.flatNumber;
-
-  if (!flatNumber) {
-    throw new ApiError(400, "Flat number is required.");
   };
 
   const {
@@ -66,12 +59,6 @@ export const createTenant = asyncHandler(async (req, res) => {
     hashedPassword = await bcrypt.hash(password, salt);
   };
 
-  const memberId = await generateMemberId("TENANT-", flatNumber);
-
-  if (!memberId) {
-    throw new ApiError(500, "Failed to generate member ID.");
-  };
-
   const profilePhoto = fileToBase64(req?.files?.profilePhoto?.[0]);
   const aadharCard = fileToBase64(req?.files?.aadharCard?.[0]);
   const rentAgreement = fileToBase64(req?.files?.rentAgreement?.[0]);
@@ -93,7 +80,6 @@ export const createTenant = asyncHandler(async (req, res) => {
       mobile,
       password: hashedPassword,
       role: role?._id,
-      memberId,
       profileType: "Tenant",
     }], { session });
 
@@ -107,7 +93,6 @@ export const createTenant = asyncHandler(async (req, res) => {
       password: hashedPassword,
       flat: flatID,
       role: role?._id,
-      memberId,
       currentAddress,
       permanentAddress,
       aadharCard,
@@ -303,4 +288,24 @@ export const deleteTenant = asyncHandler(async (req, res) => {
     session.endSession();
     throw new ApiError(500, error.message || "Failed to delete.");
   };
+});
+
+// Update Tenant login
+export const updateTenantLogin = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { login } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid Tenant ID.");
+  };
+
+  const tenant = await Tenant.findById(id);
+
+  if (!tenant) {
+    throw new ApiError(404, "Tenant not found.");
+  };
+
+  tenant.canLogin = login;
+  await tenant.save();
+  res.status(200).json({ success: true, message: "Tenant login updated." });
 });

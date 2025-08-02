@@ -230,6 +230,26 @@ export const updateMaintenanceStaff = asyncHandler(async (req, res) => {
   };
 });
 
+// Update Maintenance Staff login
+export const updateMaintenanceStaffLogin = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { login } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid Maintenance Staff ID.");
+  };
+
+  const maintenanceStaff = await MaintenanceStaff.findById(id);
+
+  if (!maintenanceStaff) {
+    throw new ApiError(404, "Maintenance Staff not found.");
+  };
+
+  maintenanceStaff.canLogin = login;
+  await maintenanceStaff.save();
+  res.status(200).json({ success: true, message: "Maintenance Staff login updated." });
+});
+
 // Delete Maintenance Staff
 export const deleteMaintenanceStaff = asyncHandler(async (req, res) => {
   const { id } = req.params;

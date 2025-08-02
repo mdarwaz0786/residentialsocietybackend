@@ -9,6 +9,8 @@ import {
   getFlatOwners,
   updateFlatOwner,
   deleteFlatOwner,
+  updateFlatOwnerStatus,
+  updateFlatOwnerLogin,
 } from "../controllers/flatOwner.controllers.js";
 const router = express.Router();
 
@@ -50,6 +52,20 @@ router.patch(
   ]),
   validateFileSize,
   updateFlatOwner,
+);
+
+router.patch(
+  "/update-flatOwner-status/:id/:status",
+  isLoggedIn,
+  checkPermission("flatOwner", "update"),
+  updateFlatOwnerStatus,
+);
+
+router.patch(
+  "/update-flatOwner-login/:id/:login",
+  isLoggedIn,
+  checkPermission("flatOwner", "update"),
+  updateFlatOwnerLogin,
 );
 
 router.delete(

@@ -5,6 +5,7 @@ import asyncHandler from '../helpers/asynsHandler.js';
 import ApiError from '../helpers/apiError.js';
 import ApiFeatures from "../helpers/ApiFeatures.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
+import generateMaidId from '../helpers/generateMaidId.js';
 
 // Approve Maid and Generate Payment
 export const approveMaidAndGeneratePayment = asyncHandler(async (req, res) => {
@@ -120,19 +121,23 @@ export const maidRegistrationPaymentSuccess = asyncHandler(async (req, res) => {
 
   const maidRegistrationPayment = await MaidRegistrationPayment.findOne({ txnid: txnid });
   const maidId = maidRegistrationPayment?.maid;
-  const maid = await Maid.findById(maidId);
+  const maid = await Maid.findById(maidId).populate("maid");
+
+  const threeMonthsFromNow = new Date(date);
+  threeMonthsFromNow.setMonth(threeMonthsFromNow.getMonth() + 3);
+
+  const flatNumber = maid?.flat?.flatNumber;
+  const memberId = await generateMaidId("MAID-", flatNumber);
 
   maidRegistrationPayment.status = "success";
   maidRegistrationPayment.paymentDate = date;
   await maidRegistrationPayment.save();
 
-  const threeMonthsFromNow = new Date(date);
-  threeMonthsFromNow.setMonth(threeMonthsFromNow.getMonth() + 3);
-
   maid.paymentStatus = "Success";
   maid.paymentDate = date;
   maid.validTill = threeMonthsFromNow;
   maid.validityStatus = "Active";
+  maid.memberId = memberId;
   await maid.save();
 
   res.render('paymentSuccess', { txnid });

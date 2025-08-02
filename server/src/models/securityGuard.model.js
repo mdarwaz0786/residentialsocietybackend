@@ -44,7 +44,6 @@ const securityGuardSchema = new mongoose.Schema({
   },
   memberId: {
     type: String,
-    required: [true, "Member ID is required."],
     trim: true,
   },
   currentAddress: {

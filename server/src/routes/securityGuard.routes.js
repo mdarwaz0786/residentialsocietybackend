@@ -9,6 +9,7 @@ import {
   getSecurityGuard,
   getSecurityGuards,
   updateSecurityGuard,
+  updateSecurityGuardLogin,
 } from "../controllers/securityGuard.controllers.js";
 const router = express.Router();
 
@@ -48,6 +49,13 @@ router.patch(
   ]),
   validateFileSize,
   updateSecurityGuard,
+);
+
+router.patch(
+  "/update-securityGuard-login/:id/:login",
+  isLoggedIn,
+  checkPermission("securityGuard", "update"),
+  updateSecurityGuardLogin,
 );
 
 router.delete(

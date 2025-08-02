@@ -6,9 +6,9 @@ import Role from "../models/role.model.js";
 import Flat from "../models/flat.model.js";
 import asyncHandler from "../helpers/asynsHandler.js";
 import ApiError from "../helpers/apiError.js";
-import generateMemberId from "../helpers/generateMemberId.js";
 import ApiFeatures from "../helpers/ApiFeatures.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
+import generateMemberId from "../helpers/generateMemberId.js";
 
 // Create Flat Owner
 export const createFlatOwner = asyncHandler(async (req, res) => {
@@ -24,9 +24,9 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
     flat,
   } = req.body;
 
-  const ownerFlat = await Flat.findById(flat);
+  const findFlat = await Flat.findById(flat);
 
-  if (!ownerFlat) {
+  if (!findFlat) {
     throw new ApiError(404, "Flat not found.");
   };
 
@@ -53,18 +53,6 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
   if (password) {
     salt = await bcrypt.genSalt(10);
     hashedPassword = await bcrypt.hash(password, salt);
-  };
-
-  const flatNumber = ownerFlat?.flatNumber;
-
-  if (!flatNumber) {
-    throw new ApiError(400, "Flat number is required to generate member ID.");
-  };
-
-  const memberId = await generateMemberId("FOWN-", flatNumber);
-
-  if (!memberId) {
-    throw new ApiError(500, "Failed to generate member ID.");
   };
 
   const profilePhoto = req?.files?.profilePhoto?.[0];
@@ -99,7 +87,6 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
       email,
       password: hashedPassword,
       role: flatOwnerRole?._id,
-      memberId,
       profileType: "FlatOwner",
     }], { session });
 
@@ -112,7 +99,6 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
       email,
       password: hashedPassword,
       role: flatOwnerRole?._id,
-      memberId,
       flat,
       currentAddress,
       permanentAddress,
@@ -138,7 +124,7 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
 // Get all Flat Owner
 export const getFlatOwners = async (req, res) => {
   const searchableFields = ["fullName", "email", "mobile", "secondaryMobile", "memberId"];
-  const filterableFields = ["status", "isDeleted"];
+  const filterableFields = ["status", "isDeleted", "canLogin"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
     defaultSortBy: "createdAt",
@@ -200,7 +186,6 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
     currentAddress,
     permanentAddress,
     flat,
-    status,
   } = req.body;
 
   const orConditions = [];
@@ -260,7 +245,6 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   if (email) flatOwnerUpdates.email = email;
   if (hashedPassword) flatOwnerUpdates.password = hashedPassword;
   if (flat) flatOwnerUpdates.flat = flat;
-  if (status) flatOwnerUpdates.status = status;
   if (currentAddress) flatOwnerUpdates.currentAddress = currentAddress;
   if (permanentAddress) flatOwnerUpdates.permanentAddress = permanentAddress;
   if (profilePhotoBase64) flatOwnerUpdates.profilePhoto = profilePhotoBase64;
@@ -325,5 +309,111 @@ export const deleteFlatOwner = asyncHandler(async (req, res) => {
   };
 });
 
+// Update Flat Owner status
+export const updateFlatOwnerStatus = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid Flat Owner ID.");
+  };
+
+  const flatOwner = await FlatOwner
+    .findById(id)
+    .populate("userId")
+    .populate("flat");
+
+  if (!flatOwner) {
+    throw new ApiError(404, "Flat Owner not found.");
+  };
+
+  if (status == "Pending") {
+    flatOwner.status = "Pending";
+    await flatOwner.save();
+    return res.status(200).json({ success: true, message: "Flat Owner status updated to Pending." });
+  };
+
+  if (status == "Rejected") {
+    flatOwner.status = "Rejected";
+    await flatOwner.save();
+    return res.status(200).json({ success: true, message: "Flat Owner status updated to Rejected." });
+  };
+
+  if (status == "Approved" && flatOwner?.status === "Approved") {
+    return res.status(200).json({ success: true, message: "Flat Owner status updated to Approved." });
+  };
+
+  if (status == "Approved") {
+    const flatNumber = flatOwner?.flat?.flatNumber;
+    const userId = flatOwner?.userId?._id;
+
+    if (!flatNumber) {
+      throw new ApiError(400, "Flat number is required to generate member ID.");
+    };
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new ApiError(404, "User not found.");
+    };
+
+    const memberId = await generateMemberId("FOWN-", flatNumber);
+
+    if (!memberId) {
+      throw new ApiError(500, "Failed to generate member ID.");
+    };
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      const userUpdates = {};
+      userUpdates.memberId = memberId;
+
+      await User.findByIdAndUpdate(userId, userUpdates, {
+        new: true,
+        session,
+      });
+
+      const flatOwnerUpdates = {};
+      flatOwnerUpdates.memberId = memberId;
+      flatOwnerUpdates.status = "Approved";
+
+      await FlatOwner.findByIdAndUpdate(id, flatOwnerUpdates, {
+        new: true,
+        session,
+      });
+
+      await session.commitTransaction();
+      session.endSession();
+
+      res.status(200).json({ success: true, message: "Flat Owner status updated to Approved." });
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      throw new ApiError(500, error.message || "Failed to update status.");
+    };
+  };
+});
+
+// Update Flat Owner login
+export const updateFlatOwnerLogin = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { login } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid Flat Owner ID.");
+  };
+
+  const flatOwner = await FlatOwner.findById(id);
+
+  if (!flatOwner) {
+    throw new ApiError(404, "Flat Owner not found.");
+  };
+
+  flatOwner.canLogin = login;
+  await flatOwner.save();
+  res.status(200).json({ success: true, message: "Flat Owner login updated." });
+});
 
 

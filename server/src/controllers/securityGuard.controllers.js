@@ -237,6 +237,26 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
   };
 });
 
+// Update Security Guard login
+export const updateSecurityGuardLogin = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { login } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid Security Guard ID.");
+  };
+
+  const securityGuard = await SecurityGuard.findById(id);
+
+  if (!securityGuard) {
+    throw new ApiError(404, "Security Guard not found.");
+  };
+
+  securityGuard.canLogin = login;
+  await securityGuard.save();
+  res.status(200).json({ success: true, message: "Security Guard login updated." });
+});
+
 // Delete Security Guard
 export const deleteSecurityGuard = asyncHandler(async (req, res) => {
   const { id } = req.params;

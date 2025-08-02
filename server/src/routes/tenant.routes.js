@@ -8,7 +8,8 @@ import {
   deleteTenant,
   getTenant,
   getTenants,
-  updateTenant
+  updateTenant,
+  updateTenantLogin
 } from "../controllers/tenant.controllers.js";
 const router = express.Router();
 
@@ -54,6 +55,13 @@ router.patch(
   ]),
   validateFileSize,
   updateTenant,
+);
+
+router.patch(
+  "/update-tenant-login/:id/:login",
+  isLoggedIn,
+  checkPermission("tenant", "update"),
+  updateTenantLogin,
 );
 
 router.delete(

@@ -9,6 +9,7 @@ import {
   getMaintenanceStaff,
   getMaintenanceStaffs,
   updateMaintenanceStaff,
+  updateMaintenanceStaffLogin,
 } from "../controllers/maintenanceStaff.controllers.js";
 const router = express.Router();
 
@@ -48,6 +49,13 @@ router.patch(
   ]),
   validateFileSize,
   updateMaintenanceStaff,
+);
+
+router.patch(
+  "/update-maintenanceStaff-login/:id/:login",
+  isLoggedIn,
+  checkPermission("maintenanceStaff", "update"),
+  updateMaintenanceStaffLogin,
 );
 
 router.delete(

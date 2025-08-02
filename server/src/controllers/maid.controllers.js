@@ -6,7 +6,6 @@ import ApiFeatures from "../helpers/ApiFeatures.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
 import FlatOwner from "../models/flatOwner.model.js";
 import Tenant from "../models/tenant.model.js";
-import generateMaidId from "../helpers/generateMaidId.js";
 
 // Create Maid
 export const createMaid = asyncHandler(async (req, res) => {
@@ -39,18 +38,6 @@ export const createMaid = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Flat ID is required.");
   };
 
-  const flatNumber = flat?.flatNumber;
-
-  if (!flatNumber) {
-    throw new ApiError(400, "Flat number is required.");
-  };
-
-  const memberId = await generateMaidId("MAID-", flatNumber);
-
-  if (!memberId) {
-    throw new ApiError(500, "Failed to generate maid ID.");
-  };
-
   const photo = req.files?.photo?.[0];
   const aadharCard = req.files?.aadharCard?.[0];
 
@@ -68,7 +55,6 @@ export const createMaid = asyncHandler(async (req, res) => {
   const maid = await Maid.create({
     fullName,
     mobile,
-    memberId,
     flat: flatID,
     photo: photoBase64,
     aadharCard: aadharBase64,
@@ -105,10 +91,10 @@ export const getMaid = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid maid ID.");
+    throw new ApiError(400, "Invalid Maid ID.");
   };
 
-  const maid = await Maid.findOne({ _id: id }).populate("flat");
+  const maid = await Maid.findById(id).populate("flat");
 
   if (!maid) {
     throw new ApiError(404, "Maid not found.");
@@ -156,7 +142,7 @@ export const deleteMaid = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid maid ID.");
+    throw new ApiError(400, "Invalid Maid ID.");
   };
 
   const maid = await Maid.findById(id);

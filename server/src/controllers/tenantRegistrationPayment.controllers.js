@@ -5,6 +5,7 @@ import asyncHandler from '../helpers/asynsHandler.js';
 import ApiError from '../helpers/apiError.js';
 import ApiFeatures from "../helpers/ApiFeatures.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
+import generateMemberId from '../helpers/generateMemberId.js';
 
 // Approve Tenant and Generate Payment
 export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => {
@@ -120,15 +121,19 @@ export const tenantRegistrationPaymentSuccess = asyncHandler(async (req, res) =>
 
   const tenantRegistrationPayment = await TenantRegistrationPayment.findOne({ txnid: txnid });
   const tenantId = tenantRegistrationPayment?.tenant;
-  const tenant = await Tenant.findById(tenantId);
+  const tenant = await Tenant.findById(tenantId).populate("flat");
+  const flatNumber = tenant?.flat?.flatNumber;
 
   tenantRegistrationPayment.status = "success";
   tenantRegistrationPayment.paymentDate = date;
   await tenantRegistrationPayment.save();
 
-  tenant.canLogin = true;
+  const memberId = await generateMemberId("TENANT-", flatNumber);
+
   tenant.paymentStatus = "Success";
   tenant.paymentDate = date;
+  tenant.canLogin = true;
+  tenant.memberId = memberId;
   await tenant.save();
 
   res.render('paymentSuccess', { txnid });
