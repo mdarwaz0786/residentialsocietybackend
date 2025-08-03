@@ -69,11 +69,11 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid password.");
   };
 
-  if (user?.profile?.status !== "Approved") {
+  if (user?.profile && user?.profile?.status !== "Approved") {
     throw new ApiError(401, "Your account is not approved.");
   };
 
-  if (user?.profile?.canLogin != true) {
+  if (user?.profile && user?.profile?.canLogin !== true) {
     throw new ApiError(401, "Your account is restricted to login.");
   };
 

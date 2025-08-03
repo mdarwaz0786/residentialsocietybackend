@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
-import Role from "../models/role.model.js";
 import ApiError from "../helpers/apiError.js";
 import asyncHandler from "../helpers/asynsHandler.js";
 
