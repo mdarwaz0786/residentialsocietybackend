@@ -105,7 +105,7 @@ const FlatOwner = () => {
                       status={status}
                       approving={approving}
                       onChange={handleStatusChange}
-                      onSubmit={(id) => updateStatus("/api/v1/flatOwner/update-flatOwner", id)}
+                      onSubmit={(id) => updateStatus(`/api/v1/flatOwner/update-flatOwner-status/${status[id]}`, id)}
                     />
                   </td>
                   <td>

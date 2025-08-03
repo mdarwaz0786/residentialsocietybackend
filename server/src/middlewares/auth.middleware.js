@@ -20,17 +20,6 @@ const isLoggedIn = asyncHandler(async (req, res, next) => {
     throw new ApiError(401, "Your account not found.");
   };
 
-  const userRole = await Role.findById(user?.role);
-
-  if (!userRole) {
-    throw new ApiError(401, "Role not found.");
-  };
-
-  if (userRole?.roleName?.toLowerCase() === "admin") {
-    req.user = user;
-    return next();
-  };
-
   req.user = user;
   next();
 });

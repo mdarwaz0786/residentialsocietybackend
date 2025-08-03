@@ -57,7 +57,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Password is required.");
   };
 
-  const user = await User.findOne({ mobile: mobile }).select("+password");
+  const user = await User.findOne({ mobile: mobile }).populate("profile").select("+password");
 
   if (!user) {
     throw new ApiError(401, "Invalid mobile number");
@@ -67,6 +67,14 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   if (!isPasswordMatch) {
     throw new ApiError(401, "Invalid password.");
+  };
+
+  if (user?.profile?.status !== "Approved") {
+    throw new ApiError(401, "Your account is not approved.");
+  };
+
+  if (user?.profile?.canLogin != true) {
+    throw new ApiError(401, "Your account is restricted to login.");
   };
 
   const token = generateToken(user?._id);

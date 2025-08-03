@@ -80,7 +80,7 @@ const Tenant = () => {
             <th>#</th>
             <th>Photo</th>
             <th>Flat</th>
-            <th>Name</th>
+            <th>Full Name</th>
             <th>Mobile</th>
             <th>Status</th>
             <th>Action</th>

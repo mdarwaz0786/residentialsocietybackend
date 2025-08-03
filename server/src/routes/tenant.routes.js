@@ -58,7 +58,7 @@ router.patch(
 );
 
 router.patch(
-  "/update-tenant-login/:id/:login",
+  "/update-tenant-login/:login/:id",
   isLoggedIn,
   checkPermission("tenant", "update"),
   updateTenantLogin,

@@ -52,7 +52,7 @@ router.patch(
 );
 
 router.patch(
-  "/update-maintenanceStaff-login/:id/:login",
+  "/update-maintenanceStaff-login/:login/:id",
   isLoggedIn,
   checkPermission("maintenanceStaff", "update"),
   updateMaintenanceStaffLogin,

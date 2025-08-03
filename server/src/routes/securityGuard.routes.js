@@ -52,7 +52,7 @@ router.patch(
 );
 
 router.patch(
-  "/update-securityGuard-login/:id/:login",
+  "/update-securityGuard-login/:login/:id",
   isLoggedIn,
   checkPermission("securityGuard", "update"),
   updateSecurityGuardLogin,

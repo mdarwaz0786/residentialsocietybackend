@@ -55,14 +55,14 @@ router.patch(
 );
 
 router.patch(
-  "/update-flatOwner-status/:id/:status",
+  "/update-flatOwner-status/:status/:id",
   isLoggedIn,
   checkPermission("flatOwner", "update"),
   updateFlatOwnerStatus,
 );
 
 router.patch(
-  "/update-flatOwner-login/:id/:login",
+  "/update-flatOwner-login/:login/:id",
   isLoggedIn,
   checkPermission("flatOwner", "update"),
   updateFlatOwnerLogin,

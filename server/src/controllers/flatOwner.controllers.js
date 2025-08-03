@@ -329,17 +329,21 @@ export const updateFlatOwnerStatus = asyncHandler(async (req, res) => {
 
   if (status == "Pending") {
     flatOwner.status = "Pending";
+    flatOwner.canLogin = false;
     await flatOwner.save();
     return res.status(200).json({ success: true, message: "Flat Owner status updated to Pending." });
   };
 
   if (status == "Rejected") {
     flatOwner.status = "Rejected";
+    flatOwner.canLogin = false;
     await flatOwner.save();
     return res.status(200).json({ success: true, message: "Flat Owner status updated to Rejected." });
   };
 
   if (status == "Approved" && flatOwner?.status === "Approved") {
+    flatOwner.canLogin = true;
+    await flatOwner.save();
     return res.status(200).json({ success: true, message: "Flat Owner status updated to Approved." });
   };
 
@@ -378,6 +382,7 @@ export const updateFlatOwnerStatus = asyncHandler(async (req, res) => {
       const flatOwnerUpdates = {};
       flatOwnerUpdates.memberId = memberId;
       flatOwnerUpdates.status = "Approved";
+      flatOwnerUpdates.canLogin = true;
 
       await FlatOwner.findByIdAndUpdate(id, flatOwnerUpdates, {
         new: true,
