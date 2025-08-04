@@ -13,14 +13,12 @@ export const createFlat = asyncHandler(async (req, res) => {
     flatNumber,
     floor,
     flatType,
-    status,
   } = req.body;
 
   const flat = await Flat.create({
     flatNumber,
     floor,
     flatType,
-    status,
     createdBy,
   });
 
@@ -30,7 +28,7 @@ export const createFlat = asyncHandler(async (req, res) => {
 // Get All Flats
 export const getFlats = asyncHandler(async (req, res) => {
   const searchableFields = ["flatNumber", "floor", "flatType"];
-  const filterableFields = ["flatType", "isDeleted"];
+  const filterableFields = ["flatType", "isDeleted", "status"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
     defaultSortBy: "createdAt",
@@ -56,7 +54,7 @@ export const getFlat = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid flat ID.");
   };
 
-  const flat = await Flat.findOne({ _id: id });
+  const flat = await Flat.findById(id);
 
   if (!flat) {
     throw new ApiError(404, "Flat not found.");
@@ -80,10 +78,7 @@ export const updateFlat = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Flat not found.");
   };
 
-  const updates = {
-    ...req.body,
-    updatedBy,
-  };
+  const updates = { ...req.body, updatedBy };
 
   const updatedFlat = await Flat.findByIdAndUpdate(id, updates, { new: true });
 

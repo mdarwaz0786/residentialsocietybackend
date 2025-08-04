@@ -1,8 +1,8 @@
 import ApiError from "../helpers/apiError.js";
 
 const SIZE_LIMITS = {
-  image: 5 * 1024 * 1024,
-  pdf: 5 * 1024 * 1024,
+  image: 10 * 1024 * 1024,
+  pdf: 10 * 1024 * 1024,
 };
 
 const validateFileSize = (req, res, next) => {
@@ -11,11 +11,11 @@ const validateFileSize = (req, res, next) => {
     const { mimetype, size, originalname } = req.file;
 
     if (mimetype.startsWith("image/") && size > SIZE_LIMITS.image) {
-      return next(new ApiError(400, `${originalname} exceeds 5MB image size limit.`));
+      return next(new ApiError(400, `${originalname} exceeds 10MB image size limit.`));
     };
 
     if (mimetype === "application/pdf" && size > SIZE_LIMITS.pdf) {
-      return next(new ApiError(400, `${originalname} exceeds 5MB PDF size limit.`));
+      return next(new ApiError(400, `${originalname} exceeds 10MB PDF size limit.`));
     };
 
     return next();
@@ -29,11 +29,11 @@ const validateFileSize = (req, res, next) => {
         const { mimetype, size, originalname } = file;
 
         if (mimetype.startsWith("image/") && size > SIZE_LIMITS.image) {
-          return next(new ApiError(400, `${originalname} exceeds 5MB image size limit.`));
+          return next(new ApiError(400, `${originalname} exceeds 10MB image size limit.`));
         };
 
         if (mimetype === "application/pdf" && size > SIZE_LIMITS.pdf) {
-          return next(new ApiError(400, `${originalname} exceeds 5MB PDF size limit.`));
+          return next(new ApiError(400, `${originalname} exceeds 10MB PDF size limit.`));
         };
       };
     } else {
@@ -44,11 +44,11 @@ const validateFileSize = (req, res, next) => {
           const { mimetype, size, originalname } = file;
 
           if (mimetype.startsWith("image/") && size > SIZE_LIMITS.image) {
-            return next(new ApiError(400, `${originalname} exceeds 5MB image size limit.`));
+            return next(new ApiError(400, `${originalname} exceeds 10MB image size limit.`));
           };
 
           if (mimetype === "application/pdf" && size > SIZE_LIMITS.pdf) {
-            return next(new ApiError(400, `${originalname} exceeds 5MB PDF size limit.`));
+            return next(new ApiError(400, `${originalname} exceeds 10MB PDF size limit.`));
           };
         };
       };

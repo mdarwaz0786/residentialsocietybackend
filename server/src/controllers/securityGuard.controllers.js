@@ -8,6 +8,7 @@ import ApiError from "../helpers/apiError.js";
 import generateMemberId from "../helpers/generateMemberId.js";
 import ApiFeatures from "../helpers/ApiFeatures.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
+import compressImageToBase64 from "../helpers/compressImageToBase64.js";
 
 // Create Security Guard
 export const createSecurityGuard = asyncHandler(async (req, res) => {
@@ -43,19 +44,16 @@ export const createSecurityGuard = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Failed to generate member ID.");
   };
 
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
   const profilePhoto = req?.files?.profilePhoto?.[0];
   const aadharCard = req?.files?.aadharCard?.[0];
 
-  const profilePhotoBase64 = profilePhoto
-    ? `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`
-    : null;
-
-  const aadharCardBase64 = aadharCard
-    ? `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`
-    : null;
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  const [profilePhotoBase64, aadharCardBase64] = await Promise.all([
+    profilePhoto ? compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype) : null,
+    aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
+  ]);
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -105,7 +103,7 @@ export const createSecurityGuard = asyncHandler(async (req, res) => {
 // Get all Security Guards
 export const getSecurityGuards = async (req, res) => {
   const searchableFields = ["fullName", "email", "mobile"];
-  const filterableFields = ["status", "isDeleted"];
+  const filterableFields = ["status", "isDeleted", "canLogin"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
     defaultSortBy: "createdAt",
@@ -186,13 +184,10 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
   const profilePhoto = req?.files?.profilePhoto?.[0];
   const aadharCard = req?.files?.aadharCard?.[0];
 
-  const profilePhotoBase64 = profilePhoto
-    ? `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`
-    : null;
-
-  const aadharCardBase64 = aadharCard
-    ? `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`
-    : null;
+  const [profilePhotoBase64, aadharCardBase64] = await Promise.all([
+    profilePhoto ? compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype) : null,
+    aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
+  ]);
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -219,6 +214,7 @@ export const updateSecurityGuard = asyncHandler(async (req, res) => {
     if (gateNumber) securityGuardUpdates.gateNumber = gateNumber;
     if (currentAddress) securityGuardUpdates.currentAddress = currentAddress;
     if (permanentAddress) securityGuardUpdates.permanentAddress = permanentAddress;
+    if (profilePhotoBase64) securityGuardUpdates.profilePhoto = profilePhotoBase64;
     if (aadharCardBase64) securityGuardUpdates.aadharCard = aadharCardBase64;
 
     const updatedSecurityGuard = await SecurityGuard.findByIdAndUpdate(id, securityGuardUpdates, {

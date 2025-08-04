@@ -4,6 +4,7 @@ import asyncHandler from "../helpers/asynsHandler.js";
 import ApiError from "../helpers/apiError.js";
 import ApiFeatures from "../helpers/ApiFeatures.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
+import compressImageToBase64 from "../helpers/compressImageToBase64.js";
 
 // Create Complaint
 export const createComplaint = asyncHandler(async (req, res) => {
@@ -13,7 +14,7 @@ export const createComplaint = asyncHandler(async (req, res) => {
   const photo = req?.files?.image?.[0];
 
   const imageBase64 = photo
-    ? `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`
+    ? await compressImageToBase64(photo.buffer, photo.mimetype)
     : null;
 
   const complaint = await Complaint.create({
@@ -94,7 +95,7 @@ export const updateComplaint = asyncHandler(async (req, res) => {
   const photo = req?.files?.image?.[0];
 
   const imageBase64 = photo
-    ? `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`
+    ? await compressImageToBase64(photo.buffer, photo.mimetype)
     : null;
 
   const updates = { updatedBy };
@@ -104,11 +105,7 @@ export const updateComplaint = asyncHandler(async (req, res) => {
   if (status) updates.status = status;
   if (imageBase64) updates.image = imageBase64;
 
-  const updatedComplaint = await Complaint.findOneAndUpdate(
-    { _id: id },
-    updates,
-    { new: true },
-  );
+  const updatedComplaint = await Complaint.findByIdAndUpdate(id, updates, { new: true });
 
   res.status(200).json({ success: true, data: updatedComplaint });
 });

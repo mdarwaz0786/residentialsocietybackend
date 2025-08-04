@@ -7,6 +7,7 @@ import formatApiResponse from "../helpers/formatApiResponse.js";
 import FlatOwner from "../models/flatOwner.model.js";
 import Tenant from "../models/tenant.model.js";
 import Role from "../models/role.model.js";
+import compressImageToBase64 from "../helpers/compressImageToBase64.js";
 import generateVisitorId from "../helpers/generateVisitorId.js";
 
 // Create Visitor
@@ -58,18 +59,8 @@ export const createVisitor = asyncHandler(async (req, res) => {
     flatID = flat?._id;
   };
 
-  const visitorId = await generateVisitorId("VIS-");
-
-  if (!visitorId) {
-    throw new ApiError(500, "Failed to generate visitor ID.");
-  };
-
   const photo = req.files?.photo?.[0];
-  let photoBase64 = "";
-
-  if (photo) {
-    photoBase64 = `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`;
-  };
+  const photoBase64 = photo ? compressImageToBase64(photo.buffer, photo.mimetype) : null;
 
   const maid = await Visitor.create({
     fullName,
@@ -80,7 +71,6 @@ export const createVisitor = asyncHandler(async (req, res) => {
     date,
     time,
     purpose,
-    visitorId,
   });
 
   res.status(201).json({ success: true, data: maid });
@@ -159,9 +149,10 @@ export const updateVisitor = asyncHandler(async (req, res) => {
 
   const updates = { ...req.body };
   const photo = req.files?.photo?.[0];
+  const photoBase64 = photo ? compressImageToBase64(photo.buffer, photo.mimetype) : null;
 
-  if (photo) {
-    updates.photo = `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`;
+  if (photoBase64) {
+    updates.photo = photoBase64;
   };
 
   updates.updatedBy = updatedBy;
@@ -169,6 +160,53 @@ export const updateVisitor = asyncHandler(async (req, res) => {
   const updatedVisitor = await Visitor.findByIdAndUpdate(id, updates, { new: true });
 
   res.status(200).json({ success: true, data: updatedVisitor });
+});
+
+// Update Visitor status
+export const updateVisitorStatus = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.params;
+  const updatedBy = req.user?._id;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid Visitor ID.");
+  };
+
+  const visitor = await Visitor.findById(id);
+
+  if (!visitor) {
+    throw new ApiError(404, "Visitor not found.");
+  };
+
+  if (status == "Pending") {
+    visitor.status = "Pending";
+    visitor.updatedBy = updatedBy;
+    await visitor.save();
+    return res.status(200).json({ success: true, message: "Visitor status updated to Pending." });
+  };
+
+  if (status == "Rejected") {
+    visitor.status = "Rejected";
+    visitor.updatedBy = updatedBy;
+    await visitor.save();
+    return res.status(200).json({ success: true, message: "Visitor status updated to Rejected." });
+  };
+
+  if (status == "Approved" && visitor?.status === "Approved") {
+    visitor.status = "Approved";
+    visitor.updatedBy = updatedBy;
+    await visitor.save();
+    return res.status(200).json({ success: true, message: "Visitor status updated to Approved." });
+  };
+
+  if (status == "Approved") {
+    const visitorId = await generateVisitorId("VIS-");
+    visitor.status = "Approved";
+    visitor.updatedBy = updatedBy;
+    visitor.visitorId = visitorId;
+    await visitor.save();
+    return res.status(200).json({ success: true, message: "Visitor status updated to Approved." });
+  };
 });
 
 // Delete Visitor

@@ -1,4 +1,4 @@
-const formatApiResponse = ({ data = [], total = 0, page = 1, limit = 10 }) => {
+const formatApiResponse = ({ data = [], total = 0, page = 1, limit = 20 }) => {
   return {
     success: true,
     total,

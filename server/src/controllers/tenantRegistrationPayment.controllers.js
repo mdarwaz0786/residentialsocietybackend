@@ -12,6 +12,7 @@ export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => 
   const { PAYU_KEY, PAYU_SALT, PAYU_BASE_URL, SERVER_BASE_URL } = process.env;
   const tenantId = req.params.id;
   const status = req.params.status;
+  const updatedBy = req.user?._id;
 
   const tenant = await Tenant.findById(tenantId).populate('createdBy');
 
@@ -30,20 +31,33 @@ export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => 
 
   if (status === "Rejected") {
     tenant.status = "Rejected";
+    tenant.updatedBy = updatedBy;
+    tenant.canLogin = false;
     await tenant.save();
-    return res.status(200).json({ success: true, message: "Status updated successfully." });
+    return res.status(200).json({ success: true, message: "Status updated to Rejected." });
   };
 
   if (status === "Pending") {
     tenant.status = "Pending";
+    tenant.updatedBy = updatedBy;
+    tenant.canLogin = false;
     await tenant.save();
-    return res.status(200).json({ success: true, message: "Status updated successfully." });
+    return res.status(200).json({ success: true, message: "Status updated to Pending." });
+  };
+
+  if (status === "Approved" && existingPayment) {
+    tenant.status = "Approved";
+    tenant.updatedBy = updatedBy;
+    tenant.canLogin = true;
+    await tenant.save();
+    return res.status(200).json({ success: true, message: "Status updated to Approved." });
   };
 
   let payment;
 
   if (status === "Approved" && !existingPayment) {
     tenant.status = 'Approved';
+    tenant.updatedBy = updatedBy;
     await tenant.save();
 
     const txnid = 'TXN' + Date.now();
@@ -77,7 +91,7 @@ export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => 
     });
   };
 
-  res.status(200).json({ success: true, data: payment });
+  res.status(200).json({ success: true, message: "Status updated to Approved and payment generated", data: payment });
 });
 
 // Get Flat Owner Payments
@@ -123,12 +137,11 @@ export const tenantRegistrationPaymentSuccess = asyncHandler(async (req, res) =>
   const tenantId = tenantRegistrationPayment?.tenant;
   const tenant = await Tenant.findById(tenantId).populate("flat");
   const flatNumber = tenant?.flat?.flatNumber;
+  const memberId = await generateMemberId("TENANT-", flatNumber);
 
   tenantRegistrationPayment.status = "success";
   tenantRegistrationPayment.paymentDate = date;
   await tenantRegistrationPayment.save();
-
-  const memberId = await generateMemberId("TENANT-", flatNumber);
 
   tenant.paymentStatus = "Success";
   tenant.paymentDate = date;

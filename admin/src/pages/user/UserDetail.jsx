@@ -46,8 +46,8 @@ const UserDetail = () => {
               <img
                 src={user?.profilePhoto}
                 alt="Profile"
-                className="rounded-circle border border-primary mb-3"
-                style={{ width: "150px", height: "150px", objectFit: "cover" }}
+                className="border-primary mb-3"
+                style={{ width: "300px", height: "300px" }}
               />
               <h5 className="text-primary">{user?.fullName}</h5>
             </div>

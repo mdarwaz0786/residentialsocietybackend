@@ -8,6 +8,7 @@ import ApiError from "../helpers/apiError.js";
 import generateMemberId from "../helpers/generateMemberId.js";
 import ApiFeatures from "../helpers/ApiFeatures.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
+import compressImageToBase64 from "../helpers/compressImageToBase64.js";
 
 // Create Maintenance Staff
 export const createMaintenanceStaff = asyncHandler(async (req, res) => {
@@ -42,19 +43,16 @@ export const createMaintenanceStaff = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Failed to generate member ID.");
   };
 
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
   const profilePhoto = req?.files?.profilePhoto?.[0];
   const aadharCard = req?.files?.aadharCard?.[0];
 
-  const profilePhotoBase64 = profilePhoto
-    ? `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`
-    : null;
-
-  const aadharCardBase64 = aadharCard
-    ? `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`
-    : null;
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  const [profilePhotoBase64, aadharCardBase64] = await Promise.all([
+    profilePhoto ? compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype) : null,
+    aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
+  ]);
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -103,7 +101,7 @@ export const createMaintenanceStaff = asyncHandler(async (req, res) => {
 // Get all Maintenance Staffs
 export const getMaintenanceStaffs = async (req, res) => {
   const searchableFields = ["fullName", "email", "mobile"];
-  const filterableFields = ["status", "isDeleted"];
+  const filterableFields = ["status", "isDeleted", "canLogin"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {
     defaultSortBy: "createdAt",
@@ -144,7 +142,7 @@ export const updateMaintenanceStaff = asyncHandler(async (req, res) => {
   const updatedBy = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid maintenance staff ID.");
+    throw new ApiError(400, "Invalid Maintenance Staff ID.");
   };
 
   const maintenanceStaff = await MaintenanceStaff.findById(id).populate("userId");
@@ -183,13 +181,10 @@ export const updateMaintenanceStaff = asyncHandler(async (req, res) => {
   const profilePhoto = req?.files?.profilePhoto?.[0];
   const aadharCard = req?.files?.aadharCard?.[0];
 
-  const profilePhotoBase64 = profilePhoto
-    ? `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`
-    : null;
-
-  const aadharCardBase64 = aadharCard
-    ? `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`
-    : null;
+  const [profilePhotoBase64, aadharCardBase64] = await Promise.all([
+    profilePhoto ? compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype) : null,
+    aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
+  ]);
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -215,9 +210,13 @@ export const updateMaintenanceStaff = asyncHandler(async (req, res) => {
     if (status) maintenanceStaffUpdates.status = status;
     if (currentAddress) maintenanceStaffUpdates.currentAddress = currentAddress;
     if (permanentAddress) maintenanceStaffUpdates.permanentAddress = permanentAddress;
+    if (profilePhotoBase64) maintenanceStaffUpdates.profilePhoto = profilePhotoBase64;
     if (aadharCardBase64) maintenanceStaffUpdates.aadharCard = aadharCardBase64;
 
-    const updatedMaintenanceStaff = await MaintenanceStaff.findByIdAndUpdate(id, maintenanceStaffUpdates, { new: true });
+    const updatedMaintenanceStaff = await MaintenanceStaff.findByIdAndUpdate(id, maintenanceStaffUpdates, {
+      new: true,
+      session,
+    });
 
     await session.commitTransaction();
     session.endSession();

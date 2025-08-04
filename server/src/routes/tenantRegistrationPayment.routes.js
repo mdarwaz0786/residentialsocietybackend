@@ -6,11 +6,13 @@ import {
   tenantRegistrationPaymentFailure,
   tenantRegistrationPaymentSuccess,
 } from '../controllers/tenantRegistrationPayment.controllers.js';
+import isLoggedIn from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
 router.patch(
   '/approve/tenant/:status/:id',
+  isLoggedIn,
   approveTenantAndGeneratePayment,
 );
 

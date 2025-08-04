@@ -4,6 +4,7 @@ import asyncHandler from "../helpers/asynsHandler.js";
 import ApiError from "../helpers/apiError.js";
 import generateToken from "../helpers/generateToken.js";
 import generateMemberId from "../helpers/generateMemberId.js";
+import compressImageToBase64 from "../helpers/compressImageToBase64.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
   const {
@@ -25,13 +26,15 @@ export const registerUser = asyncHandler(async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  let profilePhotoBase64 = "";
+  const profilePhotoBase64 = profilePhoto
+    ? await compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype)
+    : null;
 
-  if (profilePhoto) {
-    profilePhotoBase64 = `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`;
+  const memberId = await generateMemberId("ADMIN-");
+
+  if (!memberId) {
+    throw new ApiError(409, "Failed to generate Member Id.");
   };
-
-  const memberId = await generateMemberId("ADM-");
 
   const newUser = await User.create({
     fullName,
@@ -69,11 +72,11 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid password.");
   };
 
-  if (user?.profile && user?.profile?.status !== "Approved") {
+  if (user?.profile && user?.profile?.status && user?.profile?.status !== "Approved") {
     throw new ApiError(401, "Your account is not approved.");
   };
 
-  if (user?.profile && user?.profile?.canLogin !== true) {
+  if (user?.profile && user?.profile?.canLogin && user?.profile?.canLogin !== true) {
     throw new ApiError(401, "Your account is restricted to login.");
   };
 
@@ -94,7 +97,7 @@ export const loggedInUser = asyncHandler(async (req, res) => {
     .exec();
 
   if (!user) {
-    throw new ApiError(404, "Something went wrong.")
+    throw new ApiError(404, "User not found.")
   };
 
   res.status(200).json({ success: true, data: user });

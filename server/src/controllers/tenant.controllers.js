@@ -8,7 +8,7 @@ import FlatOwner from "../models/flatOwner.model.js";
 import asyncHandler from "../helpers/asynsHandler.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
 import ApiFeatures from "../helpers/ApiFeatures.js";
-import fileToBase64 from "../helpers/fileToBase64.js";
+import compressImageToBase64 from "../helpers/compressImageToBase64.js";
 
 // Create Tenant
 export const createTenant = asyncHandler(async (req, res) => {
@@ -59,22 +59,32 @@ export const createTenant = asyncHandler(async (req, res) => {
     hashedPassword = await bcrypt.hash(password, salt);
   };
 
-  const profilePhoto = fileToBase64(req?.files?.profilePhoto?.[0]);
-  const aadharCard = fileToBase64(req?.files?.aadharCard?.[0]);
-  const rentAgreement = fileToBase64(req?.files?.rentAgreement?.[0]);
-  const policeVerification = fileToBase64(req?.files?.policeVerification?.[0]);
+  const profilePhoto = req?.files?.profilePhoto?.[0];
+  const aadharCard = req?.files?.aadharCard?.[0];
+  const rentAgreement = req?.files?.rentAgreement?.[0];
+  const policeVerification = req?.files?.policeVerification?.[0];
   const vehicleRCFiles = req?.files?.vehicleRC || [];
 
-  const vehicleRCBase64Array = vehicleRCFiles ? vehicleRCFiles.map((file) => (
-    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
-  )) : [];
+  const [
+    profilePhotoBase64,
+    aadharCardBase64,
+    rentAgreementBase64,
+    policeVerificationBase64,
+    vehicleRCBase64Array
+  ] = await Promise.all([
+    profilePhoto ? compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype) : null,
+    aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
+    rentAgreement ? compressImageToBase64(rentAgreement.buffer, rentAgreement.mimetype) : null,
+    policeVerification ? compressImageToBase64(policeVerification.buffer, policeVerification.mimetype) : null,
+    vehicleRCFiles?.length > 0 ? Promise.all(vehicleRCFiles.map((file) => compressImageToBase64(file.buffer, file.mimetype))) : [],
+  ]);
 
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
     const [newUser] = await User.create([{
-      profilePhoto,
+      profilePhoto: profilePhotoBase64,
       fullName,
       email,
       mobile,
@@ -85,7 +95,7 @@ export const createTenant = asyncHandler(async (req, res) => {
 
     const [tenant] = await Tenant.create([{
       userId: newUser?._id,
-      profilePhoto,
+      profilePhoto: profilePhotoBase64,
       fullName,
       email,
       mobile,
@@ -95,9 +105,9 @@ export const createTenant = asyncHandler(async (req, res) => {
       role: role?._id,
       currentAddress,
       permanentAddress,
-      aadharCard,
-      rentAgreement,
-      policeVerification,
+      aadharCard: aadharCardBase64,
+      rentAgreement: rentAgreementBase64,
+      policeVerification: policeVerificationBase64,
       vehicleRC: vehicleRCBase64Array,
       createdBy,
     }], { session });
@@ -119,7 +129,7 @@ export const createTenant = asyncHandler(async (req, res) => {
 // Get all Tenants
 export const getTenants = asyncHandler(async (req, res) => {
   const searchableFields = ["fullName", "email", "mobile", "memberId", "secondaryMobile"];
-  const filterableFields = ["status", "isDeleted", "paymentStatus"];
+  const filterableFields = ["status", "isDeleted", "paymentStatus", "canLogin"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(
     req,
@@ -150,7 +160,7 @@ export const getTenant = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid Tenant ID.");
   };
 
-  const tenant = await Tenant.findOne({ _id: id }).populate("flat role");
+  const tenant = await Tenant.findById(id).populate("flat role");
 
   if (!tenant) {
     throw new ApiError(404, "Tenant not found.");
@@ -201,15 +211,25 @@ export const updateTenant = asyncHandler(async (req, res) => {
     hashedPassword = await bcrypt.hash(password, salt);
   };
 
-  const profilePhoto = fileToBase64(req?.files?.profilePhoto?.[0]);
-  const aadharCard = fileToBase64(req?.files?.aadharCard?.[0]);
-  const rentAgreement = fileToBase64(req?.files?.rentAgreement?.[0]);
-  const policeVerification = fileToBase64(req?.files?.policeVerification?.[0]);
+  const profilePhoto = req?.files?.profilePhoto?.[0];
+  const aadharCard = req?.files?.aadharCard?.[0];
+  const rentAgreement = req?.files?.rentAgreement?.[0];
+  const policeVerification = req?.files?.policeVerification?.[0];
   const vehicleRCFiles = req?.files?.vehicleRC || [];
 
-  const vehicleRCBase64Array = vehicleRCFiles ? vehicleRCFiles.map((file) => (
-    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
-  )) : [];
+  const [
+    profilePhotoBase64,
+    aadharCardBase64,
+    rentAgreementBase64,
+    policeVerificationBase64,
+    vehicleRCBase64Array
+  ] = await Promise.all([
+    profilePhoto ? compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype) : null,
+    aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
+    rentAgreement ? compressImageToBase64(rentAgreement.buffer, rentAgreement.mimetype) : null,
+    policeVerification ? compressImageToBase64(policeVerification.buffer, policeVerification.mimetype) : null,
+    vehicleRCFiles?.length > 0 ? Promise.all(vehicleRCFiles.map((file) => compressImageToBase64(file.buffer, file.mimetype))) : [],
+  ]);
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -220,7 +240,7 @@ export const updateTenant = asyncHandler(async (req, res) => {
     if (mobile) userUpdates.mobile = mobile;
     if (email) userUpdates.email = email;
     if (hashedPassword) userUpdates.password = hashedPassword;
-    if (profilePhoto) userUpdates.profilePhoto = profilePhoto;
+    if (profilePhotoBase64) userUpdates.profilePhoto = profilePhotoBase64;
 
     const updatedUser = await User.findByIdAndUpdate(tenant?.userId?._id, userUpdates, {
       new: true,
@@ -236,10 +256,10 @@ export const updateTenant = asyncHandler(async (req, res) => {
     if (currentAddress) updates.currentAddress = currentAddress;
     if (permanentAddress) updates.permanentAddress = permanentAddress;
     if (hashedPassword) updates.password = hashedPassword;
-    if (profilePhoto) updates.profilePhoto = profilePhoto;
-    if (aadharCard) updates.aadharCard = aadharCard;
-    if (rentAgreement) updates.rentAgreement = rentAgreement;
-    if (policeVerification) updates.policeVerification = policeVerification;
+    if (profilePhotoBase64) updates.profilePhoto = profilePhotoBase64;
+    if (aadharCardBase64) updates.aadharCard = aadharCardBase64;
+    if (rentAgreementBase64) updates.rentAgreement = rentAgreementBase64;
+    if (policeVerificationBase64) updates.policeVerification = policeVerificationBase64;
     if (vehicleRCBase64Array?.length > 0) updates.vehicleRC = vehicleRCBase64Array;
 
     const updatedTenant = await Tenant.findByIdAndUpdate(id, updates, {

@@ -6,6 +6,7 @@ import ApiFeatures from "../helpers/ApiFeatures.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
 import FlatOwner from "../models/flatOwner.model.js";
 import Tenant from "../models/tenant.model.js";
+import compressImageToBase64 from "../helpers/compressImageToBase64.js"
 
 // Create Maid
 export const createMaid = asyncHandler(async (req, res) => {
@@ -41,16 +42,10 @@ export const createMaid = asyncHandler(async (req, res) => {
   const photo = req.files?.photo?.[0];
   const aadharCard = req.files?.aadharCard?.[0];
 
-  let photoBase64 = "";
-  let aadharBase64 = "";
-
-  if (photo) {
-    photoBase64 = `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`;
-  };
-
-  if (aadharCard) {
-    aadharBase64 = `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`;
-  };
+  const [photoBase64, aadharBase64] = await Promise.all([
+    photo ? compressImageToBase64(photo.buffer, photo.mimetype) : null,
+    aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
+  ]);
 
   const maid = await Maid.create({
     fullName,
@@ -123,12 +118,17 @@ export const updateMaid = asyncHandler(async (req, res) => {
   const photo = req.files?.photo?.[0];
   const aadharCard = req.files?.aadharCard?.[0];
 
-  if (photo) {
-    updates.photo = `data:${photo.mimetype};base64,${photo.buffer.toString("base64")}`;
+  const [photoBase64, aadharBase64] = await Promise.all([
+    photo ? compressImageToBase64(photo.buffer, photo.mimetype) : null,
+    aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
+  ]);
+
+  if (photoBase64) {
+    updates.photo = photoBase64;
   };
 
-  if (aadharCard) {
-    updates.aadharCard = `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`;
+  if (aadharBase64) {
+    updates.aadharCard = aadharBase64;
   };
 
   updates.updatedBy = updatedBy;

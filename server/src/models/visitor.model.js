@@ -34,7 +34,6 @@ const visitorSchema = new mongoose.Schema({
   },
   visitorId: {
     type: String,
-    required: [true, "Visitor ID is required."],
   },
   status: {
     type: String,

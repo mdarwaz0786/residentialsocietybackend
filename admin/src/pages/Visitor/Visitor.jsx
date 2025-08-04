@@ -106,7 +106,7 @@ const Visitor = () => {
                       status={status}
                       approving={approving}
                       onChange={handleStatusChange}
-                      onSubmit={(id) => updateStatus("/api/v1/visitor/update-visitor", id)}
+                      onSubmit={(id) => updateStatus(`/api/v1/visitor/update-visitor-status/${status[id]}`, id)}
                     />
                   </td>
                   <td>

@@ -9,6 +9,7 @@ import ApiError from "../helpers/apiError.js";
 import ApiFeatures from "../helpers/ApiFeatures.js";
 import formatApiResponse from "../helpers/formatApiResponse.js";
 import generateMemberId from "../helpers/generateMemberId.js";
+import compressImageToBase64 from "../helpers/compressImageToBase64.js";
 
 // Create Flat Owner
 export const createFlatOwner = asyncHandler(async (req, res) => {
@@ -60,21 +61,17 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
   const allotment = req?.files?.allotment?.[0];
   const vehicleRCFiles = req?.files?.vehicleRC || [];
 
-  const profilePhotoBase64 = profilePhoto
-    ? `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`
-    : null;
-
-  const aadharCardBase64 = aadharCard
-    ? `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`
-    : null;
-
-  const allotmentBase64 = allotment
-    ? `data:${allotment.mimetype};base64,${allotment.buffer.toString("base64")}`
-    : null;
-
-  const vehicleRCBase64Array = vehicleRCFiles ? vehicleRCFiles.map((file) => (
-    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
-  )) : [];
+  const [
+    profilePhotoBase64,
+    aadharCardBase64,
+    allotmentBase64,
+    vehicleRCBase64Array
+  ] = await Promise.all([
+    profilePhoto ? compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype) : null,
+    aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
+    allotment ? compressImageToBase64(allotment.buffer, allotment.mimetype) : null,
+    vehicleRCFiles?.length > 0 ? Promise.all(vehicleRCFiles.map((file) => compressImageToBase64(file.buffer, file.mimetype))) : [],
+  ]);
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -212,21 +209,17 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   const allotment = req?.files?.allotment?.[0];
   const vehicleRCFiles = req?.files?.vehicleRC || [];
 
-  const profilePhotoBase64 = profilePhoto
-    ? `data:${profilePhoto.mimetype};base64,${profilePhoto.buffer.toString("base64")}`
-    : null;
-
-  const aadharCardBase64 = aadharCard
-    ? `data:${aadharCard.mimetype};base64,${aadharCard.buffer.toString("base64")}`
-    : null;
-
-  const allotmentBase64 = allotment
-    ? `data:${allotment.mimetype};base64,${allotment.buffer.toString("base64")}`
-    : null;
-
-  const vehicleRCBase64Array = vehicleRCFiles ? vehicleRCFiles.map((file) => (
-    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
-  )) : [];
+  const [
+    profilePhotoBase64,
+    aadharCardBase64,
+    allotmentBase64,
+    vehicleRCBase64Array
+  ] = await Promise.all([
+    profilePhoto ? compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype) : null,
+    aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
+    allotment ? compressImageToBase64(allotment.buffer, allotment.mimetype) : null,
+    vehicleRCFiles.length > 0 ? Promise.all(vehicleRCFiles.map((file) => compressImageToBase64(file.buffer, file.mimetype))) : [],
+  ]);
 
   // Update User
   const userUpdates = {};
@@ -313,6 +306,7 @@ export const deleteFlatOwner = asyncHandler(async (req, res) => {
 export const updateFlatOwnerStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { status } = req.params;
+  const updatedBy = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new ApiError(400, "Invalid Flat Owner ID.");
@@ -330,6 +324,7 @@ export const updateFlatOwnerStatus = asyncHandler(async (req, res) => {
   if (status == "Pending") {
     flatOwner.status = "Pending";
     flatOwner.canLogin = false;
+    flatOwner.updatedBy = updatedBy;
     await flatOwner.save();
     return res.status(200).json({ success: true, message: "Flat Owner status updated to Pending." });
   };
@@ -337,12 +332,14 @@ export const updateFlatOwnerStatus = asyncHandler(async (req, res) => {
   if (status == "Rejected") {
     flatOwner.status = "Rejected";
     flatOwner.canLogin = false;
+    flatOwner.updatedBy = updatedBy;
     await flatOwner.save();
     return res.status(200).json({ success: true, message: "Flat Owner status updated to Rejected." });
   };
 
   if (status == "Approved" && flatOwner?.status === "Approved") {
     flatOwner.canLogin = true;
+    flatOwner.updatedBy = updatedBy;
     await flatOwner.save();
     return res.status(200).json({ success: true, message: "Flat Owner status updated to Approved." });
   };
@@ -383,6 +380,7 @@ export const updateFlatOwnerStatus = asyncHandler(async (req, res) => {
       flatOwnerUpdates.memberId = memberId;
       flatOwnerUpdates.status = "Approved";
       flatOwnerUpdates.canLogin = true;
+      flatOwnerUpdates.updatedBy = updatedBy;
 
       await FlatOwner.findByIdAndUpdate(id, flatOwnerUpdates, {
         new: true,

@@ -30,9 +30,7 @@ const ApiFeatures = (req, searchableFields = [], filterableFields = [], options 
   };
 
   // Sorting
-  const sort = {
-    [sortBy]: order === "asc" ? 1 : -1,
-  };
+  const sort = { [sortBy]: order === "asc" ? 1 : -1 };
 
   // Pagination
   const skip = (page - 1) * limit;

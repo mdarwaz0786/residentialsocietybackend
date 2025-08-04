@@ -9,6 +9,7 @@ import {
   getVisitor,
   getVisitors,
   updateVisitor,
+  updateVisitorStatus,
 } from "../controllers/visitor.controllers.js";
 const router = express.Router();
 
@@ -42,6 +43,13 @@ router.patch(
   upload.fields([{ name: "photo", maxCount: 1 }]),
   validateFileSize,
   updateVisitor,
+);
+
+router.patch(
+  "/update-visitor-status/:status/:id",
+  isLoggedIn,
+  checkPermission("visitor", "update"),
+  updateVisitorStatus,
 );
 
 router.delete(

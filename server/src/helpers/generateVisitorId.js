@@ -5,7 +5,7 @@ const generateVisitorId = async (prefix = "", suffix = "") => {
   let isUnique = false;
 
   while (!isUnique) {
-    const finalSuffix = suffix || Math.floor(1000000 + Math.random() * 9000000);
+    const finalSuffix = suffix || Date.now() + (5.5 * 60 * 60 * 1000);;
     visitorId = `${prefix}${finalSuffix}`;
 
     const existing = await Visitor.findOne({ visitorId });
