@@ -5,44 +5,28 @@ import TableWrapper from '../../components/Table/TableWrapper';
 import useFetchData from '../../hooks/useFetchData';
 import { useAuth } from '../../context/auth.context';
 import PageSizeSelector from '../../components/Table/PageSizeSelector';
-import useDelete from '../../hooks/useDelete';
-import { toast } from "react-toastify";
 import { Link, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import useUpdateStatus from '../../hooks/useUpdateStatus';
-import StatusUpdateForm from '../../components/Form/StatusUpdateForm';
-import avatar from "../../assets/avatar.png";
 
-const Visitor = () => {
+const MaidRegistrationPayment = () => {
   const { validToken } = useAuth();
-
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 20;
   const search = searchParams.get("search") || "";
 
-  const fetchDataUrl = "/api/v1/visitor/get-all-visitor";
-  const singleDeleteUrl = "/api/v1/visitor/delete-single-visitor";
-  const { deleteData, deleteResponse, deleteError } = useDelete();
+  const fetchDataUrl = "/api/v1/maidRegistrationPayment/get-all-maidRegistrationPayment";
 
   const {
     data,
     params,
     setParams,
-    refetch,
-  } = useFetchData(fetchDataUrl, validToken, { page, limit, search });
+  } = useFetchData(fetchDataUrl, validToken, { page, limit, status: "success", search });
 
   useEffect(() => {
     setParams({ page, limit, search });
   }, [page, limit, search]);
-
-  const {
-    status,
-    approving,
-    handleStatusChange,
-    updateStatus,
-  } = useUpdateStatus({ token: validToken, refetch });
 
   const updateQueryParams = (updates = {}) => {
     const updatedParams = {
@@ -66,30 +50,13 @@ const Visitor = () => {
     updateQueryParams({ limit: newLimit, page: 1 });
   };
 
-  const handleDelete = async (id) => {
-    await deleteData(`${singleDeleteUrl}/${id}`, validToken);
-  };
-
-  useEffect(() => {
-    if (deleteResponse?.success) {
-      toast.success("Deleted successful");
-      refetch();
-    };
-  }, [deleteResponse]);
-
-  useEffect(() => {
-    if (deleteError) {
-      toast.error(deleteError);
-    };
-  }, [deleteError]);
-
-  const securityGuards = data?.data || [];
+  const payments = data?.data || [];
   const total = data?.total || 0;
 
   return (
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h5>All Visitor<span className="badge bg-secondary ms-2">{total}</span></h5>
+        <h5>All Payment<span className="badge bg-secondary ms-2">{total}</span></h5>
         <SearchBar value={params.search} onChange={handleSearch} />
       </div>
       <TableWrapper>
@@ -97,44 +64,30 @@ const Visitor = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
-            <th>Photo</th>
-            <th>Full Name</th>
-            <th>Mobile</th>
-            <th>Flat</th>
+            <th>Transaction Id</th>
+            <th>Amount</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {
-            securityGuards?.length > 0 ? (
-              securityGuards?.map((item, index) => (
+            payments?.length > 0 ? (
+              payments?.map((item, index) => (
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
-                  <td><img className="profile-photo" src={item?.photo || avatar} alt="photo" /></td>
-                  <td>{item?.fullName}</td>
-                  <td>{item?.mobile}</td>
-                  <td>{item?.flat?.flatNumber || "N/A"}</td>
+                  <td>{item?.txnid}</td>
+                  <td>{item?.amount}</td>
+                  <td>{item?.status}</td>
                   <td>
-                    <StatusUpdateForm
-                      id={item?._id}
-                      currentStatus={item?.status}
-                      status={status}
-                      approving={approving}
-                      onChange={handleStatusChange}
-                      onSubmit={(id) => updateStatus(`/api/v1/visitor/update-visitor-status/${status[id]}`, id)}
-                    />
-                  </td>
-                  <td>
-                    <Link to={`/visitor-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
-                    <button className="btn btn-danger" onClick={() => handleDelete(item?._id)}>Delete</button>
+                    <Link to={`/payment-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="10" className="text-center">
+                <td colSpan="8" className="text-center">
                   No Data.
                 </td>
               </tr>
@@ -159,4 +112,4 @@ const Visitor = () => {
   );
 };
 
-export default Visitor;
+export default MaidRegistrationPayment;

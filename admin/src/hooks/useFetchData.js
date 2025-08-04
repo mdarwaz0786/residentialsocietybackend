@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 function useFetchData(apiUrl, token = "", initialParams = {}) {
@@ -33,12 +33,12 @@ function useFetchData(apiUrl, token = "", initialParams = {}) {
     fetchData();
   }, [apiUrl, token, params, reloadFlag]);
 
-  const updateParams = (newParams) => {
+  const updateParams = useCallback((newParams) => {
     setParams((prev) => ({
       ...prev,
       ...newParams,
     }));
-  };
+  }, []);
 
   return {
     data,

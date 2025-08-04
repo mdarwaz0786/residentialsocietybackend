@@ -61,7 +61,7 @@ export const createMaid = asyncHandler(async (req, res) => {
 
 // Get All Maids
 export const getMaids = asyncHandler(async (req, res) => {
-  const searchableFields = ["name", "mobile", "memberId"];
+  const searchableFields = ["fullName", "mobile", "memberId"];
   const filterableFields = ["status", "isDeleted"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {

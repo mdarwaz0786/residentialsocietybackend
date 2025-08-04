@@ -12,13 +12,13 @@ const TenantDetail = () => {
   const apiUrl = id ? `/api/v1/tenant/get-single-tenant/${id}` : null;
 
   const { data } = useFetch(apiUrl, validToken);
-  const maintenanceStaff = data?.data || {};
+  const tenant = data?.data || {};
   const pdfRef = useRef();
 
   const handleDownloadPDF = () => {
     html2pdf(pdfRef.current, {
       margin: 0.5,
-      filename: `${maintenanceStaff?.fullName}_tenant.pdf`,
+      filename: `${tenant?.fullName}_tenant.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
@@ -28,7 +28,7 @@ const TenantDetail = () => {
   return (
     <div className="container">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h5>Maintenance Staff Detail</h5>
+        <h5>Tenant Detail</h5>
         <button className="btn btn-primary" onClick={handleDownloadPDF}>Download</button>
         <button className="btn btn-secondary" onClick={() => navigate(-1)}>
           <FaArrowLeft className="me-1" /> Back
@@ -39,44 +39,48 @@ const TenantDetail = () => {
         <div className="row">
           <div className="col-md-4 mb-2">
             <label className="fw-bold">Name:</label>
-            <span>{" "}{maintenanceStaff?.fullName}</span>
+            <span>{" "}{tenant?.fullName}</span>
           </div>
           <div className="col-md-4 mb-2">
             <label className="fw-bold">Mobile:</label>
-            <span>{" "}{maintenanceStaff?.mobile}</span>
+            <span>{" "}{tenant?.mobile}</span>
           </div>
           <div className="col-md-4 mb-2">
             <label className="fw-bold">Email:</label>
-            <span>{" "}{maintenanceStaff?.email}</span>
+            <span>{" "}{tenant?.email}</span>
           </div>
           <div className="col-md-4">
             <label className="fw-bold">Status:</label>
-            <span>{" "}{maintenanceStaff?.status}</span>
+            <span>{" "}{tenant?.status}</span>
           </div>
           <div className="col-md-4">
             <label className="fw-bold">ID:</label>
-            <span>{" "}{maintenanceStaff?.memberId}</span>
+            <span>{" "}{tenant?.memberId}</span>
           </div>
           <div className="col-md-6 mt-2">
             <label className="fw-bold d-block mb-1">Profile Photo:</label>
-            <img src={maintenanceStaff?.profilePhoto} alt="profileImage" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={tenant?.profilePhoto} alt="profileImage" className="img-thumbnail" />
           </div>
           <div className="col-md-6 mt-2">
             <label className="fw-bold d-block mb-1 mt-3">Aadhar Card:</label>
-            <img src={maintenanceStaff?.aadharCard} alt="aadharCard" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={tenant?.aadharCard} alt="aadharCard" className="img-thumbnail" />
           </div>
           <div className="col-md-6 mt-3">
             <label className="fw-bold d-block mb-1 mt-3">Rent Agreement:</label>
-            <img src={maintenanceStaff?.rentAgreement} alt="rentAgreement" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={tenant?.rentAgreement} alt="rentAgreement" className="img-thumbnail" />
           </div>
           <div className="col-md-6 mt-3">
             <label className="fw-bold d-block mb-1 mt-3">Police Verification:</label>
-            <img src={maintenanceStaff?.policeVerification} alt="policeVerification" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={tenant?.policeVerification} alt="policeVerification" className="img-thumbnail" />
           </div>
-          <div className="col-md-6 mt-3">
-            <label className="fw-bold d-block mb-1 mt-3">Vehicle RC:</label>
-            <img src={maintenanceStaff?.vehicleRC?.[0]} alt="vehicleRC" className="img-thumbnail" style={{ maxHeight: "200px" }} />
-          </div>
+          {
+            tenant?.vehicleRC && tenant?.vehicleRC?.map((vehicle, index) => (
+              <div className="col-md-6 mt-3" key={index}>
+                <label className="fw-bold d-block mb-1 mt-3">Vehicle RC:</label>
+                <img src={vehicle} alt="vehicleRC" className="img-thumbnail" />
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>

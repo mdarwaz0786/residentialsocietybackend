@@ -55,11 +55,11 @@ const VehicleDetail = () => {
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1">Vehicle Photo:</label>
-            <img src={vehicle?.vehiclePhoto} alt="Vehicle" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={vehicle?.vehiclePhoto} alt="Vehicle" className="img-thumbnail" />
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1">Vehicle RC:</label>
-            <img src={vehicle?.vehicleRC} alt="RC" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={vehicle?.vehicleRC} alt="RC" className="img-thumbnail" />
           </div>
         </div>
       </div>

@@ -55,11 +55,11 @@ const MaidDetail = () => {
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1">Photo:</label>
-            <img src={maid?.photo} alt="Maid" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={maid?.photo} alt="Maid" className="img-thumbnail" />
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1">Aadhar Card:</label>
-            <img src={maid?.aadharCard} alt="aadharCard" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={maid?.aadharCard} alt="aadharCard" className="img-thumbnail" />
           </div>
         </div>
       </div>

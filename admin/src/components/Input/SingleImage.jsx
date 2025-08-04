@@ -39,7 +39,7 @@ const SingleImage = ({ label, name, value, onChange, required = false, error, wi
       {error && <div className="invalid-feedback">{error}</div>}
 
       {preview && (
-        <div className="text-center mt-3">
+        <div className="mt-3">
           <img
             src={preview}
             alt="Preview"

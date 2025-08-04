@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import SearchBar from '../../components/Table/SearchBar'
 import Pagination from '../../components/Table/Pagination';
 import TableWrapper from '../../components/Table/TableWrapper';
@@ -6,13 +7,19 @@ import { useAuth } from '../../context/auth.context';
 import PageSizeSelector from '../../components/Table/PageSizeSelector';
 import useDelete from '../../hooks/useDelete';
 import { toast } from "react-toastify";
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import useUpdateStatus from '../../hooks/useUpdateStatus';
 import StatusUpdateForm from '../../components/Form/StatusUpdateForm';
 
 const MaintenanceStaff = () => {
   const { validToken } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = parseInt(searchParams.get("page")) || 1;
+  const limit = parseInt(searchParams.get("limit")) || 20;
+  const search = searchParams.get("search") || "";
+
   const fetchDataUrl = "/api/v1/maintenanceStaff/get-all-maintenanceStaff";
   const singleDeleteUrl = "/api/v1/maintenanceStaff/delete-single-maintenanceStaff";
   const { deleteData, deleteResponse, deleteError } = useDelete();
@@ -22,11 +29,11 @@ const MaintenanceStaff = () => {
     params,
     setParams,
     refetch,
-  } = useFetchData(fetchDataUrl, validToken, {
-    page: 1,
-    limit: 20,
-    search: "",
-  });
+  } = useFetchData(fetchDataUrl, validToken, { page, limit, search });
+
+  useEffect(() => {
+    setParams({ page, limit, search });
+  }, [page, limit, search]);
 
   const {
     status,
@@ -35,16 +42,26 @@ const MaintenanceStaff = () => {
     updateStatus,
   } = useUpdateStatus({ token: validToken, refetch });
 
+  const updateQueryParams = (updates = {}) => {
+    const updatedParams = {
+      page,
+      limit,
+      search,
+      ...updates,
+    };
+    setSearchParams(updatedParams);
+  };
+
   const handleSearch = (value) => {
-    setParams({ search: value, page: 1 });
+    updateQueryParams({ search: value, page: 1 });
   };
 
   const handlePageChange = (newPage) => {
-    setParams({ page: newPage });
+    updateQueryParams({ page: newPage });
   };
 
   const handlePageSizeChange = (newLimit) => {
-    setParams({ limit: newLimit, page: 1 });
+    updateQueryParams({ limit: newLimit, page: 1 });
   };
 
   const handleDelete = async (id) => {
@@ -56,7 +73,7 @@ const MaintenanceStaff = () => {
       toast.success("Deleted successful");
       refetch();
     };
-  }, [deleteResponse, refetch]);
+  }, [deleteResponse]);
 
   useEffect(() => {
     if (deleteError) {

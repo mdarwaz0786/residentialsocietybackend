@@ -63,11 +63,11 @@ const SecurityGuardDetail = () => {
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Profile Photo:</label>
-            <img src={securityGuard?.profilePhoto} alt="Vehicle" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={securityGuard?.profilePhoto} alt="Vehicle" className="img-thumbnail" />
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Aadhar Card:</label>
-            <img src={securityGuard?.aadharCard} alt="RC" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={securityGuard?.aadharCard} alt="RC" className="img-thumbnail" />
           </div>
         </div>
       </div>

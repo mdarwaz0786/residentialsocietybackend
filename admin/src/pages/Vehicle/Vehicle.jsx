@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import SearchBar from '../../components/Table/SearchBar'
 import Pagination from '../../components/Table/Pagination';
 import TableWrapper from '../../components/Table/TableWrapper';
@@ -6,27 +7,33 @@ import { useAuth } from '../../context/auth.context';
 import PageSizeSelector from '../../components/Table/PageSizeSelector';
 import useDelete from '../../hooks/useDelete';
 import { toast } from "react-toastify";
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import useUpdateStatus from '../../hooks/useUpdateStatus';
 import StatusUpdateForm from '../../components/Form/StatusUpdateForm';
+import { useEffect } from 'react';
 
 const Vehicle = () => {
   const { validToken } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = parseInt(searchParams.get("page")) || 1;
+  const limit = parseInt(searchParams.get("limit")) || 20;
+  const search = searchParams.get("search") || "";
+
   const fetchDataUrl = "/api/v1/vehicle/get-all-vehicle";
   const singleDeleteUrl = "/api/v1/vehicle/delete-single-vehicle";
-  const { deleteData } = useDelete();
+  const { deleteData, deleteResponse, deleteError } = useDelete();
 
   const {
     data,
     params,
     setParams,
     refetch,
-  } = useFetchData(fetchDataUrl, validToken, {
-    page: 1,
-    limit: 20,
-    isDeleted: false,
-    search: "",
-  });
+  } = useFetchData(fetchDataUrl, validToken, { page, limit, search });
+
+  useEffect(() => {
+    setParams({ page, limit, search });
+  }, [page, limit, search]);
 
   const {
     status,
@@ -35,23 +42,44 @@ const Vehicle = () => {
     updateStatus,
   } = useUpdateStatus({ token: validToken, refetch });
 
+  const updateQueryParams = (updates = {}) => {
+    const updatedParams = {
+      page,
+      limit,
+      search,
+      ...updates,
+    };
+    setSearchParams(updatedParams);
+  };
+
   const handleSearch = (value) => {
-    setParams({ search: value, page: 1 });
+    updateQueryParams({ search: value, page: 1 });
   };
 
   const handlePageChange = (newPage) => {
-    setParams({ page: newPage });
+    updateQueryParams({ page: newPage });
   };
 
   const handlePageSizeChange = (newLimit) => {
-    setParams({ limit: newLimit, page: 1 });
+    updateQueryParams({ limit: newLimit, page: 1 });
   };
 
   const handleDelete = async (id) => {
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
-    toast.success("Deleted successful");
-    refetch();
   };
+
+  useEffect(() => {
+    if (deleteResponse?.success) {
+      toast.success("Deleted successful");
+      refetch();
+    };
+  }, [deleteResponse]);
+
+  useEffect(() => {
+    if (deleteError) {
+      toast.error(deleteError);
+    };
+  }, [deleteError]);
 
   const vehicles = data?.data || [];
   const total = data?.total || 0;

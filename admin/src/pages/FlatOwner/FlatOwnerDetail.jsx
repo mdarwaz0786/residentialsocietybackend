@@ -4,6 +4,7 @@ import { useAuth } from "../../context/auth.context";
 import { FaArrowLeft } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { useRef } from "react";
+import ImageDownloadButton from "../../components/Button/ImageDownloadButton";
 
 const FlatOwnerDetail = () => {
   const { id } = useParams();
@@ -59,20 +60,28 @@ const FlatOwnerDetail = () => {
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1">Profile Photo:</label>
-            <img src={flatOwner?.profilePhoto} alt="image" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={flatOwner?.profilePhoto} alt="image" className="img-thumbnail" />
+            <ImageDownloadButton src={flatOwner?.profilePhoto} filename={`${flatOwner?.fullName}-profile-photo`} />
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Aadhar Card:</label>
-            <img src={flatOwner?.aadharCard} alt="image" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={flatOwner?.aadharCard} alt="image" className="img-thumbnail" />
+            <ImageDownloadButton src={flatOwner?.aadharCard} filename={`${flatOwner?.fullName}-aadhar-card`} />
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Allotment:</label>
-            <img src={flatOwner?.allotment} alt="image" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={flatOwner?.allotment} alt="image" className="img-thumbnail" />
+            <ImageDownloadButton src={flatOwner?.allotment} filename={`${flatOwner?.fullName}-allotment`} />
           </div>
-          <div className="col-md-6">
-            <label className="fw-bold d-block mb-1 mt-3">Vehicle RC:</label>
-            <img src={flatOwner?.vehicleRC?.[0]} alt="image" className="img-thumbnail" style={{ maxHeight: "200px" }} />
-          </div>
+          {
+            flatOwner?.vehicleRC && flatOwner?.vehicleRC?.map((vehicle, index) => (
+              <div className="col-md-6" key={index}>
+                <label className="fw-bold d-block mb-1 mt-3">Vehicle RC {index + 1}:</label>
+                <img src={vehicle} alt="image" className="img-thumbnail" />
+                <ImageDownloadButton src={vehicle} filename={`${flatOwner?.fullName}-vehicle-rc-${index + 1}`} />
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>

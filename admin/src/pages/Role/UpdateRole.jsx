@@ -64,7 +64,7 @@ const UpdateRole = () => {
   return (
     <div className="container mt-2 mb-2">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-        <h5>Update Role</h5>
+        <h5>Role & Permission Detail</h5>
         <button className="btn btn-secondary" onClick={() => navigate(-1)}>
           <FaArrowLeft className="me-1" /> Back
         </button>
@@ -122,7 +122,7 @@ const UpdateRole = () => {
           </div>
         ))}
 
-        <button type="submit" className="btn btn-primary">Update Role</button>
+        <button type="submit" className="btn btn-primary">Update</button>
       </form>
     </div>
   );

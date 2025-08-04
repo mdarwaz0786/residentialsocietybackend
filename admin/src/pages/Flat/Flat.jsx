@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import SearchBar from '../../components/Table/SearchBar'
 import Pagination from '../../components/Table/Pagination';
 import TableWrapper from '../../components/Table/TableWrapper';
@@ -6,11 +7,17 @@ import { useAuth } from '../../context/auth.context';
 import PageSizeSelector from '../../components/Table/PageSizeSelector';
 import useDelete from '../../hooks/useDelete';
 import { toast } from "react-toastify";
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 
 const Flat = () => {
   const { validToken } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = parseInt(searchParams.get("page")) || 1;
+  const limit = parseInt(searchParams.get("limit")) || 20;
+  const search = searchParams.get("search") || "";
+
   const fetchDataUrl = "/api/v1/flat/get-all-flat";
   const singleDeleteUrl = "/api/v1/flat/delete-single-flat";
   const { deleteData, deleteResponse, deleteError } = useDelete();
@@ -20,22 +27,32 @@ const Flat = () => {
     params,
     setParams,
     refetch,
-  } = useFetchData(fetchDataUrl, validToken, {
-    page: 1,
-    limit: 20,
-    search: "",
-  });
+  } = useFetchData(fetchDataUrl, validToken, { page, limit, search });
+
+  useEffect(() => {
+    setParams({ page, limit, search });
+  }, [page, limit, search]);
+
+  const updateQueryParams = (updates = {}) => {
+    const updatedParams = {
+      page,
+      limit,
+      search,
+      ...updates,
+    };
+    setSearchParams(updatedParams);
+  };
 
   const handleSearch = (value) => {
-    setParams({ search: value, page: 1 });
+    updateQueryParams({ search: value, page: 1 });
   };
 
   const handlePageChange = (newPage) => {
-    setParams({ page: newPage });
+    updateQueryParams({ page: newPage });
   };
 
   const handlePageSizeChange = (newLimit) => {
-    setParams({ limit: newLimit, page: 1 });
+    updateQueryParams({ limit: newLimit, page: 1 });
   };
 
   const handleDelete = async (id) => {
@@ -44,10 +61,10 @@ const Flat = () => {
 
   useEffect(() => {
     if (deleteResponse?.success) {
-      toast.success("Flat Deleted");
+      toast.success("Deleted successful");
       refetch();
     };
-  }, [deleteResponse, refetch]);
+  }, [deleteResponse]);
 
   useEffect(() => {
     if (deleteError) {

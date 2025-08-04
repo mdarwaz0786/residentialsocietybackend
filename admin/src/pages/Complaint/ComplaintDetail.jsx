@@ -40,7 +40,7 @@ const ComplaintDetail = () => {
         <div className="row">
           <div className="col-md-4 mb-2">
             <label className="fw-bold">Title:</label>
-            <span>{" "}{complaint?.vehicleNumber}</span>
+            <span>{" "}{complaint?.title}</span>
           </div>
           <div className="col-md-4 mb-2">
             <label className="fw-bold">Type:</label>
@@ -62,7 +62,7 @@ const ComplaintDetail = () => {
             (complaint?.image) && (
               <div className="col-md-6">
                 <label className="fw-bold d-block mb-1">Image:</label>
-                <img src={complaint?.image} alt="image" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+                <img src={complaint?.image} alt="image" className="img-thumbnail" />
               </div>
             )
           }

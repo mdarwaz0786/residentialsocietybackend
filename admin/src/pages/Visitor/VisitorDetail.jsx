@@ -56,7 +56,7 @@ const VisitorDetail = () => {
           </div>
           <div className="col-md-4">
             <label className="fw-bold d-block mb-1">Photo:</label>
-            <img src={visitor?.photo || avatar} alt="photo" className="img-thumbnail" style={{ maxHeight: "200px" }} />
+            <img src={visitor?.photo || avatar} alt="photo" className="img-thumbnail" />
           </div>
         </div>
       </div>
