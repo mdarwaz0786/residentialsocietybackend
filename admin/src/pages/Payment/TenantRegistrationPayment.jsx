@@ -56,7 +56,7 @@ const TenantRegistrationPayment = () => {
   return (
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h5>All Payment<span className="badge bg-secondary ms-2">{total}</span></h5>
+        <h5>All Tenant Registration Payment<span className="badge bg-secondary ms-2">{total}</span></h5>
         <SearchBar value={params.search} onChange={handleSearch} />
       </div>
       <TableWrapper>

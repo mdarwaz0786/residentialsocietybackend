@@ -18,11 +18,13 @@ router.patch(
 
 router.get(
   '/get-all-tenantRegistrationPayment',
+  isLoggedIn,
   getTenantRegistrationPayments,
 );
 
 router.get(
   '/flatOwner/payments/:id',
+  isLoggedIn,
   getFlatOwnerPayments,
 );
 

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useRef, useEffect } from "react";
 import {
   MdDashboard,
@@ -7,6 +8,7 @@ import {
   MdHome,
   MdReportProblem,
   MdPayment,
+  MdKeyboardArrowDown,
 } from "react-icons/md";
 import {
   FaUserFriends,
@@ -26,7 +28,14 @@ import { toast } from "react-toastify";
 const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
   const { logOutUser } = useAuth();
   const [activeLink, setActiveLink] = useState(null);
+  const [openDropdown, setOpenDropdown] = useState(null);
   const sidebarRef = useRef(null);
+  const dropdownRefs = [useRef(null), useRef(null)];
+
+  const handleDropdownClick = (e, index) => {
+    e.preventDefault();
+    setOpenDropdown((prev) => (prev === index ? null : index));
+  };
 
   const handleLinkClick = (label) => {
     setActiveLink(label);
@@ -34,6 +43,14 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
       setMobileOpen(false);
     };
   };
+
+  useEffect(() => {
+    dropdownRefs.forEach((ref, idx) => {
+      if (ref.current) {
+        ref.current.style.maxHeight = openDropdown === idx ? `${ref.current.scrollHeight}px` : "0px";
+      };
+    });
+  }, [openDropdown]);
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -143,15 +160,28 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
               </Link>
             </li>
 
-            <li className={styles.navItem}>
-              <Link
-                to="/payment"
-                className={`${styles.navLink} ${activeLink === "Payment" ? styles.active : ""}`}
-                onClick={() => handleLinkClick("Payment")}
-              >
+            <li className={`${styles.navItem} ${styles.dropdownContainer} ${openDropdown === 0 ? styles.open : ""}`}>
+              <Link to="#" className={`${styles.navLink} ${styles.dropdownToggle}`} onClick={(e) => handleDropdownClick(e, 0)}>
                 <MdPayment />
-                <span className={styles.navLabel}>Payment</span>
+                <span className={styles.navLabel}>Payments</span>
+                <MdKeyboardArrowDown className={styles.dropdownIcon} />
               </Link>
+              <ul className={styles.dropdownMenu} ref={dropdownRefs[0]}>
+                {[
+                  { label: "Tenant Registration", route: "/tenant-registration-payment" },
+                  { label: "Maid Registration", route: "/maid-registration-payment" },
+                ].map((item) => (
+                  <li className={styles.navItem} key={item.label}>
+                    <Link
+                      to={item.route}
+                      className={`${styles.navLink} ${styles.dropdownLink} ${activeLink === item.label ? styles.active : ""}`}
+                      onClick={() => handleLinkClick(item.label)}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </li>
 
             <li className={styles.navItem}>

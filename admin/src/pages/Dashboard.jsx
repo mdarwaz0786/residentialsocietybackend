@@ -108,11 +108,18 @@ const Dashboard = () => {
       to: "/maid",
     },
     {
-      label: "Payments",
-      value: stat?.totalPayments || 0,
+      label: "Tenant Payments",
+      value: stat?.totalTenantRegistrationPayments || 0,
       icon: <FaMoneyBillWave size={20} />,
       color: "text-primary",
-      to: "/payment",
+      to: "/tenant-registration-payment",
+    },
+    {
+      label: "Maid Payments",
+      value: stat?.totalMaidRegistrationPayments || 0,
+      icon: <FaMoneyBillWave size={20} />,
+      color: "text-primary",
+      to: "/maid-registration-payment",
     },
     {
       label: "Roles",

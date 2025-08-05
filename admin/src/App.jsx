@@ -39,8 +39,9 @@ import VisitorDetail from './pages/Visitor/VisitorDetail';
 import MaidDetail from './pages/Maid/MaidDetail';
 import Complaint from './pages/Complaint/Complaint';
 import ComplaintDetail from './pages/Complaint/ComplaintDetail';
-import Payment from './pages/Payment/Payment';
 import UpdateRole from './pages/Role/UpdateRole';
+import TenantRegistrationPayment from './pages/Payment/TenantRegistrationPayment';
+import MaidRegistrationPayment from './pages/Payment/MaidRegistrationPayment';
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -95,7 +96,8 @@ const App = () => {
             <Route path="visitor-detail/:id" element={<VisitorDetail />} />
             <Route path="complaint" element={<Complaint />} />
             <Route path="complaint-detail/:id" element={<ComplaintDetail />} />
-            <Route path="payment" element={<Payment />} />
+            <Route path="tenant-registration-payment" element={<TenantRegistrationPayment />} />
+            <Route path="maid-registration-payment" element={<MaidRegistrationPayment />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </>
