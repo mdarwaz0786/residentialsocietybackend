@@ -5,7 +5,7 @@ import Input from "../../components/Input/Input";
 import SingleImage from "../../components/Input/SingleImage";
 import SingleSelect from "../../components/Input/SingleSelect";
 import useFetch from "../../hooks/useFetch";
-import useUpdate from "../../hooks/useUpdate";
+import usePatch from "../../hooks/usePatch";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
 import useFormValidation from "../../hooks/useFormValidation";
@@ -16,7 +16,7 @@ const UpdateUser = () => {
   const { validToken } = useAuth();
   const { data: rolesData } = useFetch("/api/v1/role/get-all-role", validToken);
   const { data: userData } = useFetch(`/api/v1/user/get-single-user/${id}`, validToken);
-  const { updateData, response, updateError } = useUpdate(`/api/v1/user/update-user/${id}`);
+  const { updateData, response, updateError } = usePatch(`/api/v1/user/update-user/${id}`);
   const { errors, setErrors, validate } = useFormValidation();
 
   const [form, setForm] = useState({
@@ -89,6 +89,11 @@ const UpdateUser = () => {
     };
   }, [updateError]);
 
+  const roles = rolesData?.data.filter((role) => {
+    const name = role?.roleName?.trim()?.toLowerCase();
+    return name === "admin" || name === "sub admin";
+  });
+
   return (
     <FormWrapper title="Update User" onSubmit={handleSubmit}>
       <Input
@@ -134,7 +139,7 @@ const UpdateUser = () => {
         name="role"
         value={form.role}
         onChange={handleChange}
-        options={rolesData?.data || []}
+        options={roles || []}
         optionValue="roleName"
         optionKey="_id"
         required

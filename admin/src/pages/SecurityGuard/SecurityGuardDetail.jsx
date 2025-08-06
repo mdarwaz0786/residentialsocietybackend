@@ -4,6 +4,7 @@ import { useAuth } from "../../context/auth.context";
 import { FaArrowLeft } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { useRef } from "react";
+import ImageDownloadButton from "../../components/Button/ImageDownloadButton";
 
 const SecurityGuardDetail = () => {
   const { id } = useParams();
@@ -63,11 +64,13 @@ const SecurityGuardDetail = () => {
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Profile Photo:</label>
-            <img src={securityGuard?.profilePhoto} alt="Vehicle" className="img-thumbnail" />
+            <img src={securityGuard?.profilePhoto} alt="profilePhoto" className="img-thumbnail" />
+            <ImageDownloadButton src={securityGuard?.profilePhoto} filename={`${securityGuard?.fullName}-profile-photo`} />
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Aadhar Card:</label>
             <img src={securityGuard?.aadharCard} alt="RC" className="img-thumbnail" />
+            <ImageDownloadButton src={securityGuard?.aadharCard} filename={`${securityGuard?.fullName}-aadhar-card`} />
           </div>
         </div>
       </div>

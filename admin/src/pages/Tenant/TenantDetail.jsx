@@ -4,6 +4,7 @@ import { useAuth } from "../../context/auth.context";
 import { FaArrowLeft } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { useRef } from "react";
+import ImageDownloadButton from "../../components/Button/ImageDownloadButton";
 
 const TenantDetail = () => {
   const { id } = useParams();
@@ -60,24 +61,29 @@ const TenantDetail = () => {
           <div className="col-md-6 mt-2">
             <label className="fw-bold d-block mb-1">Profile Photo:</label>
             <img src={tenant?.profilePhoto} alt="profileImage" className="img-thumbnail" />
+            <ImageDownloadButton src={tenant?.profilePhoto} filename={`${tenant?.fullName}-profile-photo`} />
           </div>
           <div className="col-md-6 mt-2">
             <label className="fw-bold d-block mb-1 mt-3">Aadhar Card:</label>
             <img src={tenant?.aadharCard} alt="aadharCard" className="img-thumbnail" />
+            <ImageDownloadButton src={tenant?.aadharCard} filename={`${tenant?.fullName}-aadhar-card`} />
           </div>
           <div className="col-md-6 mt-3">
             <label className="fw-bold d-block mb-1 mt-3">Rent Agreement:</label>
             <img src={tenant?.rentAgreement} alt="rentAgreement" className="img-thumbnail" />
+            <ImageDownloadButton src={tenant?.rentAgreement} filename={`${tenant?.fullName}-rent-agreement`} />
           </div>
           <div className="col-md-6 mt-3">
             <label className="fw-bold d-block mb-1 mt-3">Police Verification:</label>
             <img src={tenant?.policeVerification} alt="policeVerification" className="img-thumbnail" />
+            <ImageDownloadButton src={tenant?.policeVerification} filename={`${tenant?.fullName}-police-verification`} />
           </div>
           {
-            tenant?.vehicleRC && tenant?.vehicleRC?.map((vehicle, index) => (
-              <div className="col-md-6 mt-3" key={index}>
-                <label className="fw-bold d-block mb-1 mt-3">Vehicle RC:</label>
+            tenant?.vehicleRC && tenant?.vehicleRC?.length > 0 && tenant?.vehicleRC?.map((vehicle, index) => (
+              <div className="col-md-6" key={index}>
+                <label className="fw-bold d-block mb-1 mt-3">Vehicle RC {index + 1}:</label>
                 <img src={vehicle} alt="vehicleRC" className="img-thumbnail" />
+                <ImageDownloadButton src={vehicle} filename={`${tenant?.fullName}-vehicle-rc-${index + 1}`} />
               </div>
             ))
           }

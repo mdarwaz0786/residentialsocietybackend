@@ -70,6 +70,11 @@ const CreateUser = () => {
     };
   }, [postError]);
 
+  const roles = rolesData?.data.filter((role) => {
+    const name = role?.roleName?.trim()?.toLowerCase();
+    return name === "admin" || name === "sub admin";
+  });
+
   return (
     <FormWrapper title="Create New User" onSubmit={handleSubmit}>
       <Input
@@ -115,7 +120,7 @@ const CreateUser = () => {
         name="role"
         value={form.role}
         onChange={handleChange}
-        options={rolesData?.data || []}
+        options={roles || []}
         optionValue="roleName"
         optionKey="_id"
         required

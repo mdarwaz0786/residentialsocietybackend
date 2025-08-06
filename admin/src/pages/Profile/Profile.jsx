@@ -1,22 +1,20 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import FormWrapper from "../../components/form/FormWrapper";
 import Input from "../../components/Input/Input";
 import SingleImage from "../../components/Input/SingleImage";
-import SingleSelect from "../../components/Input/SingleSelect";
 import useFetch from "../../hooks/useFetch";
 import usePatch from "../../hooks/usePatch";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "react-toastify";
 import useFormValidation from "../../hooks/useFormValidation";
 
-const UpdateUser = () => {
-  const { id } = useParams();
+const Profile = () => {
   const navigate = useNavigate();
-  const { validToken } = useAuth();
-  const { data: rolesData } = useFetch("/api/v1/role/get-all-role", validToken);
-  const { data: userData } = useFetch(`/api/v1/user/get-single-user/${id}`, validToken);
-  const { updateData, response, updateError } = usePatch(`/api/v1/user/update-user/${id}`);
+  const { validToken, user } = useAuth();
+  const { data: userData } = useFetch(`/api/v1/user/get-single-user/${user?._id}`, validToken);
+  const { updateData, response, updateError } = usePatch(`/api/v1/user/update-user/${user?._id}`);
   const { errors, setErrors, validate } = useFormValidation();
 
   const [form, setForm] = useState({
@@ -24,19 +22,17 @@ const UpdateUser = () => {
     mobile: "",
     email: "",
     password: "",
-    role: "",
     profilePhoto: null,
   });
 
   useEffect(() => {
     if (userData?.data) {
-      const { fullName, mobile, email, role, profilePhoto } = userData.data;
+      const { fullName, mobile, email, profilePhoto } = user;
       setForm({
         fullName,
         mobile,
         email,
         password: "",
-        role: role?._id,
         profilePhoto,
       });
     };
@@ -57,7 +53,6 @@ const UpdateUser = () => {
     fullName: { required: true, label: "Full Name" },
     mobile: { required: true, label: "Mobile" },
     email: { required: true, label: "Email" },
-    role: { required: true, label: "Role" },
     profilePhoto: { required: true, label: "Profile Photo" },
   };
 
@@ -78,10 +73,10 @@ const UpdateUser = () => {
 
   useEffect(() => {
     if (response?.success) {
-      toast.success("User updated");
+      toast.success("Profile updated");
       navigate(-1);
     };
-  }, [response, navigate]);
+  }, [response]);
 
   useEffect(() => {
     if (updateError) {
@@ -89,13 +84,8 @@ const UpdateUser = () => {
     };
   }, [updateError]);
 
-  const roles = rolesData?.data.filter((role) => {
-    const name = role?.roleName?.trim()?.toLowerCase();
-    return name === "admin" || name === "sub admin";
-  });
-
   return (
-    <FormWrapper title="Update User" onSubmit={handleSubmit}>
+    <FormWrapper title="Profile Detail" onSubmit={handleSubmit}>
       <Input
         label="Full Name"
         name="fullName"
@@ -134,18 +124,6 @@ const UpdateUser = () => {
         width="col-md-6"
         placeholder="Leave blank to keep existing"
       />
-      <SingleSelect
-        label="Role"
-        name="role"
-        value={form.role}
-        onChange={handleChange}
-        options={roles || []}
-        optionValue="roleName"
-        optionKey="_id"
-        required
-        error={errors.role}
-        width="col-md-6"
-      />
       <SingleImage
         label="Profile Photo"
         name="profilePhoto"
@@ -153,10 +131,10 @@ const UpdateUser = () => {
         value={form.profilePhoto}
         required
         error={errors.profilePhoto}
-        width="col-md-6"
+        width="col-md-12"
       />
     </FormWrapper>
   );
 };
 
-export default UpdateUser;
+export default Profile;

@@ -4,6 +4,7 @@ import { useAuth } from "../../context/auth.context";
 import { FaArrowLeft } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { useRef } from "react";
+import ImageDownloadButton from "../../components/Button/ImageDownloadButton";
 
 const MaintenanceStaffDetail = () => {
   const { id } = useParams();
@@ -60,10 +61,12 @@ const MaintenanceStaffDetail = () => {
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Profile Photo:</label>
             <img src={maintenanceStaff?.profilePhoto} alt="profileImage" className="img-thumbnail" />
+            <ImageDownloadButton src={maintenanceStaff?.profilePhoto} filename={`${maintenanceStaff?.fullName}-aadhar-card`} />
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Aadhar Card:</label>
             <img src={maintenanceStaff?.aadharCard} alt="aadharCard" className="img-thumbnail" />
+            <ImageDownloadButton src={maintenanceStaff?.aadharCard} filename={`${maintenanceStaff?.fullName}-aadhar-card`} />
           </div>
         </div>
       </div>

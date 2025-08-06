@@ -1,35 +1,52 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import SearchBar from '../../components/Table/SearchBar'
 import Pagination from '../../components/Table/Pagination';
 import TableWrapper from '../../components/Table/TableWrapper';
 import useFetchData from '../../hooks/useFetchData';
 import { useAuth } from '../../context/auth.context';
 import PageSizeSelector from '../../components/Table/PageSizeSelector';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const User = () => {
   const { validToken } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const fetchDataUrl = "/api/v1/user/get-all-user";
+  const page = parseInt(searchParams.get("page")) || 1;
+  const limit = parseInt(searchParams.get("limit")) || 20;
+  const search = searchParams.get("search") || "";
 
   const {
     data,
     params,
     setParams,
-  } = useFetchData(fetchDataUrl, validToken, {
-    page: 1,
-    limit: 20,
-    search: "",
-  });
+  } = useFetchData(fetchDataUrl, validToken, { page, limit, search });
+
+  useEffect(() => {
+    setParams({ page, limit, search });
+  }, [page, limit, search]);
+
+  const updateQueryParams = (updates = {}) => {
+    const updatedParams = {
+      page,
+      limit,
+      search,
+      ...updates,
+    };
+    setSearchParams(updatedParams);
+  };
 
   const handleSearch = (value) => {
-    setParams({ search: value, page: 1 });
+    updateQueryParams({ search: value, page: 1 });
   };
 
   const handlePageChange = (newPage) => {
-    setParams({ page: newPage });
+    updateQueryParams({ page: newPage });
   };
 
   const handlePageSizeChange = (newLimit) => {
-    setParams({ limit: newLimit, page: 1 });
+    updateQueryParams({ limit: newLimit, page: 1 });
   };
 
   const users = data?.data || [];
@@ -46,10 +63,12 @@ const User = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
-            <th>Name</th>
+            <th>Photo</th>
+            <th>Full Name</th>
             <th>Mobile</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -60,10 +79,12 @@ const User = () => {
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
+                  <td><img className="profile-photo" src={item?.profilePhoto} alt="profile-photo" /></td>
                   <td>{item?.fullName}</td>
                   <td>{item?.mobile}</td>
                   <td>{item?.email}</td>
                   <td>{item?.role?.roleName}</td>
+                  <td>{item?.status}</td>
                   <td>
                     <Link to={`/user-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
                   </td>

@@ -4,6 +4,7 @@ import { useAuth } from "../../context/auth.context";
 import { FaArrowLeft } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { useRef } from "react";
+import ImageDownloadButton from "../../components/Button/ImageDownloadButton";
 
 const VehicleDetail = () => {
   const { id } = useParams();
@@ -56,10 +57,12 @@ const VehicleDetail = () => {
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1">Vehicle Photo:</label>
             <img src={vehicle?.vehiclePhoto} alt="Vehicle" className="img-thumbnail" />
+            <ImageDownloadButton src={vehicle?.vehiclePhoto} filename={`${vehicle?.createdBy?.fullName}-vehicle`} />
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1">Vehicle RC:</label>
-            <img src={vehicle?.vehicleRC} alt="RC" className="img-thumbnail" />
+            <img src={vehicle?.vehicleRC} alt="vehvicleRC" className="img-thumbnail" />
+            <ImageDownloadButton src={vehicle?.vehicleRC} filename={`${vehicle?.createdBy?.fullName}-vehicle-rc`} />
           </div>
         </div>
       </div>

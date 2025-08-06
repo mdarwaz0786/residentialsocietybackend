@@ -16,7 +16,7 @@ const Pagination = ({ page, total, limit, onPageChange }) => {
       <button
         className="btn btn-primary btn-sm"
         onClick={() => onPageChange(page + 1)}
-        disabled={page === totalPages}
+        disabled={page >= totalPages || totalPages === 0}
       >
         Next
       </button>

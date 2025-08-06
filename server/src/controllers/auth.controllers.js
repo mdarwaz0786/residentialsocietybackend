@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
+import Role from "../models/role.model.js";
 import asyncHandler from "../helpers/asynsHandler.js";
 import ApiError from "../helpers/apiError.js";
 import generateToken from "../helpers/generateToken.js";
@@ -17,10 +18,31 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   const profilePhoto = req.files?.profilePhoto?.[0];
 
+  const findRole = await Role.findById(role);
+
+  if (!findRole) {
+    throw new ApiError(404, "Role not found.");
+  };
+
   const existingUser = await User.findOne({ $or: [{ email }, { mobile }] });
 
   if (existingUser) {
     throw new ApiError(409, "User already exists with this email or mobile.");
+  };
+
+  const roleName = findRole?.roleName?.toUpperCase();
+  let prefix;
+
+  if (roleName === "admin") {
+    prefix = "ADMIN";
+  } else if (roleName === "sub admin") {
+    prefix = "SUBADMIN";
+  };
+
+  const memberId = await generateMemberId(prefix);
+
+  if (!memberId) {
+    throw new ApiError(409, "Failed to generate Member Id.");
   };
 
   const salt = await bcrypt.genSalt(10);
@@ -29,12 +51,6 @@ export const registerUser = asyncHandler(async (req, res) => {
   const profilePhotoBase64 = profilePhoto
     ? await compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype)
     : null;
-
-  const memberId = await generateMemberId("ADMIN-");
-
-  if (!memberId) {
-    throw new ApiError(409, "Failed to generate Member Id.");
-  };
 
   const newUser = await User.create({
     fullName,
@@ -46,7 +62,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     profilePhoto: profilePhotoBase64,
   });
 
-  res.status(201).json({ success: true, message: "User registered successfully.", user: newUser });
+  res.status(201).json({ success: true, user: newUser });
 });
 
 export const loginUser = asyncHandler(async (req, res) => {

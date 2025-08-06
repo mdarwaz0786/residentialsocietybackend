@@ -4,6 +4,7 @@ import { useAuth } from "../../context/auth.context";
 import { FaArrowLeft } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { useRef } from "react";
+import ImageDownloadButton from "../../components/Button/ImageDownloadButton";
 
 const MaidDetail = () => {
   const { id } = useParams();
@@ -49,6 +50,10 @@ const MaidDetail = () => {
             <label className="fw-bold">Flat:</label>
             <span>{" "}{maid?.flat?.flatNumber}</span>
           </div>
+          <div className="col-md-6 mb-2">
+            <label className="fw-bold">ID:</label>
+            <span>{" "}{maid?.memberId}</span>
+          </div>
           <div className="col-md-6">
             <label className="fw-bold">Status:</label>
             <span>{" "}{maid?.status}</span>
@@ -56,10 +61,12 @@ const MaidDetail = () => {
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1">Photo:</label>
             <img src={maid?.photo} alt="Maid" className="img-thumbnail" />
+            <ImageDownloadButton src={maid?.photo} filename={`${maid?.fullName}-photo`} />
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1">Aadhar Card:</label>
             <img src={maid?.aadharCard} alt="aadharCard" className="img-thumbnail" />
+            <ImageDownloadButton src={maid?.aadharCard} filename={`${maid?.fullName}-aadhar-card`} />
           </div>
         </div>
       </div>

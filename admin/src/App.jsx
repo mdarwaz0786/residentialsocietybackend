@@ -42,6 +42,7 @@ import ComplaintDetail from './pages/Complaint/ComplaintDetail';
 import UpdateRole from './pages/Role/UpdateRole';
 import TenantRegistrationPayment from './pages/Payment/TenantRegistrationPayment';
 import MaidRegistrationPayment from './pages/Payment/MaidRegistrationPayment';
+import Profile from './pages/Profile/Profile';
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -98,6 +99,7 @@ const App = () => {
             <Route path="complaint-detail/:id" element={<ComplaintDetail />} />
             <Route path="tenant-registration-payment" element={<TenantRegistrationPayment />} />
             <Route path="maid-registration-payment" element={<MaidRegistrationPayment />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </>

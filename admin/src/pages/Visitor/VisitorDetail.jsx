@@ -5,6 +5,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { useRef } from "react";
 import avatar from "../../assets/avatar.png";
+import ImageDownloadButton from "../../components/Button/ImageDownloadButton";
 
 const VisitorDetail = () => {
   const { id } = useParams();
@@ -39,8 +40,8 @@ const VisitorDetail = () => {
       <div className="card shadow-sm p-3" ref={pdfRef}>
         <div className="row">
           <div className="col-md-4 mb-2">
-            <label className="fw-bold">Full Name:</label>
-            <span>{" "}{visitor?.visitorNumber}</span>
+            <label className="fw-bold">Name:</label>
+            <span>{" "}{visitor?.fullName}</span>
           </div>
           <div className="col-md-4 mb-2">
             <label className="fw-bold">Mobile:</label>
@@ -51,12 +52,21 @@ const VisitorDetail = () => {
             <span>{" "}{visitor?.flat?.flatNumber || "N/A"}</span>
           </div>
           <div className="col-md-4">
+            <label className="fw-bold">ID:</label>
+            <span>{" "}{visitor?.visitorId || "N/A"}</span>
+          </div>
+          <div className="col-md-4">
             <label className="fw-bold">Status:</label>
             <span>{" "}{visitor?.status}</span>
           </div>
           <div className="col-md-4">
             <label className="fw-bold d-block mb-1">Photo:</label>
             <img src={visitor?.photo || avatar} alt="photo" className="img-thumbnail" />
+            {
+              visitor?.photo && (
+                <ImageDownloadButton src={visitor?.photo} filename={`${visitor?.fullName}-visitor`} />
+              )
+            }
           </div>
         </div>
       </div>

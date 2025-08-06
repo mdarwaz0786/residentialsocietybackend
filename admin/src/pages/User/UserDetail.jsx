@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FaArrowLeft } from "react-icons/fa";
 import { useRef } from "react";
 import html2pdf from "html2pdf.js";
+import ImageDownloadButton from "../../components/Button/ImageDownloadButton";
 
 const UserDetail = () => {
   const navigate = useNavigate();
@@ -43,22 +44,16 @@ const UserDetail = () => {
         <div className="card border-0 shadow p-4" ref={pdfRef}>
           <div className="row">
             <div className="col-md-4 text-center">
-              <img
-                src={user?.profilePhoto}
-                alt="Profile"
-                className="border-primary mb-3"
-                style={{ width: "300px", height: "300px" }}
-              />
+              <img src={user?.profilePhoto} alt="Profile" className="border-primary mb-3" style={{ width: "300px", height: "300px", objectFit: "cover" }} />
+              <ImageDownloadButton src={user?.profilePhoto} filename={`${user?.fullName}-user`} />
               <h5 className="text-primary">{user?.fullName}</h5>
             </div>
             <div className="col-md-8">
               <div className="row g-3">
                 <Info label="Mobile" value={user?.mobile} />
                 <Info label="Email" value={user?.email} />
-                <Info label="Member ID" value={user?.memberId} />
+                <Info label="ID" value={user?.memberId} />
                 <Info label="Role" value={user?.role?.roleName} />
-                <Info label="Active" value={user?.isActive ? 'Yes' : 'No'} />
-                <Info label="Deleted" value={user?.isDeleted ? 'Yes' : 'No'} />
                 <Info label="Status" value={user?.status} />
               </div>
             </div>

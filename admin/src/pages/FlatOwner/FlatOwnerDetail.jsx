@@ -19,7 +19,7 @@ const FlatOwnerDetail = () => {
   const handleDownloadPDF = () => {
     html2pdf(pdfRef.current, {
       margin: 0.5,
-      filename: `${flatOwner?.userId?.fullName}_flatOwner.pdf`,
+      filename: `${flatOwner?.fullName}_flatOwner.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
@@ -54,6 +54,10 @@ const FlatOwnerDetail = () => {
             <label className="fw-bold">Flat:</label>
             <span>{" "}{flatOwner?.flat?.flatNumber}</span>
           </div>
+          <div className="col-md-4 mb-2">
+            <label className="fw-bold">Status:</label>
+            <span>{" "}{flatOwner?.status}</span>
+          </div>
           <div className="col-md-4">
             <label className="fw-bold">ID:</label>
             <span>{" "}{flatOwner?.memberId}</span>
@@ -74,10 +78,10 @@ const FlatOwnerDetail = () => {
             <ImageDownloadButton src={flatOwner?.allotment} filename={`${flatOwner?.fullName}-allotment`} />
           </div>
           {
-            flatOwner?.vehicleRC && flatOwner?.vehicleRC?.map((vehicle, index) => (
+            flatOwner?.vehicleRC && flatOwner?.vehicleRC?.lenght > 0 && flatOwner?.vehicleRC?.map((vehicle, index) => (
               <div className="col-md-6" key={index}>
                 <label className="fw-bold d-block mb-1 mt-3">Vehicle RC {index + 1}:</label>
-                <img src={vehicle} alt="image" className="img-thumbnail" />
+                <img src={vehicle} alt="vehicleRC" className="img-thumbnail" />
                 <ImageDownloadButton src={vehicle} filename={`${flatOwner?.fullName}-vehicle-rc-${index + 1}`} />
               </div>
             ))

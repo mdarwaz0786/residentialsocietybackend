@@ -5,6 +5,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { useRef } from "react";
 import formatDate from "../../helpers/formatDate";
+import ImageDownloadButton from "../../components/Button/ImageDownloadButton";
 
 const ComplaintDetail = () => {
   const { id } = useParams();
@@ -63,6 +64,7 @@ const ComplaintDetail = () => {
               <div className="col-md-6">
                 <label className="fw-bold d-block mb-1">Image:</label>
                 <img src={complaint?.image} alt="image" className="img-thumbnail" />
+                <ImageDownloadButton src={complaint?.image} filename={`${complaint?.createdBy?.fullName}-complaint`} />
               </div>
             )
           }
