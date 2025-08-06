@@ -56,7 +56,7 @@ const TenantDetail = () => {
           </div>
           <div className="col-md-4">
             <label className="fw-bold">ID:</label>
-            <span>{" "}{tenant?.memberId}</span>
+            <span>{" "}{tenant?.memberId || "N/A"}</span>
           </div>
           <div className="col-md-6 mt-2">
             <label className="fw-bold d-block mb-1">Profile Photo:</label>

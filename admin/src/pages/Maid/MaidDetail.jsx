@@ -52,7 +52,7 @@ const MaidDetail = () => {
           </div>
           <div className="col-md-6 mb-2">
             <label className="fw-bold">ID:</label>
-            <span>{" "}{maid?.memberId}</span>
+            <span>{" "}{maid?.memberId || "N/A"}</span>
           </div>
           <div className="col-md-6">
             <label className="fw-bold">Status:</label>

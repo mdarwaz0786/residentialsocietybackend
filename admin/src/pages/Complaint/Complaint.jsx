@@ -108,7 +108,9 @@ const Complaint = () => {
                 <tr>
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
-                  <td>{item?.title}</td>
+                  <td title={item?.title}>
+                    {item?.title?.length > 30 ? `${item.title.slice(0, 30)}...` : item.title}
+                  </td>
                   <td>{item?.type}</td>
                   <td>
                     <ComplaintStatusForm

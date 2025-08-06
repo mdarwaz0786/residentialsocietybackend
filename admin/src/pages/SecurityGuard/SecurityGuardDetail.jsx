@@ -56,7 +56,7 @@ const SecurityGuardDetail = () => {
           </div>
           <div className="col-md-4">
             <label className="fw-bold">ID:</label>
-            <span>{" "}{securityGuard?.memberId}</span>
+            <span>{" "}{securityGuard?.memberId || "N/A"}</span>
           </div>
           <div className="col-md-4">
             <label className="fw-bold">Gate Number:</label>
