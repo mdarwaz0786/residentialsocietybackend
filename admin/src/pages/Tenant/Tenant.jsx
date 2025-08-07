@@ -8,9 +8,10 @@ import PageSizeSelector from '../../components/Table/PageSizeSelector';
 import useDelete from '../../hooks/useDelete';
 import { toast } from "react-toastify";
 import { Link, useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useUpdateStatus from '../../hooks/useUpdateStatus';
 import StatusUpdateForm from '../../components/Form/StatusUpdateForm';
+import useDebounce from '../../hooks/useDebounce';
 
 const Tenant = () => {
   const { validToken } = useAuth();
@@ -19,6 +20,7 @@ const Tenant = () => {
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 20;
   const search = searchParams.get("search") || "";
+  const [searchInput, setSearchInput] = useState(search);
 
   const fetchDataUrl = "/api/v1/tenant/get-all-tenant";
   const singleDeleteUrl = "/api/v1/tenant/delete-single-tenant";
@@ -52,8 +54,14 @@ const Tenant = () => {
     setSearchParams(updatedParams);
   };
 
+  const debouncedSearch = useDebounce(searchInput, 1000);
+
+  useEffect(() => {
+    updateQueryParams({ search: debouncedSearch, page: 1 });
+  }, [debouncedSearch]);
+
   const handleSearch = (value) => {
-    updateQueryParams({ search: value, page: 1 });
+    setSearchInput(value);
   };
 
   const handlePageChange = (newPage) => {
@@ -88,7 +96,7 @@ const Tenant = () => {
     <div className="container mt-1">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5>All Tenant<span className="badge bg-secondary ms-2">{total}</span></h5>
-        <SearchBar value={params.search} onChange={handleSearch} />
+        <SearchBar value={searchInput} onChange={handleSearch} />
       </div>
       <TableWrapper>
         <thead className="table-dark">
