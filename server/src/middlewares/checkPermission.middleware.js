@@ -17,11 +17,11 @@ const checkPermission = (module, action) => {
       throw new ApiError(403, "Role not found.");
     };
 
-    if (role.roleName.toLowerCase() === "admin") {
+    if (role?.roleName?.toLowerCase() === "admin") {
       return next();
     };
 
-    const modulePermissions = role.permissions?.[module];
+    const modulePermissions = role?.permissions?.[module];
 
     if (!modulePermissions) {
       throw new ApiError(403, `No permissions configured for module ${module}.`);

@@ -31,10 +31,27 @@ const errorHandler = (err, req, res, next) => {
     message = `Duplicate field value: ${field.join(", ")}`;
   }
 
-  // Multer File Upload Error
+  // Multer File Upload Errors
   else if (err instanceof multer.MulterError) {
     statusCode = 400;
-    message = err.message;
+
+    // Handle specific Multer error codes
+    switch (err.code) {
+      case "LIMIT_FILE_SIZE":
+        message = "File size too large.";
+        break;
+      case "LIMIT_FILE_COUNT":
+        message = "File limit exceeded.";
+        break;
+      default:
+        message = err.message;
+    };
+  }
+
+  // Invalid JSON Payload
+  else if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    statusCode = 400;
+    message = "Invalid JSON payload.";
   }
 
   // JWT Errors
@@ -49,6 +66,24 @@ const errorHandler = (err, req, res, next) => {
     message = "Token expired.";
   }
 
+  // CSRF Error (from csurf)
+  else if (err.code === "EBADCSRFTOKEN") {
+    statusCode = 403;
+    message = "Invalid CSRF token.";
+  }
+
+  // Rate Limit Error (status code 429)
+  else if (err.status === 429) {
+    statusCode = 429;
+    message = err.message || "Too many requests. Please try again later.";
+  }
+
+  // Axios External API Error (if using axios)
+  else if (err.isAxiosError) {
+    statusCode = err.response?.status || 500;
+    message = err.response?.data?.message || "External API error.";
+  }
+
   // Default fallback (unexpected error)
   else if (err.message) {
     message = err.message;
@@ -58,6 +93,8 @@ const errorHandler = (err, req, res, next) => {
   res.status(statusCode).json({
     success: false,
     message,
+    type: err.name || "Error",
+    code: statusCode,
     ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
   });
 };

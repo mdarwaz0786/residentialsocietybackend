@@ -21,7 +21,7 @@ const validateFileSize = (req, res, next) => {
     return next();
   };
 
-  // Multiple files (upload.array or upload.fields)
+  // Multiple files (upload.array and upload.fields)
   if (req.files) {
     // upload.array()
     if (Array.isArray(req.files)) {
@@ -40,6 +40,7 @@ const validateFileSize = (req, res, next) => {
       // upload.fields()
       for (const field in req.files) {
         const fileArray = req.files[field];
+
         for (const file of fileArray) {
           const { mimetype, size, originalname } = file;
 

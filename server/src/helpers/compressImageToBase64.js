@@ -4,7 +4,7 @@ import ApiError from "../helpers/apiError.js";
 const compressImageToBase64 = async (
   buffer,
   mimetype,
-  maxSizeKB = 200,
+  maxSizeKB = 100,
   quality = 80,
   minQuality = 50,
   width = 1200,
@@ -14,7 +14,7 @@ const compressImageToBase64 = async (
   const initialSizeMB = buffer.length / (1024 * 1024);
 
   if (initialSizeMB > 10) {
-    throw new ApiError(400, "File is too large. Max allowed: 10MB.");
+    throw new ApiError(400, "File size is too large. Max file size allowed: 10MB.");
   };
 
   if (buffer.length / 1024 <= maxBufferSizeKB) {

@@ -2,9 +2,12 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import compression from "compression";
+import helmet from "helmet";
+import cluster from "cluster";
+import os from "os";
+import path from "path";
 import connectDatabase from "./src/database/connectDatabase.js";
 import testRoutes from "./src/routes/test.routes.js";
-import path from "path";
 import { fileURLToPath } from "url";
 import errorHandler from "./src/middlewares/errorHandler.middleware.js";
 import userRoutes from "./src/routes/user.routes.js";
@@ -22,8 +25,7 @@ import complaintRoutes from "./src/routes/complaint.routes.js";
 import tenantRegistrationPaymentRoutes from "./src/routes/tenantRegistrationPayment.routes.js";
 import maidRegistrationPaymentRoutes from "./src/routes/maidRegistrationPayment.route.js";
 import dashboardRoutes from "./src/routes/dashboard.routes.js";
-import cluster from "cluster";
-import os from "os";
+import apiRateLimiter from "./src/middlewares/apiRateLimiter.js";
 
 // Get the current file 
 const __filename = fileURLToPath(import.meta.url);
@@ -65,6 +67,8 @@ if (cluster.isPrimary) {
   server.use(express.urlencoded({ extended: true }));
   server.use(compression());
   server.use(cors());
+  server.use(apiRateLimiter);
+  server.use(helmet());
 
   // API Routes
   server.use("/api/v1", testRoutes);

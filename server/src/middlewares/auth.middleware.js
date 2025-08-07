@@ -7,7 +7,7 @@ const isLoggedIn = asyncHandler(async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith("Bearer ")) {
-    throw new ApiError(401, "Authentication token missing or malformed.");
+    throw new ApiError(401, "Authentication token missing.");
   };
 
   const token = authHeader.split(" ")[1];
@@ -16,7 +16,7 @@ const isLoggedIn = asyncHandler(async (req, res, next) => {
   const user = await User.findById(decoded.id).select("-password");
 
   if (!user) {
-    throw new ApiError(401, "Your account not found.");
+    throw new ApiError(401, "User not found.");
   };
 
   req.user = user;

@@ -1,35 +1,52 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import SearchBar from '../../components/Table/SearchBar'
 import Pagination from '../../components/Table/Pagination';
 import TableWrapper from '../../components/Table/TableWrapper';
 import useFetchData from '../../hooks/useFetchData';
 import { useAuth } from '../../context/auth.context';
 import PageSizeSelector from '../../components/Table/PageSizeSelector';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Role = () => {
   const { validToken } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = parseInt(searchParams.get("page")) || 1;
+  const limit = parseInt(searchParams.get("limit")) || 20;
+  const search = searchParams.get("search") || "";
   const fetchDataUrl = "/api/v1/role/get-all-role";
 
   const {
     data,
     params,
     setParams,
-  } = useFetchData(fetchDataUrl, validToken, {
-    page: 1,
-    limit: 20,
-    search: "",
-  });
+  } = useFetchData(fetchDataUrl, validToken, { page, limit, search });
+
+  useEffect(() => {
+    setParams({ page, limit, search });
+  }, [page, limit, search]);
+
+  const updateQueryParams = (updates = {}) => {
+    const updatedParams = {
+      page,
+      limit,
+      search,
+      ...updates,
+    };
+    setSearchParams(updatedParams);
+  };
 
   const handleSearch = (value) => {
-    setParams({ search: value, page: 1 });
+    updateQueryParams({ search: value, page: 1 });
   };
 
   const handlePageChange = (newPage) => {
-    setParams({ page: newPage });
+    updateQueryParams({ page: newPage });
   };
 
   const handlePageSizeChange = (newLimit) => {
-    setParams({ limit: newLimit, page: 1 });
+    updateQueryParams({ limit: newLimit, page: 1 });
   };
 
   const roles = data?.data || [];
