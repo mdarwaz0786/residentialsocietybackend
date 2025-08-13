@@ -68,7 +68,6 @@ if (cluster.isPrimary) {
   server.use(compression());
   server.use(cors());
   server.use(apiRateLimiter);
-  server.use(helmet());
 
   // API Routes
   server.use("/api/v1", testRoutes);
