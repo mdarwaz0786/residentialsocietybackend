@@ -88,8 +88,6 @@ const Flat = () => {
             <th><input type="checkbox" /></th>
             <th>#</th>
             <th>Flat Number</th>
-            <th>Flat Type</th>
-            <th>Floor</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -101,8 +99,6 @@ const Flat = () => {
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
                   <td>{item?.flatNumber}</td>
-                  <td>{item?.flatType}</td>
-                  <td>{item?.floor}</td>
                   <td>
                     <Link to={`/flat-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
                     <Link to={`/update-flat/${item?._id}`}><button className="btn btn-primary me-3 actionBtn">Edit</button></Link>

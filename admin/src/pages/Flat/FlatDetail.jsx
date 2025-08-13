@@ -43,11 +43,15 @@ const FlatDetail = () => {
           </div>
           <div className="col-md-4 mb-2">
             <label className="fw-bold">Flat Type:</label>
-            <span>{" "}{flat?.flatType}</span>
+            <span>{" "}{flat?.flatType || "N/A"}</span>
           </div>
           <div className="col-md-4 mb-2">
             <label className="fw-bold">Floor:</label>
-            <span>{" "}{flat?.floor}</span>
+            <span>{" "}{flat?.floor || "N/A"}</span>
+          </div>
+          <div className="col-md-4 mb-2">
+            <label className="fw-bold">Tower:</label>
+            <span>{" "}{flat?.tower || "N/A"}</span>
           </div>
         </div>
       </div>
