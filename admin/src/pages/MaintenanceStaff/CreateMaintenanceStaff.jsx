@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import FormWrapper from "../../components/form/FormWrapper";
+import FormWrapper from "../../components/Form/FormWrapper";
 import Input from "../../components/Input/Input";
 import SingleImage from "../../components/Input/SingleImage";
 import useCreate from "../../hooks/useCreate";

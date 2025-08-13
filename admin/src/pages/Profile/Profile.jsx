@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import FormWrapper from "../../components/form/FormWrapper";
+import FormWrapper from "../../components/Form/FormWrapper";
 import Input from "../../components/Input/Input";
 import SingleImage from "../../components/Input/SingleImage";
 import useFetch from "../../hooks/useFetch";

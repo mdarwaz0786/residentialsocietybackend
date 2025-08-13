@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import FormWrapper from "../../components/form/FormWrapper";
+import FormWrapper from "../../components/Form/FormWrapper";
 import Input from "../../components/Input/Input";
 import SingleImage from "../../components/Input/SingleImage";
 import SingleSelect from "../../components/Input/SingleSelect";
