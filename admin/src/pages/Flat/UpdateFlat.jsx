@@ -20,15 +20,17 @@ const UpdateFlat = () => {
     flatNumber: "",
     floor: "",
     flatType: "",
+    tower: "",
   });
 
   useEffect(() => {
     if (flatData?.data) {
-      const { flatNumber, floor, flatType } = flatData.data;
+      const { flatNumber, floor, tower, flatType } = flatData.data;
       setForm({
         flatNumber,
         floor,
         flatType,
+        tower,
       });
     };
   }, [flatData]);
@@ -41,8 +43,6 @@ const UpdateFlat = () => {
 
   const validationRules = {
     flatNumber: { required: true, label: "Flat Number" },
-    floor: { required: true, label: "Floor" },
-    flatType: { required: true, label: "Flat Type" },
   };
 
   const handleSubmit = async (e) => {
@@ -83,16 +83,21 @@ const UpdateFlat = () => {
         onChange={handleChange}
         required
         error={errors.flatNumber}
-        width="col-md-4"
+        width="col-md-6"
+      />
+      <Input
+        label="Tower"
+        name="tower"
+        value={form.tower}
+        onChange={handleChange}
+        width="col-md-6"
       />
       <Input
         label="Floor"
         name="floor"
         value={form.floor}
         onChange={handleChange}
-        required
-        error={errors.floor}
-        width="col-md-4"
+        width="col-md-6"
       />
       <SingleSelect
         label="Flat Type"
@@ -102,9 +107,7 @@ const UpdateFlat = () => {
         options={flatType}
         optionValue="flatType"
         optionKey="flatType"
-        required
-        error={errors.flatType}
-        width="col-md-4"
+        width="col-md-6"
       />
     </FormWrapper>
   );

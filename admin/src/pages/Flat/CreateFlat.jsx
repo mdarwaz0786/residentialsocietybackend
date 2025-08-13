@@ -16,7 +16,8 @@ const CreateFlat = () => {
   const [form, setForm] = useState({
     flatNumber: "",
     floor: "",
-    flatType: "",
+    flatType: "3BHK",
+    tower: "",
     status: "Approved",
   });
 
@@ -28,8 +29,6 @@ const CreateFlat = () => {
 
   const validationRules = {
     flatNumber: { required: true, label: "Flat Number" },
-    floor: { required: true, label: "Floor" },
-    flatType: { required: true, label: "Flat Type" },
   };
 
   const handleSubmit = async (e) => {
@@ -57,12 +56,12 @@ const CreateFlat = () => {
 
   const flatType = [
     { _id: 1, flatType: "1BHK" },
-    { _id: 1, flatType: "2BHK" },
-    { _id: 1, flatType: "3BHK" },
-    { _id: 1, flatType: "4BHK" },
-    { _id: 1, flatType: "Studio" },
-    { _id: 1, flatType: "Penthouse" },
-    { _id: 1, flatType: "Other" },
+    { _id: 2, flatType: "2BHK" },
+    { _id: 3, flatType: "3BHK" },
+    { _id: 4, flatType: "4BHK" },
+    { _id: 5, flatType: "Studio" },
+    { _id: 6, flatType: "Penthouse" },
+    { _id: 7, flatType: "Other" },
   ];
 
   return (
@@ -74,16 +73,21 @@ const CreateFlat = () => {
         onChange={handleChange}
         required
         error={errors.flatNumber}
-        width="col-md-4"
+        width="col-md-6"
+      />
+      <Input
+        label="Tower"
+        name="tower"
+        value={form.tower}
+        onChange={handleChange}
+        width="col-md-6"
       />
       <Input
         label="Floor"
         name="floor"
         value={form.floor}
         onChange={handleChange}
-        required
-        error={errors.floor}
-        width="col-md-4"
+        width="col-md-6"
       />
       <SingleSelect
         label="Flat Type"
@@ -93,9 +97,7 @@ const CreateFlat = () => {
         options={flatType || []}
         optionValue="flatType"
         optionKey="flatType"
-        required
-        error={errors.flatType}
-        width="col-md-4"
+        width="col-md-6"
       />
     </FormWrapper>
   );

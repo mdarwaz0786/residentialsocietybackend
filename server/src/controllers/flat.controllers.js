@@ -13,11 +13,13 @@ export const createFlat = asyncHandler(async (req, res) => {
     flatNumber,
     floor,
     flatType,
+    tower,
   } = req.body;
 
   const flat = await Flat.create({
     flatNumber,
     floor,
+    tower,
     flatType,
     createdBy,
   });
