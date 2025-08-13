@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import compression from "compression";
-import helmet from "helmet";
 import cluster from "cluster";
 import os from "os";
 import path from "path";
