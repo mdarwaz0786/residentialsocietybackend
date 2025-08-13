@@ -4,7 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './layout/Layout';
 import Dashboard from './pages/Dashboard';
 import User from './pages/User/User';
-import CreateUser from './pages/User/createUser';
+import CreateUser from './pages/User/CreateUser';
 import { useAuth } from './context/auth.context';
 import Login from './pages/Auth/Login';
 import UserDetail from './pages/User/UserDetail';
