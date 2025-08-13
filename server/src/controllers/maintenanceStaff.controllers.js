@@ -100,7 +100,7 @@ export const createMaintenanceStaff = asyncHandler(async (req, res) => {
 
 // Get all Maintenance Staffs
 export const getMaintenanceStaffs = async (req, res) => {
-  const searchableFields = ["fullName", "email", "mobile"];
+  const searchableFields = ["fullName", "email", "mobile", "memberId"];
   const filterableFields = ["status", "isDeleted", "canLogin"];
 
   const { query, sort, skip, limit, page } = ApiFeatures(req, searchableFields, filterableFields, {

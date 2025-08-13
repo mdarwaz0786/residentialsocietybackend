@@ -60,7 +60,7 @@ export const createVisitor = asyncHandler(async (req, res) => {
   };
 
   const photo = req.files?.photo?.[0];
-  const photoBase64 = photo ? compressImageToBase64(photo.buffer, photo.mimetype) : null;
+  const photoBase64 = photo ? await compressImageToBase64(photo.buffer, photo.mimetype) : null;
 
   const maid = await Visitor.create({
     fullName,
@@ -149,7 +149,7 @@ export const updateVisitor = asyncHandler(async (req, res) => {
 
   const updates = { ...req.body };
   const photo = req.files?.photo?.[0];
-  const photoBase64 = photo ? compressImageToBase64(photo.buffer, photo.mimetype) : null;
+  const photoBase64 = photo ? await compressImageToBase64(photo.buffer, photo.mimetype) : null;
 
   if (photoBase64) {
     updates.photo = photoBase64;
