@@ -4,7 +4,7 @@ import ApiError from "../helpers/apiError.js";
 const compressImageToBase64 = async (
   buffer,
   mimetype,
-  maxSizeKB = 100,
+  maxSizeKB = 200,
   quality = 80,
   minQuality = 50,
   width = 1200,
