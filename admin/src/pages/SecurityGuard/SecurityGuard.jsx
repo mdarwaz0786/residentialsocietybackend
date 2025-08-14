@@ -65,6 +65,8 @@ const SecurityGuard = () => {
   };
 
   const handleDelete = async (id) => {
+    const confirmed = window.confirm("Are you sure you want to permanantly delete this seccurity guard?");
+    if (!confirmed) return;
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
   };
 
@@ -133,7 +135,7 @@ const SecurityGuard = () => {
             ) : (
               <tr>
                 <td colSpan="8" className="text-center">
-                  No Data.
+                  No Data
                 </td>
               </tr>
             )

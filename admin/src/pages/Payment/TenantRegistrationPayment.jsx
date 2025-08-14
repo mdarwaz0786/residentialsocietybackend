@@ -88,7 +88,7 @@ const TenantRegistrationPayment = () => {
             ) : (
               <tr>
                 <td colSpan="8" className="text-center">
-                  No Data.
+                  No Data
                 </td>
               </tr>
             )

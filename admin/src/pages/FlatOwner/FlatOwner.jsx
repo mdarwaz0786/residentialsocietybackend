@@ -65,6 +65,8 @@ const FlatOwner = () => {
   };
 
   const handleDelete = async (id) => {
+    const confirmed = window.confirm("Are you sure you want to permanantly delete this flat owner?");
+    if (!confirmed) return;
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
   };
 
@@ -96,9 +98,9 @@ const FlatOwner = () => {
             <th><input type="checkbox" /></th>
             <th>#</th>
             <th>Photo</th>
+            <th>Flat</th>
             <th>Full Name</th>
             <th>Mobile</th>
-            <th>Flat</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -111,9 +113,9 @@ const FlatOwner = () => {
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
                   <td><img className="profile-photo" src={item?.profilePhoto} alt="profile-photo" /></td>
+                  <td>{item?.flat?.flatNumber}</td>
                   <td>{item?.fullName}</td>
                   <td>{item?.mobile}</td>
-                  <td>{item?.flat?.flatNumber}</td>
                   <td>
                     <StatusUpdateForm
                       id={item?._id}
@@ -133,7 +135,7 @@ const FlatOwner = () => {
             ) : (
               <tr>
                 <td colSpan="8" className="text-center">
-                  No Data.
+                  No Data
                 </td>
               </tr>
             )

@@ -83,7 +83,7 @@ const Role = () => {
             ) : (
               <tr>
                 <td colSpan="4" className="text-center">
-                  No Data.
+                  No Data
                 </td>
               </tr>
             )

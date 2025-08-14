@@ -73,6 +73,8 @@ const Tenant = () => {
   };
 
   const handleDelete = async (id) => {
+    const confirmed = window.confirm("Are you sure you want to permanantly delete this tenant?");
+    if (!confirmed) return;
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
   };
 
@@ -141,7 +143,7 @@ const Tenant = () => {
             ) : (
               <tr>
                 <td colSpan="8" className="text-center">
-                  No Data.
+                  No Data
                 </td>
               </tr>
             )

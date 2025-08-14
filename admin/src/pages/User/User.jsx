@@ -93,7 +93,7 @@ const User = () => {
             ) : (
               <tr>
                 <td colSpan="5" className="text-center">
-                  No Data.
+                  No Data
                 </td>
               </tr>
             )

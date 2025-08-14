@@ -67,6 +67,8 @@ const Visitor = () => {
   };
 
   const handleDelete = async (id) => {
+    const confirmed = window.confirm("Are you sure you want to permanantly delete this visitor?");
+    if (!confirmed) return;
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
   };
 
@@ -135,7 +137,7 @@ const Visitor = () => {
             ) : (
               <tr>
                 <td colSpan="10" className="text-center">
-                  No Data.
+                  No Data
                 </td>
               </tr>
             )

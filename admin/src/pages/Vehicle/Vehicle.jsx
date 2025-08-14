@@ -65,6 +65,8 @@ const Vehicle = () => {
   };
 
   const handleDelete = async (id) => {
+    const confirmed = window.confirm("Are you sure you want to permanantly delete this vehicle?");
+    if (!confirmed) return;
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
   };
 
@@ -131,7 +133,7 @@ const Vehicle = () => {
             ) : (
               <tr>
                 <td colSpan="7" className="text-center">
-                  No Data.
+                  No Data
                 </td>
               </tr>
             )
