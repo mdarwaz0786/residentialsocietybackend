@@ -21,6 +21,7 @@ const Role = () => {
     data,
     params,
     setParams,
+    isLoading,
   } = useFetchData(fetchDataUrl, validToken, { page, limit, search });
 
   useEffect(() => {
@@ -83,7 +84,7 @@ const Role = () => {
             ) : (
               <tr>
                 <td colSpan="4" className="text-center">
-                  No Data
+                  {isLoading ? "Loading..." : " No Data"}
                 </td>
               </tr>
             )

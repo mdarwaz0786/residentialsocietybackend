@@ -31,6 +31,7 @@ const Visitor = () => {
     params,
     setParams,
     refetch,
+    isLoading,
   } = useFetchData(fetchDataUrl, validToken, { page, limit, search });
 
   useEffect(() => {
@@ -137,7 +138,7 @@ const Visitor = () => {
             ) : (
               <tr>
                 <td colSpan="10" className="text-center">
-                  No Data
+                  {isLoading ? "Loading..." : " No Data"}
                 </td>
               </tr>
             )

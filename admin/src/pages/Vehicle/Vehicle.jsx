@@ -29,6 +29,7 @@ const Vehicle = () => {
     params,
     setParams,
     refetch,
+    isLoading,
   } = useFetchData(fetchDataUrl, validToken, { page, limit, search });
 
   useEffect(() => {
@@ -133,7 +134,7 @@ const Vehicle = () => {
             ) : (
               <tr>
                 <td colSpan="7" className="text-center">
-                  No Data
+                  {isLoading ? "Loading..." : " No Data"}
                 </td>
               </tr>
             )

@@ -31,6 +31,7 @@ const Tenant = () => {
     params,
     setParams,
     refetch,
+    isLoading,
   } = useFetchData(fetchDataUrl, validToken, { page, limit, search });
 
   useEffect(() => {
@@ -143,7 +144,7 @@ const Tenant = () => {
             ) : (
               <tr>
                 <td colSpan="8" className="text-center">
-                  No Data
+                  {isLoading ? "Loading..." : " No Data"}
                 </td>
               </tr>
             )

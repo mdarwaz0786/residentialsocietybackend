@@ -27,6 +27,7 @@ const Flat = () => {
     params,
     setParams,
     refetch,
+    isLoading,
   } = useFetchData(fetchDataUrl, validToken, { page, limit, search });
 
   useEffect(() => {
@@ -111,7 +112,7 @@ const Flat = () => {
             ) : (
               <tr>
                 <td colSpan="7" className="text-center">
-                  No Data
+                  {isLoading ? "Loading..." : " No Data"}
                 </td>
               </tr>
             )

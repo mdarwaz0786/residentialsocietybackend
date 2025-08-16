@@ -22,6 +22,7 @@ const TenantRegistrationPayment = () => {
     data,
     params,
     setParams,
+    isLoading,
   } = useFetchData(fetchDataUrl, validToken, { page, limit, status: "success", search });
 
   useEffect(() => {
@@ -88,7 +89,7 @@ const TenantRegistrationPayment = () => {
             ) : (
               <tr>
                 <td colSpan="8" className="text-center">
-                  No Data
+                  {isLoading ? "Loading..." : " No Data"}
                 </td>
               </tr>
             )
