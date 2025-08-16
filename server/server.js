@@ -5,6 +5,8 @@ import compression from "compression";
 import cluster from "cluster";
 import os from "os";
 import path from "path";
+import { createServer } from "http";
+import { Server as SocketIOServer } from "socket.io";
 import connectDatabase from "./src/database/connectDatabase.js";
 import testRoutes from "./src/routes/test.routes.js";
 import { fileURLToPath } from "url";
@@ -24,7 +26,9 @@ import complaintRoutes from "./src/routes/complaint.routes.js";
 import tenantRegistrationPaymentRoutes from "./src/routes/tenantRegistrationPayment.routes.js";
 import maidRegistrationPaymentRoutes from "./src/routes/maidRegistrationPayment.route.js";
 import dashboardRoutes from "./src/routes/dashboard.routes.js";
+import chatRoutes from "./src/routes/chat.routes.js";
 import apiRateLimiter from "./src/middlewares/apiRateLimiter.js";
+import chatSocketHandler from "./src/socket/chat.socket.js";
 
 // Get the current file 
 const __filename = fileURLToPath(import.meta.url);
@@ -47,7 +51,7 @@ if (cluster.isPrimary) {
   };
 
   // Handle worker exit and fork a new worker
-  cluster.on("exit", (worker, code, signal) => {
+  cluster.on("exit", (worker) => {
     cluster.fork();
   });
 } else {
@@ -55,50 +59,64 @@ if (cluster.isPrimary) {
   connectDatabase();
 
   // Init Express
-  const server = express();
+  const app = express();
+
+  // Create HTTP server (needed for socket.io)
+  const httpServer = createServer(app);
+
+  // Initialize Socket.io
+  const io = new SocketIOServer(httpServer, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"],
+    },
+  });
+
+  chatSocketHandler(io);
 
   // Set up view engine
-  server.set("view engine", "ejs");
-  server.set("views", "./src/views");
+  app.set("view engine", "ejs");
+  app.set("views", "./src/views");
 
   // Middleware
-  server.use(express.json());
-  server.use(express.urlencoded({ extended: true }));
-  server.use(compression());
-  server.use(cors());
-  server.use(apiRateLimiter);
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(compression());
+  app.use(cors());
+  app.use(apiRateLimiter);
 
   // API Routes
-  server.use("/api/v1", testRoutes);
-  server.use("/api/v1/auth", authRoutes);
-  server.use("/api/v1/user", userRoutes);
-  server.use("/api/v1/role", roleRoutes);
-  server.use("/api/v1/maid", maidRoutes);
-  server.use("/api/v1/vehicle", vehicleRoutes);
-  server.use("/api/v1/flat", flatRoutes);
-  server.use("/api/v1/flatOwner", flatOwnerRoutes);
-  server.use("/api/v1/securityGuard", securityGuardRoutes);
-  server.use("/api/v1/maintenanceStaff", maintenanceStaffRoutes);
-  server.use("/api/v1/tenant", tenantRoutes);
-  server.use("/api/v1/visitor", visitorRoutes);
-  server.use("/api/v1/complaint", complaintRoutes);
-  server.use("/api/v1/dashboard", dashboardRoutes);
-  server.use("/api/v1/tenantRegistrationPayment", tenantRegistrationPaymentRoutes);
-  server.use("/api/v1/maidRegistrationPayment", maidRegistrationPaymentRoutes);
+  app.use("/api/v1", testRoutes);
+  app.use("/api/v1/auth", authRoutes);
+  app.use("/api/v1/user", userRoutes);
+  app.use("/api/v1/role", roleRoutes);
+  app.use("/api/v1/maid", maidRoutes);
+  app.use("/api/v1/vehicle", vehicleRoutes);
+  app.use("/api/v1/flat", flatRoutes);
+  app.use("/api/v1/flatOwner", flatOwnerRoutes);
+  app.use("/api/v1/securityGuard", securityGuardRoutes);
+  app.use("/api/v1/maintenanceStaff", maintenanceStaffRoutes);
+  app.use("/api/v1/tenant", tenantRoutes);
+  app.use("/api/v1/visitor", visitorRoutes);
+  app.use("/api/v1/complaint", complaintRoutes);
+  app.use("/api/v1/dashboard", dashboardRoutes);
+  app.use("/api/v1/chat", chatRoutes);
+  app.use("/api/v1/tenantRegistrationPayment", tenantRegistrationPaymentRoutes);
+  app.use("/api/v1/maidRegistrationPayment", maidRegistrationPaymentRoutes);
 
   // Server static files for admin panel
-  server.use(express.static(path.join(__dirname, "../admin", "dist")));
+  app.use(express.static(path.join(__dirname, "../admin", "dist")));
 
   // Catch-all route for admin panel
-  server.get(/^\/(?!api).*/, (req, res) => {
+  app.get(/^\/(?!api).*/, (req, res) => {
     res.sendFile(path.join(__dirname, "../admin", "dist", "index.html"));
   });
 
   // Global error handling middleware
-  server.use(errorHandler);
+  app.use(errorHandler);
 
   // Start the server
-  server.listen(port, () => {
+  httpServer.listen(port, () => {
     console.log(`✅ Worker ${process.pid} running in ${mode} mode at http://localhost:${port}`);
   });
 };
