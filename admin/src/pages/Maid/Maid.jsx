@@ -17,7 +17,7 @@ const Maid = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get("page")) || 1;
-  const limit = parseInt(searchParams.get("limit")) || 20;
+  const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
 
   const fetchDataUrl = "/api/v1/maid/get-all-maid";
@@ -65,7 +65,7 @@ const Maid = () => {
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to permanantly delete this maid?");
+    const confirmed = window.confirm("Are you sure you want to permanently delete this maid?");
     if (!confirmed) return;
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
   };
@@ -98,9 +98,9 @@ const Maid = () => {
             <th><input type="checkbox" /></th>
             <th>#</th>
             <th>Photo</th>
+            <th>Flat</th>
             <th>Full Name</th>
             <th>Mobile</th>
-            <th>Flat</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -113,9 +113,9 @@ const Maid = () => {
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
                   <td><img className="profile-photo" src={item?.photo} alt="photo" /></td>
+                  <td>{item?.flat?.flatNumber}</td>
                   <td>{item?.fullName}</td>
                   <td>{item?.mobile}</td>
-                  <td>{item?.flat?.flatNumber}</td>
                   <td>
                     <StatusUpdateForm
                       id={item?._id}

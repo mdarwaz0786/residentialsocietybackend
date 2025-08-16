@@ -40,7 +40,7 @@ const ComplaintDetail = () => {
       <div className="card shadow-sm p-3" ref={pdfRef}>
         <div className="row">
           <div className="col-md-4 mb-2">
-            <label className="fw-bold">Title:</label>
+            <label className="fw-bold">Description:</label>
             <span>{" "}{complaint?.title}</span>
           </div>
           <div className="col-md-4 mb-2">

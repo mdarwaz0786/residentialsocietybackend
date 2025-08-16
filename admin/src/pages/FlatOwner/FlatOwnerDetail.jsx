@@ -39,12 +39,16 @@ const FlatOwnerDetail = () => {
       <div className="card shadow-sm p-3" ref={pdfRef}>
         <div className="row">
           <div className="col-md-4 mb-2">
-            <label className="fw-bold">Name:</label>
+            <label className="fw-bold">Full Name:</label>
             <span>{" "}{flatOwner?.fullName}</span>
           </div>
           <div className="col-md-4 mb-2">
             <label className="fw-bold">Mobile:</label>
             <span>{" "}{flatOwner?.mobile}</span>
+          </div>
+          <div className="col-md-4 mb-2">
+            <label className="fw-bold">Secondary Mobile:</label>
+            <span>{" "}{flatOwner?.secondaryMobile}</span>
           </div>
           <div className="col-md-4 mb-2">
             <label className="fw-bold">Email:</label>
@@ -62,8 +66,16 @@ const FlatOwnerDetail = () => {
             <label className="fw-bold">ID:</label>
             <span>{" "}{flatOwner?.memberId || "N/A"}</span>
           </div>
+          <div className="col-md-4 mb-2">
+            <label className="fw-bold">Permanent Address:</label>
+            <span>{" "}{flatOwner?.permanentAddress}</span>
+          </div>
+          <div className="col-md-4 mb-2">
+            <label className="fw-bold">Current Address:</label>
+            <span>{" "}{flatOwner?.currentAddress}</span>
+          </div>
           <div className="col-md-6">
-            <label className="fw-bold d-block mb-1">Profile Photo:</label>
+            <label className="fw-bold d-block mb-1 mt-3">Profile Photo:</label>
             <img src={flatOwner?.profilePhoto} alt="image" className="img-thumbnail" />
             <ImageDownloadButton src={flatOwner?.profilePhoto} filename={`${flatOwner?.fullName}-profile-photo`} />
           </div>
@@ -78,7 +90,7 @@ const FlatOwnerDetail = () => {
             <ImageDownloadButton src={flatOwner?.allotment} filename={`${flatOwner?.fullName}-allotment`} />
           </div>
           {
-            flatOwner?.vehicleRC && flatOwner?.vehicleRC?.lenght > 0 && flatOwner?.vehicleRC?.map((vehicle, index) => (
+            flatOwner?.vehicleRC && flatOwner?.vehicleRC?.length > 0 && flatOwner?.vehicleRC?.map((vehicle, index) => (
               <div className="col-md-6" key={index}>
                 <label className="fw-bold d-block mb-1 mt-3">Vehicle RC {index + 1}:</label>
                 <img src={vehicle} alt="vehicleRC" className="img-thumbnail" />

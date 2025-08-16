@@ -17,7 +17,7 @@ const SecurityGuard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get("page")) || 1;
-  const limit = parseInt(searchParams.get("limit")) || 20;
+  const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
 
   const fetchDataUrl = "/api/v1/securityGuard/get-all-securityGuard";
@@ -65,7 +65,7 @@ const SecurityGuard = () => {
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to permanantly delete this seccurity guard?");
+    const confirmed = window.confirm("Are you sure you want to permanently delete this seccurity guard?");
     if (!confirmed) return;
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
   };

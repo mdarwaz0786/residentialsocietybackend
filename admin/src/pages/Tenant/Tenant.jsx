@@ -18,7 +18,7 @@ const Tenant = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get("page")) || 1;
-  const limit = parseInt(searchParams.get("limit")) || 20;
+  const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const [searchInput, setSearchInput] = useState(search);
 
@@ -73,7 +73,7 @@ const Tenant = () => {
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to permanantly delete this tenant?");
+    const confirmed = window.confirm("Are you sure you want to permanently delete this tenant?");
     if (!confirmed) return;
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
   };

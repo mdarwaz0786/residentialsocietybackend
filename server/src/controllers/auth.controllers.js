@@ -103,18 +103,23 @@ export const loginUser = asyncHandler(async (req, res) => {
 
 // Logged in user
 export const loggedInUser = asyncHandler(async (req, res) => {
-  const user = await User
-    .findOne({ _id: req.user?._id })
-    .populate("role")
-    .populate({
-      path: 'profile',
-      populate: { path: 'flat' },
-    })
-    .exec();
+  let query = User.findOne({ _id: req.user?._id }).populate("role");
+
+  if (["FlatOwner", "Tenant"].includes(req.user?.profileType)) {
+    query = query.populate({
+      path: "profile",
+      populate: { path: "flat" },
+    });
+  } else {
+    query = query.populate("profile");
+  };
+
+  const user = await query.exec();
 
   if (!user) {
-    throw new ApiError(404, "User not found.")
+    throw new ApiError(404, "User not found.");
   };
 
   res.status(200).json({ success: true, data: user });
 });
+

@@ -19,7 +19,7 @@ const Visitor = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get("page")) || 1;
-  const limit = parseInt(searchParams.get("limit")) || 20;
+  const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
 
   const fetchDataUrl = "/api/v1/visitor/get-all-visitor";
@@ -67,7 +67,7 @@ const Visitor = () => {
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to permanantly delete this visitor?");
+    const confirmed = window.confirm("Are you sure you want to permanently delete this visitor?");
     if (!confirmed) return;
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
   };
@@ -100,9 +100,9 @@ const Visitor = () => {
             <th><input type="checkbox" /></th>
             <th>#</th>
             <th>Photo</th>
+            <th>Flat</th>
             <th>Full Name</th>
             <th>Mobile</th>
-            <th>Flat</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -115,9 +115,9 @@ const Visitor = () => {
                   <td><input type="checkbox" /></td>
                   <td>{index + 1 + (params.page - 1) * params.limit}</td>
                   <td><img className="profile-photo" src={item?.photo || avatar} alt="photo" /></td>
+                  <td>{item?.flat?.flatNumber || "N/A"}</td>
                   <td>{item?.fullName}</td>
                   <td>{item?.mobile}</td>
-                  <td>{item?.flat?.flatNumber || "N/A"}</td>
                   <td>
                     <StatusUpdateForm
                       id={item?._id}

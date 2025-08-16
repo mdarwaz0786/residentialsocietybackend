@@ -13,7 +13,7 @@ const Role = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get("page")) || 1;
-  const limit = parseInt(searchParams.get("limit")) || 20;
+  const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
   const fetchDataUrl = "/api/v1/role/get-all-role";
 

@@ -17,7 +17,7 @@ const Complaint = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get("page")) || 1;
-  const limit = parseInt(searchParams.get("limit")) || 20;
+  const limit = parseInt(searchParams.get("limit")) || 10;
   const search = searchParams.get("search") || "";
 
   const fetchDataUrl = "/api/v1/complaint/get-all-complaint";
@@ -65,7 +65,7 @@ const Complaint = () => {
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to permanantly delete this complaint?");
+    const confirmed = window.confirm("Are you sure you want to permanently delete this complaint?");
     if (!confirmed) return;
     await deleteData(`${singleDeleteUrl}/${id}`, validToken);
   };
@@ -97,7 +97,7 @@ const Complaint = () => {
           <tr>
             <th><input type="checkbox" /></th>
             <th>#</th>
-            <th>Title</th>
+            <th>Description</th>
             <th>Type</th>
             <th>Status</th>
             <th>Action</th>

@@ -39,7 +39,7 @@ const TenantDetail = () => {
       <div className="card shadow-sm p-3" ref={pdfRef}>
         <div className="row">
           <div className="col-md-4 mb-2">
-            <label className="fw-bold">Name:</label>
+            <label className="fw-bold">Full Name:</label>
             <span>{" "}{tenant?.fullName}</span>
           </div>
           <div className="col-md-4 mb-2">
@@ -47,19 +47,35 @@ const TenantDetail = () => {
             <span>{" "}{tenant?.mobile}</span>
           </div>
           <div className="col-md-4 mb-2">
+            <label className="fw-bold">Secondary Mobile:</label>
+            <span>{" "}{tenant?.secondaryMobile}</span>
+          </div>
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Email:</label>
             <span>{" "}{tenant?.email}</span>
           </div>
-          <div className="col-md-4">
+          <div className="col-md-4 mb-2">
+            <label className="fw-bold">Flat:</label>
+            <span>{" "}{tenant?.flat?.flatNumber}</span>
+          </div>
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Status:</label>
             <span>{" "}{tenant?.status}</span>
           </div>
-          <div className="col-md-4">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">ID:</label>
             <span>{" "}{tenant?.memberId || "N/A"}</span>
           </div>
-          <div className="col-md-6 mt-2">
-            <label className="fw-bold d-block mb-1">Profile Photo:</label>
+          <div className="col-md-4 mb-2">
+            <label className="fw-bold">Permanent Address:</label>
+            <span>{" "}{tenant?.permanentAddress}</span>
+          </div>
+          <div className="col-md-4 mb-2">
+            <label className="fw-bold">Current Address:</label>
+            <span>{" "}{tenant?.currentAddress}</span>
+          </div>
+          <div className="col-md-6">
+            <label className="fw-bold d-block mb-1 mt-3">Profile Photo:</label>
             <img src={tenant?.profilePhoto} alt="profileImage" className="img-thumbnail" />
             <ImageDownloadButton src={tenant?.profilePhoto} filename={`${tenant?.fullName}-profile-photo`} />
           </div>

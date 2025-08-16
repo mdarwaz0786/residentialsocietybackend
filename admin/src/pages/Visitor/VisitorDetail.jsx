@@ -40,7 +40,7 @@ const VisitorDetail = () => {
       <div className="card shadow-sm p-3" ref={pdfRef}>
         <div className="row">
           <div className="col-md-4 mb-2">
-            <label className="fw-bold">Name:</label>
+            <label className="fw-bold">Full Name:</label>
             <span>{" "}{visitor?.fullName}</span>
           </div>
           <div className="col-md-4 mb-2">
@@ -51,11 +51,11 @@ const VisitorDetail = () => {
             <label className="fw-bold">Flat:</label>
             <span>{" "}{visitor?.flat?.flatNumber || "N/A"}</span>
           </div>
-          <div className="col-md-4">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">ID:</label>
             <span>{" "}{visitor?.visitorId || "N/A"}</span>
           </div>
-          <div className="col-md-4">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Status:</label>
             <span>{" "}{visitor?.status}</span>
           </div>

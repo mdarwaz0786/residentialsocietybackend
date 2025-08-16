@@ -39,7 +39,7 @@ const MaintenanceStaffDetail = () => {
       <div className="card shadow-sm p-3" ref={pdfRef}>
         <div className="row">
           <div className="col-md-4 mb-2">
-            <label className="fw-bold">Name:</label>
+            <label className="fw-bold">Full Name:</label>
             <span>{" "}{maintenanceStaff?.fullName}</span>
           </div>
           <div className="col-md-4 mb-2">
@@ -50,13 +50,21 @@ const MaintenanceStaffDetail = () => {
             <label className="fw-bold">Email:</label>
             <span>{" "}{maintenanceStaff?.email}</span>
           </div>
-          <div className="col-md-4">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">Status:</label>
             <span>{" "}{maintenanceStaff?.status}</span>
           </div>
-          <div className="col-md-4">
+          <div className="col-md-4 mb-2">
             <label className="fw-bold">ID:</label>
             <span>{" "}{maintenanceStaff?.memberId || "N/A"}</span>
+          </div>
+          <div className="col-md-4 mb-2">
+            <label className="fw-bold">Permanent Address:</label>
+            <span>{" "}{maintenanceStaff?.permanentAddress}</span>
+          </div>
+          <div className="col-md-4 mb-2">
+            <label className="fw-bold">Current Address:</label>
+            <span>{" "}{maintenanceStaff?.currentAddress}</span>
           </div>
           <div className="col-md-6">
             <label className="fw-bold d-block mb-1 mt-3">Profile Photo:</label>
