@@ -2,15 +2,16 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import compression from "compression";
-import cluster from "cluster";
-import os from "os";
 import path from "path";
 import { createServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
-import connectDatabase from "./src/database/connectDatabase.js";
-import testRoutes from "./src/routes/test.routes.js";
 import { fileURLToPath } from "url";
+
+import connectDatabase from "./src/database/connectDatabase.js";
 import errorHandler from "./src/middlewares/errorHandler.middleware.js";
+import apiRateLimiter from "./src/middlewares/apiRateLimiter.js";
+
+import testRoutes from "./src/routes/test.routes.js";
 import userRoutes from "./src/routes/user.routes.js";
 import authRoutes from "./src/routes/auth.routes.js";
 import roleRoutes from "./src/routes/role.routes.js";
@@ -27,7 +28,6 @@ import tenantRegistrationPaymentRoutes from "./src/routes/tenantRegistrationPaym
 import maidRegistrationPaymentRoutes from "./src/routes/maidRegistrationPayment.route.js";
 import dashboardRoutes from "./src/routes/dashboard.routes.js";
 import chatRoutes from "./src/routes/chat.routes.js";
-import apiRateLimiter from "./src/middlewares/apiRateLimiter.js";
 import chatSocketHandler from "./src/socket/chat.socket.js";
 
 // Get the current file 
@@ -41,82 +41,66 @@ dotenv.config();
 const port = process.env.PORT || 8080;
 const mode = process.env.NODE_ENV || "development";
 
-// Check if the current environment is production
-if (cluster.isPrimary) {
-  const numCPUs = os.cpus().length;
+// Connect to MongoDB Database
+connectDatabase();
 
-  // Fork workers for each CPU core
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  };
+// Init Express
+const app = express();
 
-  // Handle worker exit and fork a new worker
-  cluster.on("exit", (worker) => {
-    cluster.fork();
-  });
-} else {
-  // Connect to MongoDB Database
-  connectDatabase();
+// Create HTTP server (needed for socket.io)
+const httpServer = createServer(app);
 
-  // Init Express
-  const app = express();
+// Initialize Socket.io
+const io = new SocketIOServer(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
-  // Create HTTP server (needed for socket.io)
-  const httpServer = createServer(app);
+// Call chat socket handler
+chatSocketHandler(io);
 
-  // Initialize Socket.io
-  const io = new SocketIOServer(httpServer, {
-    cors: {
-      origin: "*",
-      methods: ["GET", "POST"],
-    },
-  });
+// Set up view engine
+app.set("view engine", "ejs");
+app.set("views", "./src/views");
 
-  chatSocketHandler(io);
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(compression());
+app.use(cors());
+app.use(apiRateLimiter);
 
-  // Set up view engine
-  app.set("view engine", "ejs");
-  app.set("views", "./src/views");
+// API Routes
+app.use("/api/v1", testRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/role", roleRoutes);
+app.use("/api/v1/maid", maidRoutes);
+app.use("/api/v1/vehicle", vehicleRoutes);
+app.use("/api/v1/flat", flatRoutes);
+app.use("/api/v1/flatOwner", flatOwnerRoutes);
+app.use("/api/v1/securityGuard", securityGuardRoutes);
+app.use("/api/v1/maintenanceStaff", maintenanceStaffRoutes);
+app.use("/api/v1/tenant", tenantRoutes);
+app.use("/api/v1/visitor", visitorRoutes);
+app.use("/api/v1/complaint", complaintRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
+app.use("/api/v1/chat", chatRoutes);
+app.use("/api/v1/tenantRegistrationPayment", tenantRegistrationPaymentRoutes);
+app.use("/api/v1/maidRegistrationPayment", maidRegistrationPaymentRoutes);
 
-  // Middleware
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
-  app.use(compression());
-  app.use(cors());
-  app.use(apiRateLimiter);
+// Server static files for admin panel
+app.use(express.static(path.join(__dirname, "../admin", "dist")));
 
-  // API Routes
-  app.use("/api/v1", testRoutes);
-  app.use("/api/v1/auth", authRoutes);
-  app.use("/api/v1/user", userRoutes);
-  app.use("/api/v1/role", roleRoutes);
-  app.use("/api/v1/maid", maidRoutes);
-  app.use("/api/v1/vehicle", vehicleRoutes);
-  app.use("/api/v1/flat", flatRoutes);
-  app.use("/api/v1/flatOwner", flatOwnerRoutes);
-  app.use("/api/v1/securityGuard", securityGuardRoutes);
-  app.use("/api/v1/maintenanceStaff", maintenanceStaffRoutes);
-  app.use("/api/v1/tenant", tenantRoutes);
-  app.use("/api/v1/visitor", visitorRoutes);
-  app.use("/api/v1/complaint", complaintRoutes);
-  app.use("/api/v1/dashboard", dashboardRoutes);
-  app.use("/api/v1/chat", chatRoutes);
-  app.use("/api/v1/tenantRegistrationPayment", tenantRegistrationPaymentRoutes);
-  app.use("/api/v1/maidRegistrationPayment", maidRegistrationPaymentRoutes);
+// Catch-all route for admin panel
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "../admin", "dist", "index.html"));
+});
 
-  // Server static files for admin panel
-  app.use(express.static(path.join(__dirname, "../admin", "dist")));
+// Global error handling middleware
+app.use(errorHandler);
 
-  // Catch-all route for admin panel
-  app.get(/^\/(?!api).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, "../admin", "dist", "index.html"));
-  });
-
-  // Global error handling middleware
-  app.use(errorHandler);
-
-  // Start the server
-  httpServer.listen(port, () => {
-    console.log(`✅ Worker ${process.pid} running in ${mode} mode at http://localhost:${port}`);
-  });
-};
+// Start the server
+httpServer.listen(port, () => console.log(`✅ Server is running in ${mode} mode at http://localhost:${port}`));

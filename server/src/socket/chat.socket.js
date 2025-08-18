@@ -11,9 +11,15 @@ const chatSocketHandler = (io) => {
         });
 
         await newMessage.save();
-        io.emit("receiveMessage", newMessage);
+
+        const populatedMessage = await Chat
+          .findById(newMessage?._id)
+          .populate("user", "fullName profilePhoto profileType");
+
+        io.emit("receiveMessage", populatedMessage);
+
       } catch (err) {
-        socket.emit("errorMessage", { error: "Message not send." });
+        socket.emit("errorMessage", { error: "Message not sent." });
       };
     });
 

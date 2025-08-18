@@ -5,7 +5,7 @@ export const getAllChats = async (req, res) => {
   try {
     const chats = await Chat.find()
       .populate("user", "fullName profilePhoto profileType")
-      .sort({ createdAt: 1 });
+      .sort({ createdAt: 1 })
 
     return res.json({ success: true, data: chats });
   } catch (err) {
@@ -17,17 +17,10 @@ export const getAllChats = async (req, res) => {
 export const createChat = async (req, res) => {
   try {
     const { user, message, time } = req.body;
-
-    const newChat = new Chat({
-      user,
-      message,
-      time,
-    });
-
+    const newChat = new Chat({ user, message, time });
     await newChat.save();
-
     return res.status(201).json({ success: true, data: newChat });
   } catch (err) {
-    return res.status(500).json({ success: false, message: "Failed to send chat" });
+    return res.status(500).json({ success: false, message: "Failed to send chat." });
   };
 };
