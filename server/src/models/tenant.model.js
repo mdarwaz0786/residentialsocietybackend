@@ -79,6 +79,13 @@ const tenantPersonSchema = new mongoose.Schema({
   vehicleRC: {
     type: [String],
   },
+  remarks: {
+    type: String,
+  },
+  review: {
+    type: String,
+    enum: ["Under Review", ""],
+  },
   fromDate: {
     type: Date,
     default: Date.now,

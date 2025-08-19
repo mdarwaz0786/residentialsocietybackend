@@ -8,12 +8,13 @@ import PageSizeSelector from '../../components/Table/PageSizeSelector';
 import useDelete from '../../hooks/useDelete';
 import { toast } from "react-toastify";
 import { Link, useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useUpdateStatus from '../../hooks/useUpdateStatus';
 import StatusUpdateForm from '../../components/Form/StatusUpdateForm';
 
 const FlatOwner = () => {
   const { validToken } = useAuth();
+  const [remarks, setRemarks] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get("page")) || 1;
@@ -41,7 +42,7 @@ const FlatOwner = () => {
     approving,
     handleStatusChange,
     updateStatus,
-  } = useUpdateStatus({ token: validToken, refetch });
+  } = useUpdateStatus({ token: validToken, refetch, remarks });
 
   const updateQueryParams = (updates = {}) => {
     const updatedParams = {
@@ -126,8 +127,21 @@ const FlatOwner = () => {
                       onChange={handleStatusChange}
                       onSubmit={(id) => updateStatus(`/api/v1/flatOwner/update-flatOwner-status/${status[id]}`, id)}
                     />
+                    <input
+                      type="text"
+                      name="remarks"
+                      value={remarks[item?._id] || item?.remarks}
+                      placeholder="Enter Remarks"
+                      className="form-control mt-2"
+                      onChange={(e) => setRemarks({ ...remarks, [item?._id]: e.target.value })}
+                    />
+                    {item?.review && (
+                      <span className="d-inline-block mt-2 text-muted small fst-italic">
+                        💬 {item?.review}
+                      </span>
+                    )}
                   </td>
-                  <td>
+                  <td style={{ verticalAlign: "top" }}>
                     <Link to={`/flat-owner-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
                     <button className="btn btn-danger" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>

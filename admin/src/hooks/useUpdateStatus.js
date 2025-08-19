@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const useUpdateStatus = ({ token, refetch }) => {
+const useUpdateStatus = ({ token, refetch, remarks }) => {
   const [status, setStatus] = useState({});
   const [approving, setApproving] = useState({});
 
@@ -18,9 +18,15 @@ const useUpdateStatus = ({ token, refetch }) => {
 
       setApproving((prev) => ({ ...prev, [id]: true }));
 
+      const remark = remarks[id];
+
+      if (status[id] === "Rejected" && !remark) {
+        return toast.error("Enter Remarks");
+      };
+
       const response = await axios.patch(
         `${url}/${id}`,
-        { status: status[id] },
+        { status: status[id], remarks: remark },
         { headers: { Authorization: token } }
       );
 

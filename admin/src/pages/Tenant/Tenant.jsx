@@ -15,6 +15,7 @@ import useDebounce from '../../hooks/useDebounce';
 
 const Tenant = () => {
   const { validToken } = useAuth();
+  const [remarks, setRemarks] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get("page")) || 1;
@@ -43,7 +44,7 @@ const Tenant = () => {
     approving,
     handleStatusChange,
     updateStatus,
-  } = useUpdateStatus({ token: validToken, refetch });
+  } = useUpdateStatus({ token: validToken, refetch, remarks });
 
   const updateQueryParams = (updates = {}) => {
     const updatedParams = {
@@ -134,8 +135,21 @@ const Tenant = () => {
                       onChange={handleStatusChange}
                       onSubmit={(id) => updateStatus(`/api/v1/tenantRegistrationPayment/approve/tenant/${status[id]}`, id)}
                     />
+                    <input
+                      type="text"
+                      name="remarks"
+                      value={remarks[item?._id] || item?.remarks}
+                      placeholder="Enter Remarks"
+                      className="form-control mt-2"
+                      onChange={(e) => setRemarks({ ...remarks, [item?._id]: e.target.value })}
+                    />
+                    {item?.review && (
+                      <span className="d-inline-block mt-2 text-muted small fst-italic">
+                        💬 {item?.review}
+                      </span>
+                    )}
                   </td>
-                  <td>
+                  <td style={{ verticalAlign: "top" }}>
                     <Link to={`/tenant-detail/${item?._id}`}><button className="btn btn-secondary me-3 actionBtn">View</button></Link>
                     <button className="btn btn-danger" onClick={() => handleDelete(item?._id)}>Delete</button>
                   </td>

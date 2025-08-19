@@ -1,6 +1,6 @@
 const StatusUpdateForm = ({ id, currentStatus, status, approving, onChange, onSubmit }) => {
   return (
-    <form style={{ display: "flex", columnGap: "0.5rem" }} onSubmit={(e) => { e.preventDefault(); onSubmit(id); }}>
+    <form style={{ display: "flex", columnGap: "0.5rem" }} onSubmit={(e) => { e.preventDefault(); onSubmit(id) }}>
       <select
         value={status[id] || currentStatus}
         onChange={(e) => onChange(id, e.target.value)}

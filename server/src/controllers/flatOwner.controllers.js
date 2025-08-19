@@ -232,6 +232,7 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   // Update FlatOwner
   const flatOwnerUpdates = {};
   if (updatedBy) flatOwnerUpdates.updatedBy = updatedBy;
+  if (updatedBy) flatOwnerUpdates.review = "Under Review";
   if (fullName) flatOwnerUpdates.fullName = fullName;
   if (mobile) flatOwnerUpdates.mobile = mobile;
   if (secondaryMobile) flatOwnerUpdates.secondaryMobile = secondaryMobile;
@@ -306,6 +307,7 @@ export const deleteFlatOwner = asyncHandler(async (req, res) => {
 export const updateFlatOwnerStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { status } = req.params;
+  const { remarks } = req.body;
   const updatedBy = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -325,6 +327,8 @@ export const updateFlatOwnerStatus = asyncHandler(async (req, res) => {
     flatOwner.status = "Pending";
     flatOwner.canLogin = false;
     flatOwner.updatedBy = updatedBy;
+    flatOwner.remarks = "";
+    flatOwner.review = "";
     await flatOwner.save();
     return res.status(200).json({ success: true, message: "Flat Owner status updated to Pending." });
   };
@@ -333,6 +337,7 @@ export const updateFlatOwnerStatus = asyncHandler(async (req, res) => {
     flatOwner.status = "Rejected";
     flatOwner.canLogin = false;
     flatOwner.updatedBy = updatedBy;
+    flatOwner.remarks = remarks;
     await flatOwner.save();
     return res.status(200).json({ success: true, message: "Flat Owner status updated to Rejected." });
   };
@@ -340,6 +345,8 @@ export const updateFlatOwnerStatus = asyncHandler(async (req, res) => {
   if (status == "Approved" && flatOwner?.status === "Approved") {
     flatOwner.canLogin = true;
     flatOwner.updatedBy = updatedBy;
+    flatOwner.remarks = "";
+    flatOwner.review = "";
     await flatOwner.save();
     return res.status(200).json({ success: true, message: "Flat Owner status updated to Approved." });
   };
@@ -380,6 +387,8 @@ export const updateFlatOwnerStatus = asyncHandler(async (req, res) => {
       flatOwnerUpdates.memberId = memberId;
       flatOwnerUpdates.status = "Approved";
       flatOwnerUpdates.canLogin = true;
+      flatOwnerUpdates.remarks = "";
+      flatOwnerUpdates.review = "";
       flatOwnerUpdates.updatedBy = updatedBy;
 
       await FlatOwner.findByIdAndUpdate(id, flatOwnerUpdates, {

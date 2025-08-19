@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { MdMenu } from "react-icons/md";
 import styles from "./Navbar.module.css";
-// import avatar from "../../assets/avatar.png";
 import logo from "../../assets/logoCopy.png";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
@@ -31,7 +30,7 @@ const Navbar = ({ handleToggleSidebar }) => {
     logOutUser();
     toast.success("Logout successful");
   };
-  console.log(user)
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.navLeft}>

@@ -91,10 +91,10 @@ app.use("/api/v1/chat", chatRoutes);
 app.use("/api/v1/tenantRegistrationPayment", tenantRegistrationPaymentRoutes);
 app.use("/api/v1/maidRegistrationPayment", maidRegistrationPaymentRoutes);
 
-// Server static files for admin panel
+// Serve static files for admin panel
 app.use(express.static(path.join(__dirname, "../admin", "dist")));
 
-// Catch-all route for admin panel
+// Catch all route for admin panel
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "../admin", "dist", "index.html"));
 });

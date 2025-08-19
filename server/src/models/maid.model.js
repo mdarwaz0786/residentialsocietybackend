@@ -50,6 +50,9 @@ const maidSchema = new mongoose.Schema({
     enum: ["Pending", "Active", "Expired"],
     default: "Pending",
   },
+  remarks: {
+    type: String,
+  },
   isDeleted: {
     type: Boolean,
     default: false,

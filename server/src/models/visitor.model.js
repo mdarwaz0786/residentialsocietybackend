@@ -35,6 +35,9 @@ const visitorSchema = new mongoose.Schema({
   visitorId: {
     type: String,
   },
+  remarks: {
+    type: String,
+  },
   status: {
     type: String,
     enum: ["Approved", "Pending", "Rejected"],

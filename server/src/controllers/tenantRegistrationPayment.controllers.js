@@ -12,6 +12,7 @@ export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => 
   const { PAYU_KEY, PAYU_SALT, PAYU_BASE_URL, SERVER_BASE_URL } = process.env;
   const tenantId = req.params.id;
   const status = req.params.status;
+  const { remarks } = req.body;
   const updatedBy = req.user?._id;
 
   const tenant = await Tenant.findById(tenantId).populate('createdBy');
@@ -33,6 +34,7 @@ export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => 
     tenant.status = "Rejected";
     tenant.updatedBy = updatedBy;
     tenant.canLogin = false;
+    tenant.remarks = remarks;
     await tenant.save();
     return res.status(200).json({ success: true, message: "Status updated to Rejected." });
   };
@@ -41,6 +43,7 @@ export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => 
     tenant.status = "Pending";
     tenant.updatedBy = updatedBy;
     tenant.canLogin = false;
+    tenant.remarks = "";
     await tenant.save();
     return res.status(200).json({ success: true, message: "Status updated to Pending." });
   };
@@ -49,6 +52,8 @@ export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => 
     tenant.status = "Approved";
     tenant.updatedBy = updatedBy;
     tenant.canLogin = true;
+    tenant.remarks = "";
+    tenant.review = "";
     await tenant.save();
     return res.status(200).json({ success: true, message: "Status updated to Approved." });
   };
@@ -58,6 +63,8 @@ export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => 
   if (status === "Approved" && !existingPayment) {
     tenant.status = 'Approved';
     tenant.updatedBy = updatedBy;
+    tenant.remarks = "";
+    tenant.review = "";
     await tenant.save();
 
     const txnid = 'TXN' + Date.now();

@@ -62,6 +62,9 @@ const securityGuardSchema = new mongoose.Schema({
     type: Number,
     requured: [true, "Gate number is required."]
   },
+  remarks: {
+    type: String,
+  },
   fromDate: {
     type: Date,
     default: Date.now,

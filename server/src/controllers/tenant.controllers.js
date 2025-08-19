@@ -249,6 +249,7 @@ export const updateTenant = asyncHandler(async (req, res) => {
 
     const updates = {};
     if (updatedBy) updates.updatedBy = updatedBy;
+    if (updatedBy) updates.review = "Under Review";
     if (fullName) updates.fullName = fullName;
     if (mobile) updates.mobile = mobile;
     if (secondaryMobile) updates.secondaryMobile = secondaryMobile;

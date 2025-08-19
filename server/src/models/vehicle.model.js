@@ -20,6 +20,9 @@ const vehicleSchema = new mongoose.Schema({
     type: String,
     required: [true, "Vehicle RC is required."],
   },
+  remarks: {
+    type: String,
+  },
   status: {
     type: String,
     enum: ["Approved", "Pending", "Rejected"],
