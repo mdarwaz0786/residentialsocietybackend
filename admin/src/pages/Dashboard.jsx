@@ -128,6 +128,13 @@ const Dashboard = () => {
       color: "text-muted",
       to: "/role",
     },
+    {
+      label: "Setting",
+      value: stat?.totalSettings || 0,
+      icon: <FaTools size={20} />,
+      color: "text-secondary",
+      to: "/setting",
+    },
   ];
 
   return (

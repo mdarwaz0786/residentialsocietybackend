@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import Tenant from '../models/tenant.model.js';
+import Setting from '../models/setting.model.js';
 import TenantRegistrationPayment from '../models/tenantRegistrationPayment.model.js';
 import asyncHandler from '../helpers/asynsHandler.js';
 import ApiError from '../helpers/apiError.js';
@@ -9,7 +10,7 @@ import generateMemberId from '../helpers/generateMemberId.js';
 
 // Approve Tenant and Generate Payment
 export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => {
-  const { PAYU_KEY, PAYU_SALT, PAYU_BASE_URL, SERVER_BASE_URL } = process.env;
+  const { PAYU_BASE_URL, SERVER_BASE_URL } = process.env;
   const tenantId = req.params.id;
   const status = req.params.status;
   const { remarks } = req.body;
@@ -20,6 +21,14 @@ export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => 
   if (!tenant) {
     throw new ApiError(404, 'Tenant not found.');
   };
+
+  const settings = await Setting.findOne().sort({ createdAt: 1 });
+
+  if (!settings) {
+    throw new ApiError(500, "Payment settings not configured.");
+  };
+
+  const { payuKey, payuSalt, tenantRegistrationFee } = settings;
 
   const existingPayment = await TenantRegistrationPayment.findOne({
     tenant: tenantId,
@@ -68,10 +77,10 @@ export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => 
     await tenant.save();
 
     const txnid = 'TXN' + Date.now();
-    const amount = 1;
+    const amount = tenantRegistrationFee || 1;
 
     const data = {
-      key: PAYU_KEY,
+      key: payuKey,
       txnid,
       amount,
       productinfo: 'Tenant Registration',
@@ -83,7 +92,7 @@ export const approveTenantAndGeneratePayment = asyncHandler(async (req, res) => 
       service_provider: 'payu_paisa',
     };
 
-    const hashStr = `${data.key}|${data.txnid}|${data.amount}|${data.productinfo}|${data.firstname}|${data.email}|||||||||||${PAYU_SALT}`;
+    const hashStr = `${data.key}|${data.txnid}|${data.amount}|${data.productinfo}|${data.firstname}|${data.email}|||||||||||${payuSalt}`;
     const hash = crypto.createHash('sha512').update(hashStr).digest('hex');
 
     payment = await TenantRegistrationPayment.create({

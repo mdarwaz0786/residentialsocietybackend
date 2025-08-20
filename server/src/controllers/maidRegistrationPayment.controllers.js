@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import Maid from '../models/maid.model.js';
+import Setting from '../models/setting.model.js';
 import MaidRegistrationPayment from "../models/maidRegistrationPayment.model.js";
 import asyncHandler from '../helpers/asynsHandler.js';
 import ApiError from '../helpers/apiError.js';
@@ -9,7 +10,7 @@ import generateMaidId from '../helpers/generateMaidId.js';
 
 // Approve Maid and Generate Payment
 export const approveMaidAndGeneratePayment = asyncHandler(async (req, res) => {
-  const { PAYU_KEY, PAYU_SALT, PAYU_BASE_URL, SERVER_BASE_URL } = process.env;
+  const { PAYU_BASE_URL, SERVER_BASE_URL } = process.env;
   const maidId = req.params.id;
   const status = req.params.status;
 
@@ -18,6 +19,14 @@ export const approveMaidAndGeneratePayment = asyncHandler(async (req, res) => {
   if (!maid) {
     throw new ApiError(404, 'Maid not found.');
   };
+
+  const settings = await Setting.findOne().sort({ createdAt: 1 });
+
+  if (!settings) {
+    throw new ApiError(500, "Payment settings not configured.");
+  };
+
+  const { payuKey, payuSalt, maidRegistrationFee } = settings;
 
   const existingPayment = await MaidRegistrationPayment.findOne({
     maid: maidId,
@@ -47,10 +56,10 @@ export const approveMaidAndGeneratePayment = asyncHandler(async (req, res) => {
     await maid.save();
 
     const txnid = 'TXN' + Date.now();
-    const amount = 1;
+    const amount = maidRegistrationFee || 1;
 
     const data = {
-      key: PAYU_KEY,
+      key: payuKey,
       txnid,
       amount,
       productinfo: 'Maid Registration',
@@ -62,7 +71,7 @@ export const approveMaidAndGeneratePayment = asyncHandler(async (req, res) => {
       service_provider: 'payu_paisa',
     };
 
-    const hashStr = `${data.key}|${data.txnid}|${data.amount}|${data.productinfo}|${data.firstname}|${data.email}|||||||||||${PAYU_SALT}`;
+    const hashStr = `${data.key}|${data.txnid}|${data.amount}|${data.productinfo}|${data.firstname}|${data.email}|||||||||||${payuSalt}`;
     const hash = crypto.createHash('sha512').update(hashStr).digest('hex');
 
     payment = await MaidRegistrationPayment.create({

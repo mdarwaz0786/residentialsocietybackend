@@ -9,6 +9,7 @@ import {
   MdReportProblem,
   MdPayment,
   MdKeyboardArrowDown,
+  MdSettings,
 } from "react-icons/md";
 import {
   FaUserFriends,
@@ -188,6 +189,17 @@ const Sidebar = ({ mobileOpen, setMobileOpen, handleToggleSidebar }) => {
               <Link to="/role" className={`${styles.navLink} ${activeLink === "Role" ? styles.active : ""}`} onClick={() => handleLinkClick("Role")}>
                 <FaUserTag />
                 <span className={styles.navLabel}>Role & Permission</span>
+              </Link>
+            </li>
+
+            <li className={styles.navItem}>
+              <Link
+                to="/setting"
+                className={`${styles.navLink} ${activeLink === "Setting" ? styles.active : ""}`}
+                onClick={() => handleLinkClick("Setting")}
+              >
+                <FaTools />
+                <span className={styles.navLabel}>Setting</span>
               </Link>
             </li>
 

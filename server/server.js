@@ -28,6 +28,7 @@ import tenantRegistrationPaymentRoutes from "./src/routes/tenantRegistrationPaym
 import maidRegistrationPaymentRoutes from "./src/routes/maidRegistrationPayment.route.js";
 import dashboardRoutes from "./src/routes/dashboard.routes.js";
 import chatRoutes from "./src/routes/chat.routes.js";
+import settingRoutes from "./src/routes/setting.route.js";
 import chatSocketHandler from "./src/socket/chat.socket.js";
 
 // Get the current file 
@@ -88,6 +89,7 @@ app.use("/api/v1/visitor", visitorRoutes);
 app.use("/api/v1/complaint", complaintRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/chat", chatRoutes);
+app.use("/api/v1/setting", settingRoutes);
 app.use("/api/v1/tenantRegistrationPayment", tenantRegistrationPaymentRoutes);
 app.use("/api/v1/maidRegistrationPayment", maidRegistrationPaymentRoutes);
 

@@ -43,6 +43,8 @@ import UpdateRole from './pages/Role/UpdateRole';
 import TenantRegistrationPayment from './pages/Payment/TenantRegistrationPayment';
 import MaidRegistrationPayment from './pages/Payment/MaidRegistrationPayment';
 import Profile from './pages/Profile/Profile';
+import Setting from './pages/Setting/Setting';
+import UpdateSetting from './pages/Setting/UpdateSetting';
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -100,6 +102,8 @@ const App = () => {
             <Route path="tenant-registration-payment" element={<TenantRegistrationPayment />} />
             <Route path="maid-registration-payment" element={<MaidRegistrationPayment />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="setting" element={<Setting />} />
+            <Route path="update-setting/:id" element={<UpdateSetting />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </>

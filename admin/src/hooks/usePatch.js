@@ -17,7 +17,6 @@ function usePatch(apiUrl) {
         },
       };
       const res = await axios.patch(apiUrl, payload, config);
-      console.log(res?.data)
       if (res?.data?.success) {
         setResponse(res?.data);
       };
