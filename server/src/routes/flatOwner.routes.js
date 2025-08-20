@@ -29,21 +29,18 @@ router.post(
 router.get(
   "/get-all-flatOwner",
   isLoggedIn,
-  checkPermission("flatOwner", "read"),
   getFlatOwners,
 );
 
 router.get(
   "/get-single-flatOwner/:id",
   isLoggedIn,
-  checkPermission("flatOwner", "read"),
   getFlatOwner,
 );
 
 router.patch(
   "/update-flatOwner/:id",
   isLoggedIn,
-  checkPermission("flatOwner", "update"),
   upload.fields([
     { name: "profilePhoto", maxCount: 1 },
     { name: "aadharCard", maxCount: 1 },

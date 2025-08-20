@@ -88,12 +88,14 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid password.");
   };
 
-  if (user?.profile && user?.profile?.status && user?.profile?.status !== "Approved") {
-    throw new ApiError(401, "Your account is not approved.");
-  };
+  if (user?.role?.roleName !== "Flat Owner") {
+    if (user?.profile && user?.profile?.status && user?.profile?.status !== "Approved") {
+      throw new ApiError(401, "Your account is not approved.");
+    };
 
-  if (user?.profile && user?.profile?.canLogin && user?.profile?.canLogin !== true) {
-    throw new ApiError(401, "Your account is restricted to login.");
+    if (user?.profile && user?.profile?.canLogin && user?.profile?.canLogin !== true) {
+      throw new ApiError(401, "Your account is restricted to login.");
+    };
   };
 
   const token = generateToken(user?._id);
