@@ -52,6 +52,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["Admin", "SubAdmin", "FlatOwner", "Tenant", "SecurityGuard", "MaintenanceStaff"],
   },
+  fcmToken: {
+    type: String,
+    trim: true,
+  },
+  deviceId: {
+    type: String,
+    trim: true,
+  },
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);

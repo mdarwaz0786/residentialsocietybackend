@@ -66,7 +66,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
-  const { mobile, password } = req.body;
+  const { mobile, password, fcmToken, deviceId } = req.body;
 
   if (!mobile) {
     throw new ApiError(400, "Mobile number is required.");
@@ -76,7 +76,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Password is required.");
   };
 
-  const user = await User.findOne({ mobile: mobile }).populate("profile").select("+password");
+  const user = await User.findOne({ mobile: mobile }).populate("profile").populate("role").select("+password");
 
   if (!user) {
     throw new ApiError(401, "Invalid mobile number");
@@ -96,6 +96,16 @@ export const loginUser = asyncHandler(async (req, res) => {
     if (user?.profile && user?.profile?.canLogin && user?.profile?.canLogin !== true) {
       throw new ApiError(401, "Your account is restricted to login.");
     };
+  };
+
+  if (!!fcmToken) {
+    user.fcmToken = fcmToken;
+    await user.save();
+  };
+
+  if (!!deviceId) {
+    user.deviceId = deviceId;
+    await user.save();
   };
 
   const token = generateToken(user?._id);
