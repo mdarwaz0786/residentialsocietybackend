@@ -63,7 +63,6 @@ export const createTenant = asyncHandler(async (req, res) => {
   const aadharCard = req?.files?.aadharCard?.[0];
   const rentAgreement = req?.files?.rentAgreement?.[0];
   const policeVerification = req?.files?.policeVerification?.[0];
-  const vehicleRCFiles = req?.files?.vehicleRC || [];
 
   const [
     profilePhotoBase64,
@@ -76,7 +75,6 @@ export const createTenant = asyncHandler(async (req, res) => {
     aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
     rentAgreement ? compressImageToBase64(rentAgreement.buffer, rentAgreement.mimetype) : null,
     policeVerification ? compressImageToBase64(policeVerification.buffer, policeVerification.mimetype) : null,
-    vehicleRCFiles?.length > 0 ? Promise.all(vehicleRCFiles.map((file) => compressImageToBase64(file.buffer, file.mimetype))) : [],
   ]);
 
   const session = await mongoose.startSession();
@@ -108,7 +106,6 @@ export const createTenant = asyncHandler(async (req, res) => {
       aadharCard: aadharCardBase64,
       rentAgreement: rentAgreementBase64,
       policeVerification: policeVerificationBase64,
-      vehicleRC: vehicleRCBase64Array,
       createdBy,
     }], { session });
 
@@ -215,7 +212,6 @@ export const updateTenant = asyncHandler(async (req, res) => {
   const aadharCard = req?.files?.aadharCard?.[0];
   const rentAgreement = req?.files?.rentAgreement?.[0];
   const policeVerification = req?.files?.policeVerification?.[0];
-  const vehicleRCFiles = req?.files?.vehicleRC || [];
 
   const [
     profilePhotoBase64,
@@ -228,7 +224,6 @@ export const updateTenant = asyncHandler(async (req, res) => {
     aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
     rentAgreement ? compressImageToBase64(rentAgreement.buffer, rentAgreement.mimetype) : null,
     policeVerification ? compressImageToBase64(policeVerification.buffer, policeVerification.mimetype) : null,
-    vehicleRCFiles?.length > 0 ? Promise.all(vehicleRCFiles.map((file) => compressImageToBase64(file.buffer, file.mimetype))) : [],
   ]);
 
   const session = await mongoose.startSession();
@@ -261,7 +256,6 @@ export const updateTenant = asyncHandler(async (req, res) => {
     if (aadharCardBase64) updates.aadharCard = aadharCardBase64;
     if (rentAgreementBase64) updates.rentAgreement = rentAgreementBase64;
     if (policeVerificationBase64) updates.policeVerification = policeVerificationBase64;
-    if (vehicleRCBase64Array?.length > 0) updates.vehicleRC = vehicleRCBase64Array;
 
     const updatedTenant = await Tenant.findByIdAndUpdate(id, updates, {
       new: true,

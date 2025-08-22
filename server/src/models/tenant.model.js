@@ -76,9 +76,6 @@ const tenantPersonSchema = new mongoose.Schema({
     type: String,
     required: [true, "Police verification is required."],
   },
-  vehicleRC: {
-    type: [String],
-  },
   remarks: {
     type: String,
   },

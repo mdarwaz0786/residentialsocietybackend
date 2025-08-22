@@ -59,7 +59,6 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
   const profilePhoto = req?.files?.profilePhoto?.[0];
   const aadharCard = req?.files?.aadharCard?.[0];
   const allotment = req?.files?.allotment?.[0];
-  const vehicleRCFiles = req?.files?.vehicleRC || [];
 
   const [
     profilePhotoBase64,
@@ -70,7 +69,6 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
     profilePhoto ? compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype) : null,
     aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
     allotment ? compressImageToBase64(allotment.buffer, allotment.mimetype) : null,
-    vehicleRCFiles?.length > 0 ? Promise.all(vehicleRCFiles.map((file) => compressImageToBase64(file.buffer, file.mimetype))) : [],
   ]);
 
   const session = await mongoose.startSession();
@@ -101,7 +99,6 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
       permanentAddress,
       aadharCard: aadharCardBase64,
       allotment: allotmentBase64,
-      vehicleRC: vehicleRCBase64Array,
     }], { session });
 
     newUser[0].profile = flatOwner?.[0]?._id;
@@ -207,7 +204,6 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   const profilePhoto = req?.files?.profilePhoto?.[0];
   const aadharCard = req?.files?.aadharCard?.[0];
   const allotment = req?.files?.allotment?.[0];
-  const vehicleRCFiles = req?.files?.vehicleRC || [];
 
   const [
     profilePhotoBase64,
@@ -218,7 +214,6 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
     profilePhoto ? compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype) : null,
     aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
     allotment ? compressImageToBase64(allotment.buffer, allotment.mimetype) : null,
-    vehicleRCFiles.length > 0 ? Promise.all(vehicleRCFiles.map((file) => compressImageToBase64(file.buffer, file.mimetype))) : [],
   ]);
 
   // Update User
@@ -244,7 +239,6 @@ export const updateFlatOwner = asyncHandler(async (req, res) => {
   if (profilePhotoBase64) flatOwnerUpdates.profilePhoto = profilePhotoBase64;
   if (aadharCardBase64) flatOwnerUpdates.aadharCard = aadharCardBase64;
   if (allotmentBase64) flatOwnerUpdates.allotment = allotmentBase64;
-  if (vehicleRCBase64Array?.length > 0) flatOwnerUpdates.vehicleRC = vehicleRCBase64Array;
 
   const session = await mongoose.startSession();
   session.startTransaction();

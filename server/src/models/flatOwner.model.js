@@ -73,9 +73,6 @@ const flatOwnerSchema = new mongoose.Schema({
     type: String,
     required: [true, "Allotment is required."],
   },
-  vehicleRC: {
-    type: [String],
-  },
   remarks: {
     type: String,
   },

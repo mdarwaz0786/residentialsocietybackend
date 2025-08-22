@@ -89,15 +89,6 @@ const FlatOwnerDetail = () => {
             <img src={flatOwner?.allotment} alt="image" className="img-thumbnail" />
             <ImageDownloadButton src={flatOwner?.allotment} filename={`${flatOwner?.fullName}-allotment`} />
           </div>
-          {
-            flatOwner?.vehicleRC && flatOwner?.vehicleRC?.length > 0 && flatOwner?.vehicleRC?.map((vehicle, index) => (
-              <div className="col-md-6" key={index}>
-                <label className="fw-bold d-block mb-1 mt-3">Vehicle RC {index + 1}:</label>
-                <img src={vehicle} alt="vehicleRC" className="img-thumbnail" />
-                <ImageDownloadButton src={vehicle} filename={`${flatOwner?.fullName}-vehicle-rc-${index + 1}`} />
-              </div>
-            ))
-          }
         </div>
       </div>
     </div>

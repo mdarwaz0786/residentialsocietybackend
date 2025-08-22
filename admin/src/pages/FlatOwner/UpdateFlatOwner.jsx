@@ -30,12 +30,11 @@ const UpdateFlatOwner = () => {
     profilePhoto: null,
     aadharCard: null,
     allotment: null,
-    vehicleRC: null,
   });
 
   useEffect(() => {
     if (data?.data) {
-      const { fullName, mobile, email, flat, currentAddress, permanentAddress, profilePhoto, aadharCard, allotment, vehicleRC } = data.data;
+      const { fullName, mobile, email, flat, currentAddress, permanentAddress, profilePhoto, aadharCard, allotment } = data.data;
       setForm({
         fullName: fullName,
         mobile: mobile,
@@ -47,7 +46,6 @@ const UpdateFlatOwner = () => {
         profilePhoto: profilePhoto,
         aadharCard: aadharCard,
         allotment: allotment,
-        vehicleRC: vehicleRC,
       });
     };
   }, [data]);
@@ -73,7 +71,6 @@ const UpdateFlatOwner = () => {
     profilePhoto: { required: true, label: "Profile Photo" },
     aadharCard: { required: true, label: "Aadhar Card" },
     allotment: { required: true, label: "Allotment" },
-    vehicleRC: { required: true, label: "Vehicle Rc" },
   };
 
   const handleSubmit = async (e) => {
@@ -204,15 +201,6 @@ const UpdateFlatOwner = () => {
         value={form.aadharCard}
         required
         error={errors.allotment}
-        width="col-md-6"
-      />
-      <SingleImage
-        label="Vehicle RC"
-        name="vehicleRC"
-        onChange={(file) => handleImageChange(file, "vehicleRC")}
-        value={form.vehicleRC}
-        required
-        error={errors.vehicleRC}
         width="col-md-6"
       />
     </FormWrapper>

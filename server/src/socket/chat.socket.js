@@ -19,27 +19,7 @@ const chatSocketHandler = (io) => {
           .populate("user", "fullName profilePhoto profileType")
 
         io.emit("receiveMessage", populatedMessage);
-
-        const payload = {
-          notification: {
-            title: populatedMessage?.user?.fullName,
-            body: populatedMessage?.message,
-          },
-          data: {
-            link: "residentialsociety://Chat",
-          },
-        };
-
-        const users = await User.find({ fcmToken: { $exists: true } }).select("fcmToken");
-        const tokens = users.map((u) => u?.fcmToken)?.filter(Boolean);
-
-        if (tokens?.length > 0) {
-          await firebase.messaging().sendEachForMulticast({
-            tokens,
-            ...payload,
-          });
-        };
-
+        setImmediate(() => sendPushNotification(populatedMessage));
       } catch (err) {
         socket.emit("errorMessage", { error: "Message not sent." });
       };
@@ -47,6 +27,36 @@ const chatSocketHandler = (io) => {
 
     socket.on("disconnect", () => { });
   });
+};
+
+const sendPushNotification = async (populatedMessage) => {
+  try {
+    const payload = {
+      notification: {
+        title: populatedMessage?.user?.fullName,
+        body: populatedMessage?.message,
+      },
+      data: {
+        link: "residentialsociety://Chat",
+      },
+    };
+
+    const users = await User.find({
+      _id: { $ne: populatedMessage?.user?._id },
+      fcmToken: { $exists: true }
+    }).select("fcmToken");
+
+    const tokens = users.map((u) => u?.fcmToken)?.filter(Boolean);
+
+    if (tokens?.length > 0) {
+      firebase.messaging().sendEachForMulticast({
+        tokens,
+        ...payload,
+      });
+    };
+  } catch (err) {
+    console.error("Push notification error:", err.message);
+  };
 };
 
 export default chatSocketHandler;

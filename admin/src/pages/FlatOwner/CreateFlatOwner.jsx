@@ -27,7 +27,6 @@ const CreateFlatOwner = () => {
     profilePhoto: null,
     aadharCard: null,
     allotment: null,
-    vehicleRC: null,
   });
 
   const handleChange = (e) => {
@@ -52,7 +51,6 @@ const CreateFlatOwner = () => {
     profilePhoto: { required: true, label: "Profile Photo" },
     aadharCard: { required: true, label: "Aadhar Card" },
     allotment: { required: true, label: "Allotment" },
-    vehicleRC: { required: true, label: "vehicle RC" },
   };
 
   const handleSubmit = async (e) => {
@@ -172,14 +170,6 @@ const CreateFlatOwner = () => {
         onChange={(file) => handleImageChange(file, "allotment")}
         required
         error={errors.allotment}
-        width="col-md-6"
-      />
-      <SingleImage
-        label="Vehicle RC"
-        name="vehicleRC"
-        onChange={(file) => handleImageChange(file, "vehicleRC")}
-        required
-        error={errors.vehicleRC}
         width="col-md-6"
       />
     </FormWrapper>
