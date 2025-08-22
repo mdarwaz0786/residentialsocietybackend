@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import validator from "validator";
 
-const adminSchema = new mongoose.Schema({
+const subAdminSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -56,6 +56,6 @@ const adminSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-const Admin = mongoose.model("Admin", adminSchema);
+const SubAdmin = mongoose.model("SubAdmin", subAdminSchema);
 
-export default Admin;
+export default SubAdmin;

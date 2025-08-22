@@ -14,7 +14,18 @@ export const getAllChats = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const chats = await Chat.find()
-      .populate("user", "fullName profilePhoto profileType")
+      .populate({
+        path: "user",
+        select: "fullName profilePhoto profileType profile",
+        populate: {
+          path: "profile",
+          select: "flat",
+          populate: {
+            path: "flat",
+            select: "flatNumber",
+          },
+        },
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -36,7 +47,6 @@ export const getAllChats = async (req, res) => {
     return res.status(500).json({ success: false, message: "Failed to fetch chats" });
   };
 };
-
 
 // Create chat
 export const createChat = async (req, res) => {

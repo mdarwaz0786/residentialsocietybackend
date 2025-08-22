@@ -14,9 +14,19 @@ const chatSocketHandler = (io) => {
 
         await newMessage.save();
 
-        const populatedMessage = await Chat
-          .findById(newMessage?._id)
-          .populate("user", "fullName profilePhoto profileType")
+        const populatedMessage = await Chat.findById(newMessage?._id)
+          .populate({
+            path: "user",
+            select: "fullName profilePhoto profileType profile",
+            populate: {
+              path: "profile",
+              select: "flat",
+              populate: {
+                path: "flat",
+                select: "flatNumber",
+              },
+            },
+          });
 
         io.emit("receiveMessage", populatedMessage);
         setImmediate(() => sendPushNotification(populatedMessage));
