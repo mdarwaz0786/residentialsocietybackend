@@ -3,26 +3,28 @@ import Chat from "../models/chat.model.js";
 // Get all chats
 export const getAllChats = async (req, res) => {
   try {
-    let { page = 1, limit = 20 } = req.query;
+    let { page = 1, limit = 10 } = req.query;
 
     page = parseInt(page);
     limit = parseInt(limit);
 
     if (page < 1) page = 1;
-    if (limit < 1) limit = 20;
+    if (limit < 1) limit = 10;
 
     const skip = (page - 1) * limit;
 
     const chats = await Chat.find()
       .populate({
         path: "user",
-        select: "fullName profilePhoto profileType profile",
+        select: "fullName profilePhoto profileType",
         populate: {
           path: "profile",
           select: "flat",
+          options: { strictPopulate: false },
           populate: {
             path: "flat",
             select: "flatNumber",
+            options: { strictPopulate: false },
           },
         },
       })
