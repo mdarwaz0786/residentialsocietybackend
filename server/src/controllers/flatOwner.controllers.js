@@ -64,7 +64,6 @@ export const createFlatOwner = asyncHandler(async (req, res) => {
     profilePhotoBase64,
     aadharCardBase64,
     allotmentBase64,
-    vehicleRCBase64Array
   ] = await Promise.all([
     profilePhoto ? compressImageToBase64(profilePhoto.buffer, profilePhoto.mimetype) : null,
     aadharCard ? compressImageToBase64(aadharCard.buffer, aadharCard.mimetype) : null,
